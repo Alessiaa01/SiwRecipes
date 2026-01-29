@@ -21,10 +21,19 @@ public class RicettaService {
 	}
 	
 	public Ricetta findById(Long id) {
-		this.ricettaRepository.findById(id).orElse(null);
+		return ricettaRepository.findById(id).orElse(null);
 	}
 	
 	public List<Ricetta> findAll() {
-		this.ricettaRepository.findAll();
+	    return ricettaRepository.findAll();
 	}
+	
+	public List<Ricetta> findByTitolo(String titolo){
+		return ricettaRepository.findByTitoloContainingIgnoreCase(titolo);
+	}
+	
+	public boolean existByTitle(String titolo) {
+		return ricettaRepository.existsByTitolo(titolo);
+
+}
 }

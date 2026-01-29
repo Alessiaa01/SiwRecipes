@@ -1,29 +1,40 @@
 package it.uniroma3.siw.model;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Ricetta {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)//viene generato in modo automatico, incrementale assegnato dal DB
+    //il valore dell'id viene creato automaticamente la prima volta che l'oggetto viene reso persistente nel DB
 	private Long id;
 	
+	@Column(nullable=false)
 	private String titolo;
 	
+	@Column(length=2000)
 	private String descrizione;
-	
+
+	@Column(length=2000)
 	private String procedimento;
 	
 	private String categoria;
 	
 	private String difficoltà;
 	
+	@Column(length=2000)
 	private String imageUrl;
 	
 	private Integer porzioni;
@@ -31,7 +42,16 @@ public class Ricetta {
 	private Integer tempoDiCottura;
 	
 	private Integer tempoDiPreparazione;
-
+	
+	private LocalDate dataDiInserimento;
+	
+	@OneToMany(mappedBy ="ricetta", cascade = CascadeType.ALL)
+    private List<RicettaIngrediente> ingredienti = new ArrayList<>();
+	
+	//COSTRUTTORE
+		public Ricetta() {
+			this.ingredienti = new ArrayList<>();
+		}
 
 //METODI GETTER E SETTER 
 
@@ -113,6 +133,14 @@ public void setTempoDiCottura(Integer tempoDiCottura) {
 
 public void setTempoDiPreparazione(Integer tempoDiPreparazione) {
 	this.tempoDiPreparazione = tempoDiPreparazione;
+}
+
+public LocalDate getDataDiInserimento() {
+	return dataDiInserimento;
+}
+
+public void setDataDiInserimento(LocalDate dataDiInserimento) {
+	this.dataDiInserimento = dataDiInserimento;
 }
 
 @Override
