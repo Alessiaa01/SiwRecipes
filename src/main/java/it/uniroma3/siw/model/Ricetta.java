@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -47,6 +48,9 @@ public class Ricetta {
 	
 	@OneToMany(mappedBy ="ricetta", cascade = CascadeType.ALL)
     private List<RicettaIngrediente> ingredienti = new ArrayList<>();
+	
+	@ManyToOne  
+    private Utente autore;
 	
 	//COSTRUTTORE
 		public Ricetta() {
@@ -141,6 +145,22 @@ public LocalDate getDataDiInserimento() {
 
 public void setDataDiInserimento(LocalDate dataDiInserimento) {
 	this.dataDiInserimento = dataDiInserimento;
+}
+
+public List<RicettaIngrediente> getIngredienti() {
+	return ingredienti;
+}
+
+public void setIngredienti(List<RicettaIngrediente> ingredienti) {
+	this.ingredienti = ingredienti;
+}
+
+public Utente getAutore() {
+	return autore;
+}
+
+public void setAutore(Utente autore) {
+	this.autore = autore;
 }
 
 @Override

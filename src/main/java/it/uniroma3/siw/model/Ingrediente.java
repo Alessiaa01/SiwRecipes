@@ -30,6 +30,7 @@ public class Ingrediente {
 		
 	}
 
+	//METODI GETTER E SETTER
 	public Long getId() {
 		return id;
 	}
@@ -47,10 +48,10 @@ public class Ingrediente {
 		this.nome = nome;
 	}
 
-	
+	//Non voglio avere due righe chiamate nello stesso modo 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, nome);
+		return Objects.hash(nome);
 	}
 
 	@Override
@@ -62,6 +63,9 @@ public class Ingrediente {
 		if (getClass() != obj.getClass())
 			return false;
 		Ingrediente other = (Ingrediente) obj;
-		return Objects.equals(id, other.id) && Objects.equals(nome, other.nome);
+		return Objects.equals(nome, other.nome);
 	}
+
+	
+	
 }

@@ -1,5 +1,7 @@
 package it.uniroma3.siw.model;
 
+import java.util.Objects;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
@@ -28,9 +30,14 @@ public class Credentials {
 	@OneToOne(cascade = CascadeType.ALL)
 	private Utente utente;
 	
-	
+
 	// true = attivo, false = bannato
     private boolean enabled = true;
+    
+    //COSTRUTTORE
+    public Credentials() {
+    	
+    }
 
 	public Long getId() {
 		return id;
@@ -79,5 +86,23 @@ public class Credentials {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+
+	//non possono esistere due utenti con lo stesso username nel sistema 
+	@Override
+	public int hashCode() {
+		return Objects.hash(username);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Credentials other = (Credentials) obj;
+		return Objects.equals(username, other.username);
+	}	
 	
 }

@@ -21,7 +21,6 @@ public class Utente {
 	
 	private String nome;
 	
-
 	private String cognome;
 	
 	private String email;
@@ -77,9 +76,18 @@ public class Utente {
 		this.dataDiNascita = dataDiNascita;
 	}
 	
+	public List<Ricetta> getRicetteScritte() {
+		return ricetteScritte;
+	}
+
+	public void setRicetteScritte(List<Ricetta> ricetteScritte) {
+		this.ricetteScritte = ricetteScritte;
+	}
+
+	
 	@Override
 	public int hashCode() {
-		return Objects.hash(cognome, email, nome);
+		return Objects.hash(email, nome);
 	}
 
 	@Override
@@ -91,8 +99,7 @@ public class Utente {
 		if (getClass() != obj.getClass())
 			return false;
 		Utente other = (Utente) obj;
-		return Objects.equals(cognome, other.cognome) && Objects.equals(email, other.email)
-				&& Objects.equals(nome, other.nome);
+		return Objects.equals(email, other.email) && Objects.equals(nome, other.nome);
 	}
 	
 }

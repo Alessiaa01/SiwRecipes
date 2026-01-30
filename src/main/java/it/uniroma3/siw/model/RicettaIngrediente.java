@@ -59,6 +59,22 @@ public class RicettaIngrediente {
 	}
 	
 
+	public Ricetta getRicetta() {
+		return ricetta;
+	}
+
+	public void setRicetta(Ricetta ricetta) {
+		this.ricetta = ricetta;
+	}
+
+	public Ingrediente getIngrediente() {
+		return ingrediente;
+	}
+
+	public void setIngrediente(Ingrediente ingrediente) {
+		this.ingrediente = ingrediente;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -75,5 +91,6 @@ public class RicettaIngrediente {
 		RicettaIngrediente other = (RicettaIngrediente) obj;
 		return Objects.equals(id, other.id);
 	}
+
 	
 }
