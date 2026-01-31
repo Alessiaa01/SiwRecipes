@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${ricetta.titolo}">Dettaglio Ricetta</title>
+    
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/ricetta.css}" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="magic-background"></div>
+
+    <header class="main-header">
+        <div class="header-content-wrapper">
+            <div class="header-left">
+                <div class="admin-link-header-left">
+                    <a th:href="@{/}"><i class="fa-solid fa-house-chimney"></i> Home</a>
+                </div>
+                <div sec:authorize="hasAuthority('ADMIN')">
+                    <a th:href="@{/admin/index}" class="btn-home-royal"><i class="fa-solid fa-crown"></i> Gestione Admin</a>
+                </div>
+                <div sec:authorize="isAuthenticated() and !hasAuthority('ADMIN')">
+                    <a th:href="@{/myRecipes}" class="btn-my-recipes">
+                        <i class="fa-solid fa-book-open"></i> Le mie ricette
+                    </a>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div th:if="${currentUser != null}" class="user-profile">
+                    <a th:href="@{'/user/' + ${currentUser.id}}" 
+                       class="chef-name" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-user-circle"></i>
+                        <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Nome Cognome</span>
+                    </a>
+                    
+                    <a th:href="@{/logout}" class="btn-logout-header">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </a>
+                </div>
+
+                <div th:if="${currentUser == null}" class="guest-actions">
+                    <span class="welcome-text">Benvenuto!</span>
+                    <a th:href="@{/login}" class="btn-gold" style="margin-right: 10px;">Accedi</a>
+                    <a th:href="@{/register}" class="btn-register">Registrati</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="single-recipe-card">
+        
+        <div class="title-section">
+            <h1 th:text="${ricetta.titolo}">Titolo Ricetta</h1>
+            <div class="meta-info-row">
+                <span>
+                    <i class="fas fa-user-edit"></i>
+                    <span th:if="${ricetta.autore != null}" th:text="${ricetta.autore.nome} + ' ' + ${ricetta.autore.cognome}">Chef</span>
+                    <span th:unless="${ricetta.autore != null}">Anonimo</span>
+                </span>
+                
+                <span th:if="${ricetta.dataDiInserimento}">|</span>
+                
+                <span th:if="${ricetta.dataDiInserimento}">
+                    <i class="far fa-calendar-alt"></i> 
+                    <span th:text="${#temporals.format(ricetta.dataDiInserimento, 'dd MMMM yyyy')}">Data</span>
+                </span>
+            </div>
+            <p class="subtitle" th:text="${ricetta.descrizione}">Descrizione breve...</p>
+        </div>
+
+        <div class="content-grid">
+            
+            <div class="left-column">
+                
+                <div class="ingredients-header-container">
+                    <h2 class="ingredients-header">Ingredienti</h2>
+                </div>
+                
+                <ul class="ingredients-list">
+                    <li th:each="ing : ${ricetta.ingredienti}">
+                        <i class="fas fa-star star-icon"></i> 
+                        <strong th:text="${ing.nome}" class="ingredient-name">Nome</strong>
+                        <span th:if="${ing.quantita} != null"> 
+                            <span th:text="${ing.quantita}">0</span>
+                            <span th:if="${ing.unita} != null" th:text="${ing.unita}">g</span>
+                        </span>
+                    </li>
+                    <li th:if="${ricetta.ingredienti == null or ricetta.ingredienti.isEmpty()}">
+                        Nessun ingrediente specificato.
+                    </li>
+                </ul>
+
+                <div class="procedure-text">
+                    <h3><i class="fas fa-scroll"></i> Procedimento</h3>
+                    <p th:text="${ricetta.procedimento}">Qui ci sarà il procedimento...</p>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="recipe-image-wrapper">
+                    <img th:if="${ricetta.imageUrl}" th:src="${ricetta.imageUrl}" alt="Immagine Ricetta"/>
+                    <img th:unless="${ricetta.imageUrl}" src="https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=800&auto=format&fit=crop" alt="Placeholder"/>
+                </div>
+                
+                <div class="tech-details">
+                    <h3><i class="fas fa-info-circle"></i> Dettagli</h3>
+                    <ul class="tech-list">
+                        <li>
+                            <span><i class="fas fa-clock"></i> Tempo prep.:</span>
+                            <strong th:text="${ricetta.tempoDiPreparazione} + ' min'">30 min</strong>
+                        </li>
+                        <li th:if="${ricetta.tempoDiCottura != null}">
+                             <span><i class="fas fa-fire"></i> Tempo cott.:</span>
+                            <strong th:text="${ricetta.tempoDiCottura} + ' min'">20 min</strong>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-signal"></i> Difficoltà:</span>
+                            <strong th:text="${ricetta.difficoltà}">Media</strong>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-utensils"></i> Porzioni:</span>
+                            <strong th:text="${ricetta.porzioni} != null ? ${ricetta.porzioni} : '-'">4</strong>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-bookmark"></i> Categoria:</span>
+                            <strong th:text="${ricetta.categoria}">Categoria</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-actions-centered" 
+             style="margin-top: 40px; text-align: center;"
+             th:if="${currentUser != null} and (${ricetta.autore.id} == ${currentUser.id} or ${#authorization.expression('hasAuthority(''ADMIN'')')})">
+            
+            <a th:href="@{'/recipe/edit/' + ${ricetta.id}}" class="btn-gold">
+                <i class="fas fa-pencil-alt"></i> Modifica
+            </a>
+            
+            <form th:action="@{'/recipe/delete/' + ${ricetta.id}}" method="GET" style="display:inline-block; margin-left:10px;">
+                <button type="submit" class="btn-logout-header"
+                        onclick="return confirm('Sei sicuro di voler eliminare questa ricetta?');">
+                    <i class="fas fa-trash-alt"></i> Elimina
+                </button>
+            </form>
+        </div>
+
+    </main>
+</body>
+</html>

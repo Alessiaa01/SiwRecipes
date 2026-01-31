@@ -97,7 +97,7 @@ public class CredentialsService {
 		nuoveCredenziali.setRuolo(Credentials.DEFAULT_ROLE);
 		nuoveCredenziali.setUtente(nuovoUtente);
 		
-		// C. Password Casuale (Trucco per soddisfare il DB)
+		// C. Password Casuale (Trucco per soddisfare il DB), l'utente non saprà mai e non userà mai
 		nuoveCredenziali.setPassword(UUID.randomUUID().toString());
 		
 		this.credentialsRepository.save(nuoveCredenziali);
@@ -108,7 +108,7 @@ public class CredentialsService {
     public void lockCredentials(String username) {
         Credentials credentials = this.credentialsRepository.findByUsername(username).orElse(null);
         if (credentials != null) {
-            credentials.setEnabled(false); // Scommenta quando hai aggiunto il campo nel Model
+            credentials.setEnabled(false); 
             this.credentialsRepository.save(credentials);
         }
     }
@@ -117,7 +117,7 @@ public class CredentialsService {
     public void unlockCredentials(String username) {
         Credentials credentials = this.credentialsRepository.findByUsername(username).orElse(null);
         if (credentials != null) {
-             credentials.setEnabled(true); // Scommenta quando hai aggiunto il campo nel Model
+             credentials.setEnabled(true); 
             this.credentialsRepository.save(credentials);
         }
     }

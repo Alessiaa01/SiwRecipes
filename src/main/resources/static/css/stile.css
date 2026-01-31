@@ -1,0 +1,196 @@
+/* ========================================================== */
+/* STYLE.CSS - BASE, HEADER E BOTTONI */
+/* ========================================================== */
+
+/* --- 1. VARIABILI COLORI E FONT --- */
+:root {
+    /* Palette Sfondo */
+    --celeste-bg: #E1F5FE;       
+    --celeste-accent: #81D4FA;   
+    
+    /* Palette Colori Elementi */
+    --marrone-dark: rgb(100, 62, 41);
+    --marrone-text: #5D4037;
+    
+    /* Palette Oro (Bottoni e Dettagli) */
+    --oro: #C5A059;
+    --oro-light: #FFF8E1;        
+    --oro-gradient: linear-gradient(45deg, #C5A059 0%, #E6C676 50%, #C5A059 100%);
+    
+    /* Palette Rosso (Logout) */
+    --rosso-gradient: linear-gradient(45deg, #D32F2F 0%, #FF6B6B 50%, #D32F2F 100%);
+
+    --bianco: #FFFFFF;
+    
+    /* Variabili Card (Servono anche qui per riferimenti futuri) */
+    --parchment: #fffbf0;
+    --royal-gold: #c5a059;  
+    
+    /* --- FONT --- */
+    --font-title: 'Cinzel Decorative', cursive; 
+    --font-body: 'Cormorant Garamond', serif;   
+    --font-ui: 'Lato', sans-serif;              
+}
+
+/* --- 2. RESET & GLOBAL --- */
+* { 
+    box-sizing: border-box; margin: 0; padding: 0; 
+    caret-color: var(--oro); 
+}
+
+/* Scrollbar Personalizzata */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--celeste-bg); }
+::-webkit-scrollbar-thumb {
+    background-color: var(--oro); 
+    border-radius: 20px;       
+    border: 3px solid var(--celeste-bg); 
+}
+::-webkit-scrollbar-thumb:hover { background-color: #b08d4b; }
+
+/* Firefox Scrollbar */
+* { scrollbar-width: thin; scrollbar-color: var(--oro) var(--celeste-bg); }
+
+body {
+    font-family: var(--font-body);
+    font-weight: 500; 
+    background-color: var(--celeste-bg);
+    background-image: linear-gradient(to bottom, #E1F5FE 0%, #B3E5FC 100%);
+    background-attachment: fixed; 
+    color: var(--marrone-text);
+    min-height: 100vh;
+}
+
+a { text-decoration: none; transition: 0.3s; }
+ul { list-style: none; }
+
+/* --- 3. HEADER STICKY UNIFICATO --- */
+.main-header {
+    position: sticky; 
+    top: 0;
+    z-index: 1000; 
+    background-color: rgba(255, 255, 255, 0.25); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4); 
+    padding: 0.8rem 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.header-content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.header-left, .header-right {
+    display: flex; align-items: center; gap: 15px;
+}
+
+/* Testi Header */
+.welcome-text {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    color: var(--marrone-dark);
+    font-size: 1rem;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.chef-name {
+    font-family: 'Lato', sans-serif; 
+    font-weight: 700;
+    color: #5D4037; 
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.chef-name i { color: var(--oro); font-size: 1.2rem; }
+
+/* --- 4. BOTTONI UNIFICATI (Per tutte le pagine) --- */
+
+/* CLASSE BASE */
+.btn-gold, .btn-login, .btn-search, .btn-my-recipes, 
+.btn-admin-badge, .btn-logout-header, .btn-register {
+    border: none; cursor: pointer;
+    font-family: var(--font-ui); 
+    font-weight: 700;
+    text-transform: uppercase; 
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    
+    padding: 10px 24px; 
+    border-radius: 50px; 
+    min-width: 120px; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px;
+    
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* VARIANTE 1: ORO (Admin, Login, Cerca, MyRecipes) */
+.btn-gold, .btn-login, .btn-search, .btn-my-recipes, .btn-admin-badge {
+    background-image: var(--oro-gradient);
+    background-size: 200% auto; 
+    color: white;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4); 
+}
+
+.btn-gold:hover, .btn-login:hover, .btn-search:hover, 
+.btn-my-recipes:hover, .btn-admin-badge:hover {
+    background-position: right center; 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.6);
+}
+
+/* VARIANTE 2: ROSSO (Logout) */
+.btn-logout-header {
+    background-image: var(--rosso-gradient);
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); 
+    min-width: auto; 
+}
+.btn-logout-header:hover {
+    background-position: right center;
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.6); 
+}
+
+/* VARIANTE 3: OUTLINE (Registrati) */
+.btn-register {
+    background: transparent;
+    border: 2px solid var(--oro); 
+    color: var(--marrone-dark); 
+    box-shadow: none;
+}
+.btn-register:hover {
+    background-color: var(--oro); 
+    color: white;
+    box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3);
+}
+
+/* RESPONSIVE HEADER */
+@media (max-width: 768px) {
+    .header-content-wrapper { flex-direction: column; gap: 1.5rem; padding-bottom: 1rem;}
+}
+
+/* Scrollbar Personalizzata */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--celeste-bg); }
+::-webkit-scrollbar-thumb {
+    background-color: var(--oro); 
+    border-radius: 20px;       
+    border: 3px solid var(--celeste-bg); 
+}
+::-webkit-scrollbar-thumb:hover { background-color: #b08d4b; }
+
+/* Firefox Scrollbar */
+* { scrollbar-width: thin; scrollbar-color: var(--oro) var(--celeste-bg); }

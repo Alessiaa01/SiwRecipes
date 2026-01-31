@@ -1,0 +1,311 @@
+/* ========================================= */
+/* FORMLOGIN.CSS - STILE MAGICO PER IL LOGIN */
+/* ========================================= */
+
+:root {
+    --oro: #C5A059;
+    --oro-dark: #8a6e36;
+    --marrone-text: #5D4037;
+    --parchment: #fffbf0;
+    --shadow-soft: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+body {
+    /* Colore di riserva se l'immagine non carica */
+    background-color: #E1F5FE; 
+    
+    /* PERCORSO DELL'IMMAGINE */
+    /* Assicurati che il file si chiami esattamente così e sia nella cartella images */
+    background-image: url('/images/sfondoLogin.jpg'); 
+    
+    /* Fai in modo che l'immagine copra tutto lo schermo */
+    background-size: cover;      
+    background-position: center; 
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* L'immagine resta ferma se scorri */
+
+    /* Flexbox per centrare la card (come prima) */
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Quicksand', sans-serif;
+}
+
+/* --- LA CARD DEL RICETTARIO --- */
+.recipe-book-card {
+    background-color: var(--parchment);
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 
+        0 0 0 8px rgba(197, 160, 89, 0.2),
+        0 20px 50px rgba(0,0,0,0.15);
+    border: 1px solid var(--oro);
+    overflow: hidden; /* Importante per non far uscire contenuti */
+    margin: 20px;
+    padding-bottom: 20px;
+}
+
+/* --- HEADER DECORATIVO COMPATTO --- */
+.header-decoration {
+    /* Riduciamo il padding sopra e sotto (era 30px/30px) */
+    padding: 15px 20px 10px; 
+    
+    background: linear-gradient(to bottom, #fff 0%, var(--parchment) 100%);
+    position: relative; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: visible; 
+    
+    
+    min-height: 120px; 
+}
+
+/* IL NASTRO */
+.title-ribbon {
+    width: 400px;         
+    max-width: 110%;       
+    height: auto;
+    
+    position: absolute;    
+    top: 35px;          
+    left: 50%;
+    transform: translateX(-50%); 
+    
+    z-index: 1;            
+    opacity: 1;
+    pointer-events: none;  
+    filter: drop-shadow(0 10px 10px rgba(93, 64, 55, 0.2));
+}
+
+/* IL TITOLO */
+h1 {
+    font-family: 'Cinzel Decorative', cursive;
+    color: #4E342E;        
+    font-size: 3.2rem;     
+    font-weight: 700;
+    
+  
+    margin-top: 25px;      
+    margin-bottom: 0;      
+    
+    position: relative;
+    z-index: 2;            
+    text-shadow: 0px 1px 0px rgba(255,255,255,0.5), 0px -1px 0px rgba(0,0,0,0.1); 
+    letter-spacing: 2px;
+}
+
+.login-subtitle {
+    font-family: 'Rouge Script', cursive;
+    font-size: 1.8rem;     /* Un po' più piccolo */
+    color: var(--oro-dark);
+    
+    /* Avviciniamo il sottotitolo al titolo */
+    margin-top: 25px;      /* Era 45px */
+    margin-bottom: 5px;    /* Riduciamo spazio verso i campi input */
+    
+    position: relative;
+    z-index: 2;
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+}
+/* --- ALERT ERRORI --- */
+.magic-alert {
+    border-radius: 10px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.alert-danger {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #ef5350;
+}
+.alert-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #66bb6a;
+}
+
+/* --- CAMPI INPUT --- */
+.magic-field {
+    position: relative;
+}
+
+.field-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--oro); /* Icona oro */
+    font-size: 1.1rem;
+    z-index: 10;
+    transition: color 0.3s;
+}
+
+.form-control {
+    padding: 12px 15px 12px 50px; /* Spazio per icona */
+    border-radius: 50px;
+    border: 2px solid #f0e6d2; /* Bordo color pergamena scura */
+    background-color: #fffbf7; /* Sfondo leggermente caldo */
+    font-size: 1rem;
+    color: var(--marrone-text);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+}
+
+/* Effetto Focus Magico */
+.field-wrapper:focus-within .input-icon {
+    color: var(--oro-dark);
+}
+
+.form-control:focus {
+    border-color: var(--oro);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.15); /* Alone dorato */
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: #bcaaa4;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+
+/* --- BOTTONI --- */
+.royal-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 50px;
+    
+    /* IL TUO GRADIENTE ANIMATO */
+    /* Crea una striscia: Oro scuro -> Oro chiaro -> Bianco (Luce) -> Oro chiaro -> Oro scuro */
+     background: linear-gradient(90deg, #C5A059, #e6c676, rgb(249, 235, 225), #e6c676, #C5A059);
+    background-size: 200% auto; /* Rende lo sfondo largo il doppio per permettere lo scorrimento */
+    
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    
+    /* Font coerente con il titolo */
+    font-family: 'Cinzel Decorative', cursive; 
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+    
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(197, 160, 89, 0.4);
+    
+    /* L'ANIMAZIONE CONTINUA */
+    animation: shine 3s linear infinite; /* Ho messo 3s per renderlo leggermente più visibile */
+    cursor: pointer;
+}
+
+/* Effetto al passaggio del mouse (Hover) */
+.royal-btn:hover {
+    transform: translateY(-3px) scale(1.02); /* Il bottone si alza leggermente */
+    box-shadow: 0 10px 25px rgba(197, 160, 89, 0.6); /* L'ombra diventa più forte */
+}
+
+/* Effetto al click (Active) */
+.royal-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(197, 160, 89, 0.4);
+}
+
+/* DEFINIZIONE DELL'ANIMAZIONE */
+@keyframes shine {
+    to {
+        background-position: 200% center; /* Sposta lo sfondo da destra a sinistra */
+    }
+}
+
+/* --- GOOGLE BUTTON --- */
+.google-magic-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    padding: 12px;
+    border-radius: 50px;
+    text-decoration: none;
+    color: #555;
+    font-weight: 700;
+    font-family: 'Quicksand', sans-serif;
+    transition: all 0.3s;
+}
+
+.google-magic-btn:hover {
+    background-color: #fff;
+    border-color: var(--oro);
+    color: var(--oro-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.google-icon {
+    width: 22px;
+    height: 22px;
+}
+
+/* --- LINK REGISTRAZIONE --- */
+.scroll-link {
+    margin-top: 1.5rem;
+}
+
+.scroll-link a {
+    color: var(--marrone-text);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+    position: relative;
+    transition: 0.3s;
+}
+
+.scroll-link a:hover {
+    color: var(--oro-dark);
+}
+
+/* Sottolineatura animata */
+.scroll-link a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 50%;
+    background-color: var(--oro);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.scroll-link a:hover::after {
+    width: 100%;
+}
+
+.small-text-gold {
+    /* Colore Oro */
+    color: #C5A059; 
+    
+    /* Font magico come il titolo */
+    font-family: 'Cinzel Decorative', cursive; 
+    font-weight: 700;
+    font-size: 1rem;      /* Un po' più grande e leggibile */
+    
+   
+    text-transform: uppercase;
+    
+    /* Piccola ombra bianca sotto per farlo sembrare inciso */
+    text-shadow: 0 1px 0 #fff; 
+}

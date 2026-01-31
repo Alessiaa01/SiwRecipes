@@ -1,0 +1,234 @@
+/* ========================================================== */
+/* RECIPES.CSS - STILE PAGINA RICETTE (Grid, Cards, Search) */
+/* ========================================================== */
+
+/* --- 1. HERO SECTION --- */
+.hero-section {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+}
+
+/* --- ANIMAZIONE LOGO FLUTTUANTE --- */
+
+.main-logo {
+    max-height: 200px;
+    margin-bottom: 1rem;
+    
+    /* Ombra che dà profondità */
+    filter: drop-shadow(0 10px 15px rgba(78, 52, 46, 0.3)); 
+    
+    /* L'animazione: nome, durata, tipo di movimento, ripetizione */
+    animation: magicFloat 4s ease-in-out infinite;
+    
+    /* Ottimizzazione per il browser */
+    will-change: transform; 
+}
+
+/* Definizione del movimento */
+@keyframes magicFloat {
+    0% { 
+        transform: translateY(0px); 
+    }
+    50% { 
+        transform: translateY(-20px); /* Il logo sale di 20 pixel */
+    }
+    100% { 
+        transform: translateY(0px);   /* Il logo torna alla posizione originale */
+    }
+}
+
+
+.main-title {
+    font-family: var(--font-title);
+    color: var(--marrone-dark);
+    font-size: 3.5rem; 
+    text-transform: none; 
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 0px var(--oro);
+    font-style: italic; 
+}
+
+/* --- 2. SEARCH BAR --- */
+.search-wrapper {
+    display: flex; justify-content: center;
+    margin-bottom: 4rem; padding: 0 1rem;
+}
+
+.magic-search-form {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1rem;
+    border-radius: 50px;
+    display: flex; gap: 10px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--oro);
+}
+
+.input-group { position: relative; display: flex; align-items: center; }
+
+.icon-input {
+    position: absolute; left: 20px; color: var(--oro); font-size: 1.1rem;
+}
+
+.magic-search-form input {
+    border: 1px solid #eee;
+    background-color: var(--oro-light);
+    border-radius: 30px;
+    padding: 12px 20px 12px 45px; 
+    font-family: var(--font-ui);
+    font-weight: 600; 
+    color: var(--marrone-dark);
+    outline: none; width: 250px;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.magic-search-form input:focus {
+    border-color: var(--oro); background-color: #fff;
+    width: 280px; 
+}
+
+/* --- 3. CARDS & GRIGLIA --- */
+.container { 
+    max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 5rem; 
+}
+
+.recipe-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 3rem;
+}
+
+.recipe-card {
+    background-color: var(--parchment);
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 
+        0 0 0 1px rgba(197, 160, 89, 0.3), 
+        0 15px 35px rgba(0,0,0,0.05);       
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex; flex-direction: column;
+}
+
+.recipe-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 
+        0 0 0 2px var(--royal-gold), 
+        0 20px 40px rgba(197, 160, 89, 0.25);
+}
+
+.card-image-wrapper {
+    height: 220px; position: relative; overflow: hidden;
+    border-bottom: 3px solid var(--oro);
+}
+
+.card-image-wrapper img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s;
+}
+
+.recipe-card:hover img { transform: scale(1.1); }
+
+/* Badges sulla Card */
+.difficulty-badge {
+    position: absolute; top: 15px; right: 15px;
+    background: rgba(255, 255, 255, 0.9); 
+    color: var(--marrone-dark);
+    padding: 6px 14px; border-radius: 20px;
+    font-family: var(--font-ui); font-size: 0.8rem; font-weight: 800;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 10;
+    border: 1px solid var(--oro);
+}
+
+/* Card Content */
+.card-content {
+    padding: 1.8rem;
+    display: flex; flex-direction: column; flex-grow: 1;
+    background-image: linear-gradient(to bottom, #fffbf0 0%, #fffdf7 100%);
+}
+
+.recipe-title {
+    font-family: var(--font-title);
+    font-size: 1.6rem; color: var(--marrone-dark);
+    font-weight: 700; margin-bottom: 0.8rem;
+    display: block; line-height: 1.2;
+    text-decoration: none;
+}
+.recipe-title:hover span { color: var(--oro); text-decoration: underline; }
+
+.recipe-description {
+    font-size: 1rem; color: #666;
+    margin-bottom: 1.5rem;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    overflow: hidden; flex-grow: 1;
+    line-height: 1.6;
+}
+
+.card-divider {
+    height: 1px; background: linear-gradient(to right, transparent, var(--oro), transparent);
+    margin: 1rem 0; opacity: 0.5;
+}
+
+.card-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.9rem; color: var(--marrone-text);
+    margin-top: auto;
+}
+
+.meta-info { display: flex; gap: 15px; }
+.meta-item { display: flex; align-items: center; gap: 5px; font-weight: 600; }
+.meta-item i { color: var(--oro); }
+
+.author-link {
+    font-weight: bold; color: var(--marrone-dark);
+    transition: color 0.2s;
+}
+.author-link:hover { color: var(--oro); }
+
+/* --- 4. PREFERITI (CUORE SULLA CARD) --- */
+.favorite-action {
+    position: absolute; bottom: 15px; right: 15px; z-index: 20;
+}
+
+.btn-favorite {
+    background: white;
+    border: 1px solid var(--oro);
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    padding: 0; 
+    min-width: 0; 
+}
+
+.btn-favorite i {
+    font-size: 1.2rem; color: #ccc; transition: 0.3s;
+}
+
+.btn-favorite:hover {
+    transform: scale(1.1); box-shadow: 0 6px 15px rgba(197, 160, 89, 0.3);
+}
+
+.btn-favorite:hover i { color: #E74C3C; }
+.btn-favorite i.fa-solid.fa-heart { color: #E74C3C; }
+
+/* --- 5. UTILITIES EXTRA --- */
+.empty-message {
+    text-align: center; color: var(--marrone-text);
+    font-size: 1.5rem; margin-top: 3rem;
+}
+.empty-message i { font-size: 4rem; color: var(--oro); margin-bottom: 1rem; opacity: 0.6; }
+
+.magic-background {
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 300px;
+    background: linear-gradient(to top, rgba(255,255,255,0.8) 0%, transparent 100%);
+    pointer-events: none; z-index: -1;
+}
+
+@media (max-width: 768px) {
+    .magic-search-form { flex-direction: column; }
+    .magic-search-form input { width: 100%; }
+    .magic-search-form input:focus { width: 100%; }
+}
