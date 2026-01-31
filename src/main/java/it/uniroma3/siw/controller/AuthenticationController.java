@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import it.uniroma3.siw.model.Credentials;
 import it.uniroma3.siw.model.Utente;
+import it.uniroma3.siw.model.Utente;
 import it.uniroma3.siw.service.CredentialsService;
 import it.uniroma3.siw.service.UtenteService;
 import jakarta.validation.Valid;
@@ -40,31 +41,32 @@ public class AuthenticationController {
 		return "formRegistrazioneUtente";
 	}
 
-	// GESTISCE LA REGISTRAZIONE (POST)
-	@PostMapping(value = { "/registrazione" })
-	public String registerUtente(@Valid @ModelAttribute("utente") Utente utente,
-			BindingResult userBindingResult, @Valid
-			@ModelAttribute("credentials") Credentials credentials,
-			BindingResult credentialsBindingResult,
-			Model model) {
 
-        // Controlla se username esiste già
-        if(!credentials.getUsername().isEmpty() && credentialsService.getCredentials(credentials.getUsername()) != null){
-            credentialsBindingResult.rejectValue("username", "duplicate", "Username già esistente");
-        }
+	// Registrazione utente
+@PostMapping("/registrazione")
+public String registerUser(@Valid @ModelAttribute("user") Utente utente,
+                           BindingResult userBindingResult,
+                           @Valid @ModelAttribute("credentials") Credentials credentials,
+                           BindingResult credentialsBindingResult,
+                           Model model) {
 
-		// Se ci sono errori, ricarica la pagina
-		if (userBindingResult.hasErrors() || credentialsBindingResult.hasErrors()) {
-			return "formRegisterUser";
-		}
-		
-        // Se tutto ok, salva
-		utenteService.saveUtente(utente); // Salva prima l'utente
-        credentials.setUtente(utente);    // Collega
-        credentialsService.saveCredentials(credentials); // Salva le credenziali (password criptata)
-        
-		return "formLogin"; // Rimanda al login
-	}
+	if (!userBindingResult.hasErrors() && !credentialsBindingResult.hasErrors()) {
+        // salva l'utente
+        utenteService.saveUtente(utente);//salva dati anagrafici
+        credentials.setUtente(utente);//collega credenziali all'utente
+        credentialsService.saveCredentials(credentials); //salva le credenziali 
+        model.addAttribute("utente", utente);
+        return "registrazioneSuccessful.html"; // pagina conferma registrazione
+    }
+    return "formRegistrazioneUtente.html"; // ritorna al form se ci sono errori
+}
+
+@GetMapping(value = "/success")
+public String defaultAfterLogin() {
+    // tutti vengono mandati alle ricette
+    return "welcome.html";
+}
+  
 	
 	// GESTIONE LOGOUT E INDEX
 	@GetMapping(value = "/") 

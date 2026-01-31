@@ -1,0 +1,271 @@
+/* ========================================================== */
+/* FORM REGISTRAZIONE UTENTE - STILE MAGICO/REALE (Con Nastro) */
+/* ========================================================== */
+
+:root {
+    /* Palette Celeste (Sfondo) */
+    --celeste-bg: #E1F5FE;       
+    
+    /* Palette Colori Elementi */
+    --marrone-dark: #5D4037;
+    --marrone-text: #4E342E;
+    --oro: #C5A059;
+    --oro-shine: #E6C676;
+    
+    /* Variabili Card */
+    --parchment: #fffbf0;   /* Crema carta antica */
+    --shadow-card: 0 15px 35px rgba(78, 52, 46, 0.15);
+    
+    /* Font */
+    --font-title: 'Cinzel Decorative', cursive; 
+    --font-body: 'Cormorant Garamond', serif;   
+    --font-ui: 'Lato', sans-serif;
+    --font-script: 'Rouge Script', cursive; /* Aggiunto per il sottotitolo */
+}
+
+/* --- GLOBAL RESET & BACKGROUND --- */
+body {
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Sfondo Sfumato Fisso */
+.magic-background-layer {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--celeste-bg);
+    background-image: linear-gradient(135deg, #E1F5FE 0%, #B3E5FC 100%);
+    z-index: -1;
+}
+
+/* --- CARD (RICETTARIO) --- */
+.enchanted-container {
+    width: 100%;
+    max-width: 650px; /* Larghezza ottimale per il layout a 2 colonne */
+    z-index: 10;
+}
+
+.recipe-book-card {
+    background-color: var(--parchment);
+    border-radius: 15px;
+    box-shadow: var(--shadow-card), 0 0 0 1px rgba(197, 160, 89, 0.3);
+    position: relative;
+    overflow: visible; /* IMPORTANTE: Visible per permettere al nastro di uscire se serve */
+    border-top: 5px solid var(--oro);
+    padding-bottom: 20px;
+}
+
+.card-content-wrapper {
+    padding: 2rem;
+}
+
+/* --- HEADER & LOGO --- */
+.header-decoration {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.main-logo {
+    /* Puoi regolare qui la grandezza se serve */
+    max-height: 100px; 
+    width: auto;
+    margin-bottom: 1rem;
+    
+    /* Ombra leggera */
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    
+    /* QUI AGGIUNGIAMO L'ANIMAZIONE FLUTTUANTE */
+    /* Nome animazione | durata | tipo movimento | ripetizione */
+    animation: magicFloat 4s ease-in-out infinite;
+}
+
+/* Definizione del movimento fluttuante */
+@keyframes magicFloat {
+    0%, 100% {
+        transform: translateY(0); /* Posizione iniziale e finale */
+    }
+    50% {
+        transform: translateY(-12px); /* A metà si sposta in alto di 12px */
+    }
+}
+
+h1.display-6 {
+    font-family: var(--font-title);
+    color: var(--marrone-dark);
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+/* Sottotitolo */
+.login-subtitle {
+    font-family: var(--font-script);
+    font-size: 1.8rem;
+    color: var(--oro);
+    margin-top: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+/* --- INPUT FIELDS (Override Bootstrap) --- */
+.magic-field {
+    margin-bottom: 5px;
+}
+
+.magic-field label {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    color: var(--marrone-dark);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.field-wrapper {
+    position: relative;
+}
+
+/* Icona dentro l'input */
+.input-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: var(--oro);
+    font-size: 1.1rem;
+    z-index: 10;
+}
+
+/* Input Box Styling */
+.form-control {
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid #e0e0e0;
+    border-radius: 50px;
+    padding: 10px 15px 10px 45px; /* Padding sinistro per l'icona */
+    font-family: var(--font-ui);
+    color: var(--marrone-dark);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background-color: #fff;
+    border-color: var(--oro);
+    box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.2);
+    color: var(--marrone-dark);
+    outline: none;
+}
+
+/* Placeholder */
+.form-control::placeholder {
+    color: #aaa;
+    font-style: italic;
+    font-family: var(--font-body);
+}
+
+/* Messaggi di Errore */
+.error-msg {
+    color: #D32F2F;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 10px;
+    margin-top: 2px;
+    display: block;
+}
+
+/* --- BOTTONI --- */
+
+/* Bottone Principale (Royal con Animazione) */
+.royal-btn {
+    /* Gradiente con bianco al centro per l'effetto shine */
+    background: linear-gradient(90deg, #C5A059, #e6c676, #fff, #e6c676, #C5A059);
+    background-size: 200% auto;
+    
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 50px;
+    width: 100%;
+    
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
+    
+    animation: shine 4s linear infinite;
+    cursor: pointer;
+}
+
+.royal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.6);
+}
+
+@keyframes shine {
+    to { background-position: 200% center; }
+}
+
+/* Bottone Home (Outline) */
+.btn-gold-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--marrone-dark);
+    font-weight: bold;
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    transition: all 0.3s;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+}
+
+.btn-gold-outline:hover {
+    background-color: rgba(197, 160, 89, 0.1);
+    color: var(--oro);
+    transform: translateX(-3px);
+}
+
+/* --- LINK LOGIN --- */
+.scroll-link {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--marrone-text);
+}
+
+.scroll-link a {
+    color: var(--oro);
+    font-weight: 700;
+    text-decoration: none;
+    font-family: var(--font-ui);
+    transition: 0.3s;
+}
+
+.scroll-link a:hover {
+    color: var(--marrone-dark);
+    text-decoration: underline;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .card-content-wrapper {
+        padding: 1.5rem;
+    }
+    
+    .display-6 {
+        font-size: 2rem;
+    }
+    
+    .title-ribbon {
+        width: 100%;
+    }
+}

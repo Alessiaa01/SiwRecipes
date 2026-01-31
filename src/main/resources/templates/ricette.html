@@ -7,66 +7,63 @@
     <title>SiwRecipes - Il Ricettario Incantato</title>
     
     <link rel="stylesheet" th:href="@{/css/stile.css}" />
-	<link rel="stylesheet" th:href="@{/css/ricette.css}" />
+    
+    <link rel="stylesheet" th:href="@{/css/ricette.css}" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="magic-background"></div>
+    <div class="magic-background-layer"></div>
 
     <header class="main-header">
         <div class="header-content-wrapper">
             
             <div class="header-left">
                 <div sec:authorize="hasAuthority('ADMIN')">
-                    <a th:href="@{/admin/index}" class="btn-admin-badge">
+                    <a th:href="@{/admin/index}" class="btn-gold">
                         <i class="fa-solid fa-crown"></i> Gestione Admin
                     </a>
                 </div>
-
-                <div sec:authorize="isAuthenticated()">
-                    <a th:href="@{/formNewRicetta}" class="btn-my-recipes">
-                        <i class="fa-solid fa-feather-pointed"></i> Scrivi Ricetta
+                <div sec:authorize="hasAuthority('DEFAULT')"> 
+                    <a th:href="@{/user/profile}" class="btn-gold">
+                        <i class="fa-solid fa-user-gear"></i> Gestione Profilo
                     </a>
                 </div>
             </div>
             
             <div class="header-right">
-                <div th:if="${currentUser != null}" class="user-profile">
-                    <span class="chef-name">
-                        <i class="fa-solid fa-user-circle"></i>
-                        <a th:href="@{'/user/profile'}" 
-                           th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">
-                            Nome Cognome
-                        </a>
-                    </span>
-                    
-                    <a th:href="@{/logout}" class="btn-logout-header">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </a>
-                </div>
-
-                <div th:if="${currentUser == null}" class="guest-actions">
-                    <span class="welcome-text">Benvenuto!</span>
+                <div sec:authorize="isAnonymous()" style="display:flex; align-items:center; gap:10px;">
+                    <span class="header-text">Benvenuto!</span>
                     <a th:href="@{/login}" class="btn-gold">Accedi</a>
                     <a th:href="@{/registrazione}" class="btn-gold">Registrati</a>
+                </div>
+                <div sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap:10px;">
+                    <span class="header-text">
+                        <i class="fa-solid fa-user"></i>
+                        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+                    </span>
+                    <form th:action="@{/logout}" method="post" style="margin:0;">
+                        <button type="submit" class="btn-logout">
+                            Logout <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </header>
 
-	<div class="hero-section">
-	        <div class="logo-container">
-	            <a th:href="@{/}">
-	                <img src="/images/logo2 copia.png" class="main-logo" alt="Disney Recipes" onerror="this.style.display='none'"/>
-	            </a>  
-	        </div>
-	        <h1 class="main-title">Il Ricettario Incantato</h1>
-	    </div>
+    <div class="hero-section">
+        <div class="logo-container">
+            <a th:href="@{/}">
+                <img src="/images/logo2 copia.png" class="main-logo" alt="SiwRecipe Logo" onerror="this.style.display='none'"/>
+            </a>  
+        </div>
+        <h1 class="main-title">Il Ricettario Incantato</h1>
+    </div>
     
     <div class="search-wrapper">
         <form th:action="@{/searchRicette}" method="get" class="magic-search-form">
@@ -74,14 +71,13 @@
                 <i class="fa-solid fa-magnifying-glass icon-input"></i>
                 <input type="text" name="titolo" placeholder="Cerca titolo..." />
             </div>
-            
-            <button type="submit" class="btn-search">Cerca</button>
+            <button type="submit" class="btn-gold">Cerca</button>
         </form>
     </div>
 
     <div th:if="${ricette.isEmpty()}" class="empty-message">
         <i class="fa-solid fa-scroll"></i>
-        <p>Non ci sono ricette! </p>
+        <p>Non ci sono ricette!</p>
     </div>
 
     <div class="container" th:unless="${ricette.isEmpty()}">
@@ -91,47 +87,28 @@
                 <div class="card-image-wrapper">
                     <img th:src="${ricetta.imageUrl != null} ? ${ricetta.imageUrl} : 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=800&auto=format&fit=crop'" 
                          th:alt="'Immagine di ' + ${ricetta.titolo}" />
-                    
                     <span class="difficulty-badge" th:if="${ricetta.difficoltà != null}" th:text="${ricetta.difficoltà}">Facile</span>
-
-                    </div>
+                </div>
                 
                 <div class="card-content">
                     <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="recipe-title">
-                        <span th:text="${ricetta.titolo}">Titolo </span>
+                        <span th:text="${ricetta.titolo}">Titolo</span>
                     </a>
-                    
                     <p class="recipe-description" th:text="${ricetta.descrizione}">Descrizione...</p>
-
                     <div class="card-divider"></div>
-
                     <div class="card-footer">
                         <div class="meta-info">
-                            <span class="meta-item" title="Tempo di preparazione">
-                                <i class="fa-regular fa-clock"></i> 
-                                <span th:text="${ricetta.tempoDiPreparazione}">0</span>'
-                            </span>
-
-                            <span class="meta-item" title="Porzioni">
-                                <i class="fa-solid fa-users"></i> 
-                                <span th:text="${ricetta.porzioni}">2</span>
-                            </span>
+                            <span class="meta-item"><i class="fa-regular fa-clock"></i> <span th:text="${ricetta.tempoDiPreparazione}">0</span>'</span>
+                            <span class="meta-item"><i class="fa-solid fa-users"></i> <span th:text="${ricetta.porzioni}">2</span></span>
                         </div>
-
-                        <span class="meta-item author">
-                            <i class="fa-solid fa-user-pen"></i>
-                            <span th:text="${ricetta.autore.nome}">Autore</span>
-                        </span>
-                        
-                        <div class="date-info" th:if="${ricetta.dataDiInserimento}">
-                            <i class="fa-regular fa-calendar-days"></i>
-                            <span th:text="${#temporals.format(ricetta.dataDiInserimento, 'dd/MM/yyyy')}"></span>
-                        </div>
+                        <span class="meta-item"><i class="fa-solid fa-user-pen"></i> <span th:text="${ricetta.autore.nome}">Autore</span></span>
+                    </div>
+                    <div style="margin-top:15px; text-align:center;">
+                        <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="btn-gold" style="width:100%">Leggi</a>
                     </div>
                 </div>
             </li>
         </ul>
     </div>
-
 </body>
 </html>

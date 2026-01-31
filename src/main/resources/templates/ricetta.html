@@ -18,14 +18,14 @@
     <header class="main-header">
         <div class="header-content-wrapper">
             <div class="header-left">
-                <div class="admin-link-header-left">
+                <div class="btn-gold">
                     <a th:href="@{/}"><i class="fa-solid fa-house-chimney"></i> Home</a>
                 </div>
                 <div sec:authorize="hasAuthority('ADMIN')">
-                    <a th:href="@{/admin/index}" class="btn-home-royal"><i class="fa-solid fa-crown"></i> Gestione Admin</a>
+                    <a th:href="@{/admin/index}" class="btn-gold"><i class="fa-solid fa-crown"></i> Gestione Admin</a>
                 </div>
                 <div sec:authorize="isAuthenticated() and !hasAuthority('ADMIN')">
-                    <a th:href="@{/myRecipes}" class="btn-my-recipes">
+                    <a th:href="@{/myRecipes}" class="btn-gold">
                         <i class="fa-solid fa-book-open"></i> Le mie ricette
                     </a>
                 </div>
@@ -39,7 +39,7 @@
                         <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Nome Cognome</span>
                     </a>
                     
-                    <a th:href="@{/logout}" class="btn-logout-header">
+                    <a th:href="@{/logout}" class="btn-logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </a>
                 </div>
@@ -47,7 +47,7 @@
                 <div th:if="${currentUser == null}" class="guest-actions">
                     <span class="welcome-text">Benvenuto!</span>
                     <a th:href="@{/login}" class="btn-gold" style="margin-right: 10px;">Accedi</a>
-                    <a th:href="@{/register}" class="btn-register">Registrati</a>
+                    <a th:href="@{/registrazione}" class="btn-gold">Registrati</a>
                 </div>
             </div>
         </div>
@@ -145,7 +145,7 @@
             </a>
             
             <form th:action="@{'/recipe/delete/' + ${ricetta.id}}" method="GET" style="display:inline-block; margin-left:10px;">
-                <button type="submit" class="btn-logout-header"
+                <button type="submit" class="btn-logout"
                         onclick="return confirm('Sei sicuro di voler eliminare questa ricetta?');">
                     <i class="fas fa-trash-alt"></i> Elimina
                 </button>

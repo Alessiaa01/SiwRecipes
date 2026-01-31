@@ -34,7 +34,7 @@ public class AuthConfiguration {
 		auth.jdbcAuthentication()
 			.dataSource(dataSource)
 			// Query per prendere username e ruolo (ADMIN o DEFAULT)
-			.authoritiesByUsernameQuery("SELECT username, role FROM credentials WHERE username=?")
+			.authoritiesByUsernameQuery("SELECT username, ruolo FROM credentials WHERE username=?")
 			// Query per prendere username, password e stato attivo
 			.usersByUsernameQuery("SELECT username, password, enabled FROM credentials WHERE username=?");
 	}
@@ -60,7 +60,7 @@ public class AuthConfiguration {
                 .authorizeHttpRequests(auth -> auth
                 	//RISORSE SEMPRE ACCESSIBILI
                 	.requestMatchers("/css/**", "/images/**", "/favicon.ico").permitAll()
-                	//PAGINE PUBBLICHE(Home, Login, Regiistrazione)
+                	//PAGINE PUBBLICHE(Home, Login, Registrazione)
                 	.requestMatchers("/", "/index", "/searchRicette", "/ricette", "/ricetta/**").permitAll()
     				.requestMatchers("/registrazione", "/login").permitAll()
                     //PAGINE ADMIN
@@ -74,7 +74,7 @@ public class AuthConfiguration {
                 //LOGIN CLASSICO
                 .formLogin(form -> form
                     .loginPage("/login") //la pagina con il form
-                    .defaultSuccessUrl("/index", true) //se entra, vai qui 
+                    .defaultSuccessUrl("/success", true) //se entra, vai qui 
                     .failureUrl("/login?error=true") // se sbaglia, ricarica la pagina con un errore
                 )
                 
