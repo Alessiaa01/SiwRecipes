@@ -6,47 +6,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${ricetta.titolo}">Dettaglio Ricetta</title>
     
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/stile.css}" />
     <link rel="stylesheet" th:href="@{/css/ricetta.css}" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-    <div class="magic-background"></div>
+    <div class="magic-background-layer"></div>
 
     <header class="main-header">
         <div class="header-content-wrapper">
             <div class="header-left">
-                <div class="btn-gold">
-                    <a th:href="@{/}"><i class="fa-solid fa-house-chimney"></i> Home</a>
-                </div>
+                <a th:href="@{/}" class="btn-gold">
+                    <i class="fa-solid fa-house-chimney"></i> Home
+                </a>
+                
                 <div sec:authorize="hasAuthority('ADMIN')">
-                    <a th:href="@{/admin/index}" class="btn-gold"><i class="fa-solid fa-crown"></i> Gestione Admin</a>
+                    <a th:href="@{/admin/index}" class="btn-gold">
+                        <i class="fa-solid fa-crown"></i> Gestione Admin
+                    </a>
                 </div>
-                <div sec:authorize="isAuthenticated() and !hasAuthority('ADMIN')">
-                    <a th:href="@{/myRecipes}" class="btn-gold">
-                        <i class="fa-solid fa-book-open"></i> Le mie ricette
+                
+                <div sec:authorize="hasAuthority('DEFAULT')">
+                    <a th:href="@{/user/profile}" class="btn-gold">
+                        <i class="fa-solid fa-user-gear"></i> Gestione Profilo
                     </a>
                 </div>
             </div>
             
             <div class="header-right">
-                <div th:if="${currentUser != null}" class="user-profile">
-                    <a th:href="@{'/user/' + ${currentUser.id}}" 
+                <div sec:authorize="isAuthenticated()" class="user-profile" style="display:flex; align-items:center; gap:10px;">
+                    <a th:if="${currentUser != null}" th:href="@{'/user/' + ${currentUser.id}}" 
                        class="chef-name" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
                         <i class="fa-solid fa-user-circle"></i>
                         <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Nome Cognome</span>
                     </a>
                     
-                    <a th:href="@{/logout}" class="btn-logout">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </a>
+                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+                        <button type="submit" class="btn-logout">
+                            Logout <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </form>
                 </div>
-
-                <div th:if="${currentUser == null}" class="guest-actions">
+                
+                <div sec:authorize="!isAuthenticated()" class="guest-actions" style="display:flex; align-items:center; gap:10px;">
                     <span class="welcome-text">Benvenuto!</span>
-                    <a th:href="@{/login}" class="btn-gold" style="margin-right: 10px;">Accedi</a>
+                    <a th:href="@{/login}" class="btn-gold">Accedi</a>
                     <a th:href="@{/registrazione}" class="btn-gold">Registrati</a>
                 </div>
             </div>
@@ -54,30 +60,26 @@
     </header>
 
     <main class="single-recipe-card">
-        
         <div class="title-section">
             <h1 th:text="${ricetta.titolo}">Titolo Ricetta</h1>
+            
             <div class="meta-info-row">
                 <span>
                     <i class="fas fa-user-edit"></i>
                     <span th:if="${ricetta.autore != null}" th:text="${ricetta.autore.nome} + ' ' + ${ricetta.autore.cognome}">Chef</span>
                     <span th:unless="${ricetta.autore != null}">Anonimo</span>
                 </span>
-                
-                <span th:if="${ricetta.dataDiInserimento}">|</span>
-                
-                <span th:if="${ricetta.dataDiInserimento}">
+                <span th:if="${ricetta.dataInserimento}">|</span>
+                <span th:if="${ricetta.dataInserimento}">
                     <i class="far fa-calendar-alt"></i> 
-                    <span th:text="${#temporals.format(ricetta.dataDiInserimento, 'dd MMMM yyyy')}">Data</span>
+                    <span th:text="${#temporals.format(ricetta.dataInserimento, 'dd MMMM yyyy')}">Data</span>
                 </span>
             </div>
             <p class="subtitle" th:text="${ricetta.descrizione}">Descrizione breve...</p>
         </div>
 
         <div class="content-grid">
-            
             <div class="left-column">
-                
                 <div class="ingredients-header-container">
                     <h2 class="ingredients-header">Ingredienti</h2>
                 </div>
@@ -88,14 +90,10 @@
                         <strong th:text="${ing.nome}" class="ingredient-name">Nome</strong>
                         <span th:if="${ing.quantita} != null"> 
                             <span th:text="${ing.quantita}">0</span>
-                            <span th:if="${ing.unita} != null" th:text="${ing.unita}">g</span>
-                        </span>
-                    </li>
-                    <li th:if="${ricetta.ingredienti == null or ricetta.ingredienti.isEmpty()}">
-                        Nessun ingrediente specificato.
+                            </span>
                     </li>
                 </ul>
-
+                
                 <div class="procedure-text">
                     <h3><i class="fas fa-scroll"></i> Procedimento</h3>
                     <p th:text="${ricetta.procedimento}">Qui ci sarà il procedimento...</p>
@@ -104,54 +102,145 @@
 
             <div class="right-column">
                 <div class="recipe-image-wrapper">
-                    <img th:if="${ricetta.imageUrl}" th:src="${ricetta.imageUrl}" alt="Immagine Ricetta"/>
-                    <img th:unless="${ricetta.imageUrl}" src="https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=800&auto=format&fit=crop" alt="Placeholder"/>
+                    <img th:if="${ricetta.immagine != null}" th:src="${ricetta.immagine}" alt="Immagine Ricetta"/>
+                    <img th:unless="${ricetta.immagine != null}" src="/images/placeholder-piatto.jpg" alt="Nessuna immagine"/>
                 </div>
                 
                 <div class="tech-details">
                     <h3><i class="fas fa-info-circle"></i> Dettagli</h3>
                     <ul class="tech-list">
                         <li>
-                            <span><i class="fas fa-clock"></i> Tempo prep.:</span>
+                            <span><i class="fas fa-clock"></i> Tempo:</span>
                             <strong th:text="${ricetta.tempoDiPreparazione} + ' min'">30 min</strong>
-                        </li>
-                        <li th:if="${ricetta.tempoDiCottura != null}">
-                             <span><i class="fas fa-fire"></i> Tempo cott.:</span>
-                            <strong th:text="${ricetta.tempoDiCottura} + ' min'">20 min</strong>
                         </li>
                         <li>
                             <span><i class="fas fa-signal"></i> Difficoltà:</span>
-                            <strong th:text="${ricetta.difficoltà}">Media</strong>
+                            <strong th:text="${ricetta.difficolta}">Media</strong>
                         </li>
                         <li>
                             <span><i class="fas fa-utensils"></i> Porzioni:</span>
                             <strong th:text="${ricetta.porzioni} != null ? ${ricetta.porzioni} : '-'">4</strong>
                         </li>
-                        <li>
-                            <span><i class="fas fa-bookmark"></i> Categoria:</span>
-                            <strong th:text="${ricetta.categoria}">Categoria</strong>
-                        </li>
-                    </ul>
+                        </ul>
                 </div>
             </div>
         </div>
 
+        <div class="reviews-section">
+            <h2 class="reviews-title"><i class="fas fa-comments"></i> I Commenti</h2>
+
+            <div th:if="${!ricetta.recensioni.empty}">
+                <div th:each="recensione : ${ricetta.recensioni}" class="review-card">
+                    
+                    <div th:if="${recensioneDaModificare != null && recensioneDaModificare.id == recensione.id}">
+                        <h3 class="edit-inline-title">Modifica la tua recensione</h3>
+                        <form th:action="@{'/recensione/aggiorna/' + ${recensione.id}}" method="POST" th:object="${recensioneDaModificare}" class="form-magic">
+                            <div class="row">
+                                <div class="form-row-title">
+                                    <input type="text" th:field="*{titolo}" required />
+                                </div>
+                                <div class="form-row-rating">
+                                    <select th:field="*{voto}" required>
+                                        <option value="5">5 ★★★★★</option>
+                                        <option value="4">4 ★★★★</option>
+                                        <option value="3">3 ★★★</option>
+                                        <option value="2">2 ★★</option>
+                                        <option value="1">1 ★</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <textarea th:field="*{testo}" rows="3" required></textarea>
+                            
+                            <div class="edit-actions-container">
+                                <button type="submit" class="btn-gold">Salva Modifiche</button>
+                                <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="btn-logout" style="min-width: auto;">Annulla</a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div th:unless="${recensioneDaModificare != null && recensioneDaModificare.id == recensione.id}">
+                        <div class="review-header">
+                            <span><i class="fas fa-user"></i> <span th:text="${recensione.autore.nome}">Nome</span></span>
+                            <span class="review-stars">
+                                <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, recensione.voto)}"></i>
+                            </span>
+                        </div>
+                        <strong th:text="${recensione.titolo}" class="review-title-text">Titolo</strong>
+                        <p th:text="${recensione.testo}" class="review-body-text">Testo...</p>
+
+                        <div class="review-actions" 
+                             th:if="${currentUser != null} and (${recensione.autore.id} == ${currentUser.id} or ${#authorization.expression('hasAuthority(''ADMIN'')')})">
+                             
+                            <a th:if="${recensione.autore.id} == ${currentUser.id}"
+                               th:href="@{'/recensione/modifica/' + ${recensione.id}}" 
+                               class="btn-gold" style="min-width: 100px; height: 36px; font-size: 0.75rem;">
+                               <i class="fas fa-edit"></i> Modifica
+                            </a>
+                            
+                            <a th:href="@{'/recensione/cancella/' + ${recensione.id}}" 
+                               onclick="return confirm('Cancellare questa recensione?');"
+                               class="btn-logout" style="min-width: 100px; height: 36px; font-size: 0.75rem;">
+                               <i class="fas fa-trash"></i> Cancella
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${ricetta.recensioni.empty}" class="empty-reviews-msg">
+                <p>Nessuna recensione presente. Sii il primo a commentare!</p>
+            </div>
+
+            <div sec:authorize="isAuthenticated()" th:if="${recensioneDaModificare == null}" class="new-review-box">
+                <h3>Lascia la tua opinione</h3>
+                <form th:action="@{'/ricetta/' + ${ricetta.id} + '/recensione'}" method="POST" th:object="${nuovaRecensione}" class="form-magic">
+                    <div th:if="${#fields.hasGlobalErrors()}" class="error-global">
+                        <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+                    </div>
+                    <div class="row">
+                        <div class="form-row-title">
+                            <input type="text" th:field="*{titolo}" placeholder="Titolo della recensione..." required />
+                        </div>
+                        <div class="form-row-rating">
+                            <select th:field="*{voto}" required>
+                                <option value="5">5 ★★★★★</option>
+                                <option value="4">4 ★★★★</option>
+                                <option value="3">3 ★★★</option>
+                                <option value="2">2 ★★</option>
+                                <option value="1">1 ★</option>
+                            </select>
+                        </div>
+                    </div>
+                    <span th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}" class="error-field"></span>
+                    
+                    <textarea th:field="*{testo}" rows="3" placeholder="Raccontaci la tua esperienza..." required></textarea>
+                    <span th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}" class="error-field"></span>
+
+                    <div class="form-magic" style="display:flex; justify-content:center;">
+                        <button type="submit" class="btn-gold">
+                            <i class="fas fa-feather-pointed"></i> Pubblica Recensione
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div sec:authorize="!isAuthenticated()" class="guest-msg-container">
+                <p><em><a href="/login" class="link-accedi-gold">Accedi</a> per lasciare una recensione.</em></p>
+            </div>
+        </div>
+       
         <div class="admin-actions-centered" 
-             style="margin-top: 40px; text-align: center;"
              th:if="${currentUser != null} and (${ricetta.autore.id} == ${currentUser.id} or ${#authorization.expression('hasAuthority(''ADMIN'')')})">
-            
-            <a th:href="@{'/recipe/edit/' + ${ricetta.id}}" class="btn-gold">
+            <a th:href="@{'/ricetta/modifica/' + ${ricetta.id}}" class="btn-gold">
                 <i class="fas fa-pencil-alt"></i> Modifica
             </a>
-            
-            <form th:action="@{'/recipe/delete/' + ${ricetta.id}}" method="GET" style="display:inline-block; margin-left:10px;">
+            <form th:action="@{'/ricetta/cancella/' + ${ricetta.id}}" method="POST" class="delete-form-inline">
                 <button type="submit" class="btn-logout"
                         onclick="return confirm('Sei sicuro di voler eliminare questa ricetta?');">
                     <i class="fas fa-trash-alt"></i> Elimina
                 </button>
             </form>
         </div>
-
     </main>
 </body>
 </html>

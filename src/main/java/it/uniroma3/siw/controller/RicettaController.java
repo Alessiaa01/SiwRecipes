@@ -34,7 +34,8 @@ public class RicettaController {
 	//Ricetta singola
 	@GetMapping("/ricetta/{id}")
 	public String getRicetta(@PathVariable("id") Long id, Model model) {
-		model.addAttribute("ricetta",this.ricettaService.findById(id));
+	Ricetta ricetta= this.ricettaService.findById(id);
+	model.addAttribute("ricetta",ricetta);
 		return "ricetta.html";
 	}
 	
