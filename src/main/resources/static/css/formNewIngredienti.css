@@ -1,0 +1,182 @@
+/* ========================================================== */
+/* STILE GESTIONE DISPENSA (Layout Hero + Scaffale)           */
+/* ========================================================== */
+
+/* --- Contenitore Principale --- */
+/* Più stretto e centrato per dare eleganza */
+.admin-container-centered {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* --- 1. SEZIONE CREAZIONE (HERO) --- */
+.creation-section {
+    background: #fffbf0;
+    border: 2px solid #C5A059;
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(197, 160, 89, 0.2);
+    margin-bottom: 50px;
+    position: relative; /* Per posizionare l'icona */
+}
+
+/* Icona decorativa fluttuante sopra il form */
+.creation-icon {
+    font-size: 3rem;
+    color: #C5A059;
+    background: #fffbf0;
+    padding: 0 20px;
+    position: absolute;
+    top: -25px; /* La sposta metà fuori dal bordo superiore */
+    left: 50%;
+    transform: translateX(-50%); /* La centra perfettamente */
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Input più grande (Stile Barra Magica) */
+.magic-input-lg {
+    width: 60%;
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    border: 1px solid #ddd;
+    border-radius: 50px; /* Bordi arrotondati */
+    background: #fff;
+    transition: all 0.3s ease;
+    font-family: 'Lato', sans-serif;
+}
+
+.magic-input-lg:focus {
+    border-color: #C5A059;
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+    outline: none;
+}
+
+/* --- SEZIONE SCAFFALE --- */
+.shelf-section {
+    background: rgba(255, 255, 255, 0.8); /* Più solido per leggere meglio */
+    border-radius: 15px;
+    padding: 30px;
+    border: 1px solid #d4c5a9;
+    box-shadow: inset 0 0 20px rgba(197, 160, 89, 0.1);
+    margin-top: 40px;
+}
+
+.shelf-title {
+    text-align: center;
+    color: rgb(100, 62, 41);
+    font-family: 'Cinzel Decorative', cursive; 
+    margin-bottom: 30px;
+    font-size: 1.6rem;
+    border-bottom: 2px solid #C5A059;
+    display: inline-block;
+    padding-bottom: 10px;
+    /* Trucco per centrare il bordo */
+    position: relative; 
+    left: 50%; transform: translateX(-50%);
+}
+
+/* GRIGLIA */
+.ingredients-shelf {
+    display: grid;
+    /* Crea colonne automatiche larghe almeno 180px */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+    gap: 15px;
+}
+
+/* --- LA CARD INGREDIENTE --- */
+.ingredient-card {
+    background: #fff;
+    border: 1px solid #e0d4b8;
+    border-radius: 12px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effetto Hover sulla card */
+.ingredient-card:hover {
+    transform: translateY(-5px);
+    border-color: #C5A059;
+    box-shadow: 0 8px 15px rgba(197, 160, 89, 0.2);
+}
+
+/* Icona a sinistra (Foglia) */
+.ing-icon-wrapper {
+    background: #FFF8E1; /* Giallo pallido */
+    color: #C5A059;
+    width: 35px; height: 35px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+}
+
+/* Testo */
+.ing-name {
+    font-weight: bold;
+    color: rgb(100, 62, 41);
+    flex-grow: 1; /* Spinge il cestino a destra */
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Mette ... se il nome è lunghissimo */
+}
+
+/* Tasto Cestino */
+.btn-delete-card {
+    color: #ff8a80;
+    font-size: 0.9rem;
+    padding: 8px;
+    border-radius: 5px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.btn-delete-card:hover {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+/* --- STATO VUOTO --- */
+.empty-shelf-state {
+    text-align: center;
+    color: #aaa;
+    padding: 40px;
+}
+.empty-shelf-state i {
+    font-size: 3rem; margin-bottom: 15px; display: block; color: #e0d4b8;
+}
+
+
+
+
+
+/* Error Banner specifico per questo layout */
+.error-banner {
+    background: #FFEBEE; color: #C62828;
+    padding: 15px; border-radius: 8px;
+    border: 1px solid #EF9A9A;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* --- RESPONSIVE (Mobile) --- */
+@media (max-width: 600px) {
+    .input-row { flex-direction: column; }
+    .magic-input-lg { width: 100%; }
+    .creation-section { padding: 40px 20px; }
+}
+

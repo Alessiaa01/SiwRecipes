@@ -1,18 +1,35 @@
 /* ========================================================== */
-/* RICETTE.CSS - SPECIFICO PER LA PAGINA RICETTE              */
+/* FILE: ricette.css                                          */
+/* Stile specifico per la pagina Elenco Ricette               */
 /* ========================================================== */
 
-/* ... (codice precedente) ... */
+/* Import Fonts (se non caricati nel main CSS) */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+:root {
+    --parchment: #fffbf0;
+    --parchment-dark: #fff8e1;
+    --oro: #C5A059;
+    --oro-light: #FFF8E1;
+    --royal-gold: #d4af37;
+    --marrone-dark: rgb(100, 62, 41);
+    --marrone-text: #5D4037;
+    --font-title: 'Cinzel Decorative', cursive;
+    --font-ui: 'Lato', sans-serif;
+    --font-body: 'Cormorant Garamond', serif;
+}
 
 /* ========================================================== */
-/* 5. HERO (Logo e Titolo)                                    */
+/* 1. HERO SECTION (Logo, Titolo e Ricerca)                   */
 /* ========================================================== */
-.hero-section { text-align: center; padding: 2rem 1rem 1rem; }
+
+.hero-section { 
+    text-align: center; 
+    padding: 2rem 1rem 1rem; 
+}
 
 .main-logo {
-    /* MODIFICA QUI: Aumenta questo valore per ingrandire il logo */
-    max-height: 160px;  /* Era 110px */
-    
+    max-height: 160px; /* Dimensione Logo */
     width: auto; 
     margin-bottom: 0.5rem;
     filter: drop-shadow(0 5px 15px rgba(78, 52, 46, 0.2));
@@ -20,59 +37,345 @@
 }
 
 @keyframes magicFloat {
-    0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); }
+    0%, 100% { transform: translateY(0); } 
+    50% { transform: translateY(-10px); }
 }
 
 .main-title {
-    font-family: var(--font-title); /* Cinzel Decorative */
-    font-size: 3rem; color: var(--marrone-dark);
-    font-weight: 700; margin-bottom: 1rem; 
+    font-family: var(--font-title);
+    font-size: 3rem; 
+    color: var(--marrone-dark);
+    font-weight: 700; 
+    margin-bottom: 1rem; 
     text-shadow: 1px 1px 0px var(--oro);
 }
 
-/* --- SEARCH BAR --- */
-.search-wrapper { display: flex; justify-content: center; margin-bottom: 3rem; width: 100%; }
+/* --- BARRA DI RICERCA --- */
+.search-wrapper { 
+    display: flex; 
+    justify-content: center; 
+    margin-bottom: 3rem; 
+    width: 100%; 
+}
+
 .magic-search-form {
-    background: rgba(255, 255, 255, 0.9); padding: 1rem; border-radius: 50px;
-    display: flex; gap: 10px; box-shadow: 0 10px 20px rgba(78, 52, 46, 0.1);
-    border: 1px solid var(--oro); align-items: center;
+    background: rgba(255, 255, 255, 0.95); 
+    padding: 0.8rem; 
+    border-radius: 50px;
+    display: flex; 
+    gap: 10px; 
+    box-shadow: 0 10px 20px rgba(78, 52, 46, 0.1);
+    border: 1px solid var(--oro); 
+    align-items: center;
 }
-.input-group { position: relative; display: flex; align-items: center; }
-.icon-input { position: absolute; left: 15px; color: var(--oro); z-index: 1; }
+
+.input-group { 
+    position: relative; 
+    display: flex; 
+    align-items: center; 
+}
+
+.icon-input { 
+    position: absolute; 
+    left: 15px; 
+    color: var(--oro); 
+    z-index: 1; 
+}
+
 .magic-search-form input {
-    border: 1px solid #ddd; background-color: var(--oro-light);
-    border-radius: 30px; padding: 10px 15px 10px 40px; 
-    font-family: var(--font-ui); font-weight: 700; color: var(--marrone-dark);
-    outline: none; width: 250px; height: 42px; /* Allineato all'altezza bottoni */
+    border: 1px solid #ddd; 
+    background-color: var(--oro-light);
+    border-radius: 30px; 
+    padding: 10px 15px 10px 40px; /* Padding a sx per l'icona */
+    font-family: var(--font-ui); 
+    font-weight: 700; 
+    color: var(--marrone-dark);
+    outline: none; 
+    width: 250px; 
+    height: 42px;
+    transition: all 0.3s ease;
 }
-.magic-search-form input:focus { border-color: var(--oro); background-color: #fff; }
 
-/* --- GRID SYSTEM --- */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 5rem; }
-.recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 3rem; }
+.magic-search-form input:focus { 
+    border-color: var(--oro); 
+    background-color: #fff; 
+    width: 280px; /* Si allarga leggermente al focus */
+}
 
-/* --- RECIPE CARD --- */
+/* ========================================================== */
+/* 2. GRIGLIA & CARDS                                         */
+/* ========================================================== */
+
+.container { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 1.5rem 5rem; 
+}
+
+.recipe-grid {
+    display: grid;
+    /* Crea colonne responsive: minimo 300px, poi si adattano */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    list-style: none;
+    padding: 0;
+    margin: 40px 0;
+}
+
+/* --- LA CARD --- */
 .recipe-card {
-    background-color: #fffbf0; border-radius: 12px; overflow: hidden; position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: all 0.3s;
-    display: flex; flex-direction: column;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    /* Ombra e Bordo */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Uniforma l'altezza delle card nella riga */
+    position: relative;
 }
-.recipe-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(197, 160, 89, 0.2); }
 
-.card-image-wrapper { height: 200px; position: relative; overflow: hidden; border-bottom: 3px solid var(--oro); }
-.card-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+.recipe-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(197, 160, 89, 0.25);
+    border-color: rgba(197, 160, 89, 0.6);
+}
 
-.card-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
-.recipe-title { font-family: var(--font-title); font-size: 1.5rem; color: var(--marrone-dark); font-weight: 700; margin-bottom: 0.5rem; display: block; }
+/* --- IMMAGINE --- */
+.card-image-wrapper {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    border-bottom: 3px solid var(--oro);
+}
 
-.recipe-description { font-size: 1rem; color: #777; margin-bottom: 1rem; flex-grow: 1; }
-.card-divider { height: 1px; background: rgba(197, 160, 89, 0.4); margin: 1rem 0; }
-.card-footer { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--marrone-text); }
-.meta-info, .meta-item { display: flex; gap: 8px; align-items: center; }
-.meta-item i { color: var(--oro); }
+.card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
 
+.recipe-card:hover .card-image-wrapper img {
+    transform: scale(1.08);
+}
+
+/* --- BADGES (Etichette sopra l'immagine) --- */
+
+/* ========================================================== */
+/* SEZIONE BADGES (Adattata al tuo stile richiesto)           */
+/* ========================================================== */
+
+/* 1. Badge Difficoltà (Nastro Oro a Destra) */
 .difficulty-badge {
-    position: absolute; top: 15px; right: -10px; background: var(--oro); color: white;
-    padding: 5px 15px; font-weight: bold; font-size: 0.8rem; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    position: absolute; 
+    top: 15px; 
+    right: 0; /* Attaccato al bordo destro */
+    
+    background-color: var(--oro); 
+    color: white;
+    padding: 5px 15px;
+    
+    /* Font e Testo */
+    font-family: var(--font-ui); 
+    font-size: 0.8rem; 
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    /* Ombra */
+    box-shadow: -2px 2px 5px rgba(0,0,0,0.2); 
+    z-index: 10;
+    
+    /* Arrotonda solo l'angolo sinistro per effetto "etichetta" */
+    border-radius: 20px 0 0 20px; 
 }
-.empty-message { text-align: center; color: var(--marrone-text); font-size: 1.5rem; margin-top: 3rem; }
+
+/* Rimuoviamo il triangolino (::after) perché dentro l'immagine 
+   con overflow:hidden verrebbe tagliato e non si vedrebbe l'effetto piega.
+   Lo stile border-radius sopra compensa visivamente. */
+
+
+/* 2. Badge Rating (Voto - In alto a sinistra) */
+.rating-badge {
+    position: absolute; 
+    top: 15px; 
+    left: 15px;
+    
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #F57F17; /* Arancione scuro */
+    
+    padding: 5px 10px; 
+    border-radius: 20px;
+    
+    /* Stile Testo */
+    font-family: var(--font-ui);
+    font-size: 0.85rem; 
+    font-weight: bold;
+    
+    /* Bordo e Ombra */
+    border: 1px solid #FBC02D;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+    z-index: 10;
+}
+
+.rating-badge span { 
+    color: #333; 
+}
+
+
+/* 3. Bottone Preferiti (Spostato in BASSO a DESTRA) */
+/* Lo spostiamo qui per non coprire il badge difficoltà */
+.favorite-action {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    z-index: 20;
+}
+
+.btn-favorite {
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    color: #e74c3c;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.btn-favorite:hover { 
+    transform: scale(1.15); 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+/* --- CONTENUTO DELLA CARD --- */
+.card-content {
+    padding: 20px;
+    flex-grow: 1; /* Occupa tutto lo spazio disponibile */
+    display: flex;
+    flex-direction: column;
+    /* Sfumatura leggera pergamena */
+    background-image: linear-gradient(to bottom, var(--parchment) 0%, var(--parchment-dark) 100%);
+}
+
+.recipe-title {
+    font-family: var(--font-title);
+    font-size: 1.6rem; 
+    color: var(--marrone-dark);
+    font-weight: 700; 
+    margin-bottom: 0.5rem;
+    display: block; 
+    line-height: 1.2;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.recipe-title:hover { 
+    color: var(--oro); 
+}
+
+.recipe-description {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    
+    /* Tronca il testo dopo 3 righe */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Divisore */
+.card-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(197, 160, 89, 0.5), transparent);
+    margin: auto 0 15px 0; /* 'auto' spinge il footer in basso */
+    width: 100%;
+    position: relative;
+}
+
+/* Stellina sul divisore */
+.card-divider::after {
+    content: '✦'; 
+    position: absolute; 
+    top: -12px; left: 50%; 
+    transform: translateX(-50%);
+    color: var(--oro); font-size: 1.1rem;
+}
+
+/* --- FOOTER DELLA CARD --- */
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Allinea tutto verticalmente al centro */
+    font-size: 0.9rem;
+    color: var(--marrone-text);
+    padding-top: 5px;
+}
+
+/* Gruppo di Sinistra (Tempo e Porzioni) */
+.meta-info {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Gruppo di Destra (Autore e Data IN LINEA) */
+.card-footer-right {
+    display: flex;       /* Mette gli elementi in riga */
+    align-items: center; /* Li centra verticalmente */
+    gap: 8px;            /* Spazio tra Autore e Data */
+}
+
+/* Stile elementi comuni */
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+    font-family: var(--font-ui);
+    white-space: nowrap;
+}
+
+.meta-item i, .date-info i {
+    color: var(--oro); 
+}
+
+/* Link Autore */
+.author-link {
+    color: #666; 
+    text-decoration: none; 
+    font-weight: 600;
+}
+.author-link:hover { color: var(--oro); text-decoration: underline; }
+
+/* Data */
+.date-info {
+    font-size: 0.75rem;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Separatore (il puntino tra nome e data) */
+.separator {
+    margin: 0 2px;
+    font-size: 1rem;
+    color: #e0d4b8; /* Colore tenue */
+    line-height: 0; /* Evita che sballi l'altezza */
+}

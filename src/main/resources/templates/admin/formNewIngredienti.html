@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Dispensa - Admin</title>
+    
+    <link rel="stylesheet" th:href="@{/css/stile.css}" />
+    <link rel="stylesheet" th:href="@{/css/formNewIngredienti.css}" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="magic-background-layer"></div>
+
+    <header class="main-header">
+        <div class="header-content-wrapper">
+            <div class="header-left">
+				<a th:href="@{/}" class="btn-gold">
+                   <i class="fa-solid fa-house-chimney"></i> Home
+               </a>
+                <a th:href="@{/admin/indiceAdmin}" class="btn-gold">
+                    <i class="fa-solid fa-crown"></i> Gestione admin
+                </a>
+            </div>
+			
+			<div class="header-right">
+				<div sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap:10px;">
+                   <span class="header-text">
+                       <i class="fa-solid fa-user"></i>
+                       <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+                   </span>
+                   <form th:action="@{/logout}" method="post" style="margin:0;">
+                       <button type="submit" class="btn-logout">
+                           Logout <i class="fa-solid fa-right-from-bracket"></i>
+                       </button>
+                   </form>
+               </div>
+    		</div>
+		</div>
+    </header>
+
+    <div class="admin-container-centered">
+        
+        <h1 class="admin-title" style="text-align: center; margin-bottom: 50px; font-family: 'Cinzel Decorative', cursive; color: rgb(100, 62, 41); font-size: 2.5rem;">
+            <i class="fas fa-dungeon"></i> La Dispensa 
+        </h1>
+
+        <div th:if="${messaggioErrore}" class="error-banner" style="margin-bottom: 30px;">
+            <i class="fas fa-exclamation-triangle"></i> <span th:text="${messaggioErrore}">Errore</span>
+        </div>
+
+        <div class="creation-section">
+            <div class="creation-icon"><i class="fas fa-magic"></i></div>
+            
+            <h2 style="color: #C5A059; margin-bottom: 10px; font-family: 'Lato', sans-serif;">Nuovo Ingrediente</h2>
+            <p style="color: #888; margin-bottom: 20px; font-family: 'Lato', sans-serif;">Scrivi il nome e aggiungilo agli scaffali del regno.</p>
+
+            <form th:action="@{/admin/ingrediente}" th:object="${ingrediente}" method="POST">
+                <div class="input-row">
+                    <input type="text" th:field="*{nome}" class="magic-input-lg" placeholder="Es. Farina..." required />
+                    
+                    <button type="submit" class="btn-gold" style="padding: 15px 30px; border-radius: 50px;">
+                        <i class="fas fa-plus"></i> Aggiungi
+                    </button>
+                </div>
+            </form>
+        </div>
+
+		<div class="shelf-section">
+    <h3 class="shelf-title">
+        <i class="fas fa-dungeon"></i> Scorte 
+    </h3>
+    
+    <div class="ingredients-shelf" th:if="${!listaIngredienti.isEmpty()}">
+        
+        <div th:each="ing : ${listaIngredienti}" class="ingredient-card">
+            
+            <div class="ing-icon-wrapper">
+                <i class="fas fa-leaf"></i> 
+            </div>
+            
+            <div class="ing-name" th:text="${ing.nome}">Farina</div>
+            
+            <a th:href="@{'/admin/ingrediente/delete/' + ${ing.id}}" 
+               class="btn-delete-card" 
+               title="Butta via"
+               onclick="return confirm('Attenzione! Se questo ingrediente è usato in una ricetta, non potrai eliminarlo. Procedere?')">
+                <i class="fas fa-trash-alt"></i>
+            </a>
+
+        </div>
+    </div>
+
+    <div th:if="${listaIngredienti.isEmpty()}" class="empty-shelf-state">
+        <i class="fas fa-box-open"></i>
+        <p>Gli scaffali sono vuoti!<br>Aggiungi nuovi ingredienti </p>
+    </div>
+</div>
+
+    </div>
+</body>
+</html>

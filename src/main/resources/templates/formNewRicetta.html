@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuova Ricetta - Disney RecipeBook</title>
+    
+    <link rel="stylesheet" th:href="@{/css/formNewRicetta.css}" />
+    <link rel="stylesheet" th:href="@{/css/stile.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="magic-background"></div>
+
+	<header class="main-header">
+	       <div class="header-content-wrapper">
+	           <div class="header-left">
+	               <a th:href="@{/}" class="btn-gold">
+	                   <i class="fa-solid fa-house-chimney"></i> Home
+	               </a>
+	               
+	               <div sec:authorize="hasAuthority('ADMIN')">
+	                   <a th:href="@{/admin/index}" class="btn-gold">
+	                       <i class="fa-solid fa-crown"></i> Gestione Admin
+	                   </a>
+	               </div>
+	               
+	               <div sec:authorize="hasAuthority('DEFAULT')">
+	                   <a th:href="@{/user/profile}" class="btn-gold">
+	                       <i class="fa-solid fa-user-gear"></i> Gestione Profilo
+	                   </a>
+	               </div>
+	           </div>
+	           
+	           <div class="header-right">
+	                <div sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap:10px;">
+					<span class="header-text">
+					                   <i class="fa-solid fa-user"></i>
+					                        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+					                    </span>
+	                   
+	                   <form th:action="@{/logout}" method="post" style="margin: 0;">
+	                       <button type="submit" class="btn-logout">
+	                           Logout <i class="fa-solid fa-right-from-bracket"></i>
+	                       </button>
+	                   </form>
+	               </div>
+	               
+	               <div sec:authorize="!isAuthenticated()" class="guest-actions" style="display:flex; align-items:center; gap:10px;">
+	                   <span class="welcome-text">Benvenuto!</span>
+	                   <a th:href="@{/login}" class="btn-gold">Accedi</a>
+	                   <a th:href="@{/registrazione}" class="btn-gold">Registrati</a>
+	               </div>
+	           </div>
+	       </div>
+	   </header>
+
+    <div class="single-recipe-card">
+        
+        <div class="form-title">
+            <h1><i class="fas fa-feather-alt"></i> Crea Nuova Ricetta</h1>
+            <p style="text-align:center; color: #666; font-size: 0.9em;">Compila i dettagli e aggiungi gli ingredienti </p>
+        </div>
+
+        <form th:action="@{/ricetta}" th:object="${ricetta}" method="POST" id="newRecipeForm">
+            
+            <div th:if="${#fields.hasGlobalErrors()}" class="error-banner">
+                <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+            </div>
+
+            <div class="input-group">
+                <label>Titolo della Ricetta</label>
+                <input type="text" th:field="*{titolo}" class="magic-input" placeholder="Es. Torta di Mele" required/>
+                <span style="color: #d32f2f;" th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}"></span>
+            </div>
+
+            <div class="input-group">
+                <label>Breve Descrizione</label>
+                <textarea th:field="*{descrizione}" rows="2" class="magic-textarea" placeholder="Racconta brevemente il tuo piatto..."></textarea>
+            </div>
+
+            <div class="details-grid">
+                <div>
+                    <label>Categoria</label>
+                    <input type="text" th:field="*{categoria}" class="magic-input" placeholder="Es. Dolci, Primi...">
+                </div>
+                
+                <div>
+                    <label><i class="fas fa-clock"></i> Tempo (min)</label>
+                    <input type="number" th:field="*{tempoDiPreparazione}" class="magic-input" required/>
+                </div>
+                
+                <div>
+                    <label><i class="fas fa-fire"></i> Cottura (min)</label>
+                    <input type="number" th:field="*{tempoDiCottura}" class="magic-input"/>
+                </div>
+                
+                <div>
+                    <label><i class="fas fa-signal"></i> Difficoltà</label>
+                    <select th:field="*{difficolta}" class="magic-input">
+                        <option value="Facile">Facile</option>
+                        <option value="Media">Media</option>
+                        <option value="Difficile">Difficile</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label><i class="fas fa-utensils"></i> Porzioni</label>
+                    <input type="number" th:field="*{porzioni}" class="magic-input"/>
+                </div>
+            </div> 
+
+            <div class="tags-container">
+                <label class="diet-label">
+                    <i class="fas fa-leaf"></i> Diete & Intolleranze:
+                </label>
+                
+                <div class="checkbox-wrapper">
+                    
+                    <label class="magic-checkbox-label checkbox-veg">
+                        <input type="checkbox" value="Vegetariano" th:field="*{tags}"> 
+                        <i class="fas fa-carrot"></i> <span>Vegetariano</span>
+                    </label>
+
+                    <label class="magic-checkbox-label checkbox-vegan">
+                        <input type="checkbox" value="Vegano" th:field="*{tags}"> 
+                        <i class="fas fa-seedling"></i> <span>Vegano</span>
+                    </label>
+
+                    <label class="magic-checkbox-label checkbox-gluten">
+                        <input type="checkbox" value="Senza Glutine" th:field="*{tags}"> 
+                        <i class="fas fa-bread-slice"></i> <span>Senza Glutine</span>
+                    </label>
+
+                    <label class="magic-checkbox-label checkbox-lactose">
+                        <input type="checkbox" value="Senza Lattosio" th:field="*{tags}"> 
+                        <i class="fas fa-cheese"></i> <span>Senza Lattosio</span>
+                    </label>
+                    
+                </div>
+            </div>
+
+            <div class="procedure-section" style="width: 100%; margin-top: 30px;">
+                <label class="section-header-styled"><i class="fas fa-carrot"></i> Ingredienti:</label>
+                
+                <div class="ingredient-adder">
+                    <div class="ing-row">
+                        <input type="text" id="ingSearchInput" list="datalistIngredienti" class="magic-input" style="flex: 3;" placeholder="Cerca ingrediente..." autocomplete="off">
+                        <datalist id="datalistIngredienti">
+                            <option th:each="ing : ${listaIngredienti}" th:value="${ing.nome}" th:data-id="${ing.id}"></option>
+                        </datalist>
+
+                        <input type="number" id="ingQty" class="magic-input" placeholder="Qtà" style="flex: 1;">
+
+                        <select id="ingUnit" class="magic-input" style="flex: 1; padding: 10px;">
+                            <option value="gr">gr</option>
+                            <option value="kg">kg</option>
+                            <option value="ml">ml</option>
+                            <option value="l">l</option>
+                            <option value="qb">q.b.</option>
+                            <option value="pz">pz</option>
+                        </select>
+                        
+                        <button type="button" class="btn-small" onclick="aggiungiIngrediente()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <ul id="listaVisiva" class="temp-list">
+                        <li th:if="${#lists.isEmpty(listaIngredienti)}" style="color: #999; justify-content: center; font-style: italic; background:none; border:none;">
+                            (Assicurati che la dispensa non sia vuota!)
+                        </li>
+                    </ul>
+                    
+                    <div id="hiddenInputs"></div>
+                </div>
+            </div>
+
+            <div class="columns-container">
+                <div class="procedure-section" style="width: 100%;"> 
+                    <label class="section-header-styled">
+                        <i class="fas fa-scroll"></i> Procedimento:
+                    </label>
+                    <textarea th:field="*{procedimento}" rows="12" class="magic-textarea" placeholder="Scrivi qui i passaggi della preparazione..." required></textarea>
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <div class="polaroid-frame">
+                    <img id="preview-img" src="/images/placeholder-piatto.jpg" alt="Anteprima">
+                </div>
+                <div class="input-group" style="width: 100%; max-width: 600px;">
+                    <label>URL Immagine</label>
+                    <input type="text" th:field="*{imageUrl}" id="imgUrlInput" oninput="updatePreview()" class="magic-input" placeholder="Incolla qui il link dell'immagine..."/>
+                </div>
+            </div>
+
+            <div class="footer-buttons">
+                <p style="width:100%; text-align:center; margin-bottom:10px; font-size: 0.9rem; color:#666;">
+                 
+                </p>
+                
+                <button type="submit" class="btn-gold">Salva</button>
+                <a th:href="@{/index}" class="btn-logout">Annulla</a>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const url = document.getElementById('imgUrlInput').value;
+            const img = document.getElementById('preview-img');
+            if(url) {
+                img.src = url;
+                img.onerror = function() { this.src = '/images/placeholder-piatto.jpg'; };
+            } else {
+                img.src = '/images/placeholder-piatto.jpg';
+            }
+        }
+
+        function aggiungiIngrediente() {
+            var inputVal = document.getElementById("ingSearchInput").value;
+            var qty = document.getElementById("ingQty").value;
+            var unit = document.getElementById("ingUnit").value;
+            var datalist = document.getElementById("datalistIngredienti");
+            
+            var id = null;
+            var options = datalist.options;
+            
+            if (options.length === 0) {
+                alert("Errore: La lista ingredienti non è stata caricata dal server.");
+                return;
+            }
+
+            for(var i = 0; i < options.length; i++) {
+                if(options[i].value === inputVal) {
+                    id = options[i].getAttribute("data-id");
+                    break;
+                }
+            }
+
+            if (!id) {
+                alert("Devi selezionare un ingrediente valido dalla lista!");
+                return;
+            }
+            if (qty === "" || qty <= 0) {
+                alert("Inserisci una quantità valida!");
+                return;
+            }
+
+            var li = document.createElement("li");
+            li.innerHTML = `
+                <span><i class="fas fa-leaf" style="color:#4CAF50; margin-right:5px;"></i> 
+                <b>${inputVal}</b> <span style="color:#666;">(${qty} ${unit})</span></span> 
+                <i class="fas fa-trash-alt btn-remove" onclick="rimuovi(this)" title="Rimuovi"></i>
+            `;
+            document.getElementById("listaVisiva").appendChild(li);
+
+            var hiddenDiv = document.createElement("div");
+            
+            var inputId = document.createElement("input");
+            inputId.type = "hidden";
+            inputId.name = "ingredienteIds"; 
+            inputId.value = id;
+            
+            var inputQty = document.createElement("input");
+            inputQty.type = "hidden";
+            inputQty.name = "quantitaIng"; 
+            inputQty.value = qty;
+
+            var inputUnit = document.createElement("input");
+            inputUnit.type = "hidden";
+            inputUnit.name = "unitaIng"; 
+            inputUnit.value = unit;
+
+            hiddenDiv.appendChild(inputId);
+            hiddenDiv.appendChild(inputQty);
+            hiddenDiv.appendChild(inputUnit);
+            
+            document.getElementById("hiddenInputs").appendChild(hiddenDiv);
+
+            document.getElementById("ingSearchInput").value = "";
+            document.getElementById("ingQty").value = "";
+            document.getElementById("ingSearchInput").focus();
+            
+            li.dataset.refId = hiddenDiv.id = "hidden_" + Math.random().toString(36).substr(2, 9);
+        }
+
+        function rimuovi(elementoIcona) {
+            var li = elementoIcona.parentNode;
+            var hiddenDivId = li.dataset.refId;
+            var hiddenDiv = document.getElementById(hiddenDivId);
+            if(hiddenDiv) hiddenDiv.remove();
+            li.remove();
+        }
+        
+        updatePreview();
+    </script>
+</body>
+</html>

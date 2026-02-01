@@ -36,12 +36,11 @@
             </div>
             
             <div class="header-right">
-                <div sec:authorize="isAuthenticated()" class="user-profile" style="display:flex; align-items:center; gap:10px;">
-                    <a th:if="${currentUser != null}" th:href="@{'/user/' + ${currentUser.id}}" 
-                       class="chef-name" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-user-circle"></i>
-                        <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Nome Cognome</span>
-                    </a>
+                 <div sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap:10px;">
+					<span class="header-text">
+					                   <i class="fa-solid fa-user"></i>
+					                        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+					                    </span>
                     
                     <form th:action="@{/logout}" method="post" style="margin: 0;">
                         <button type="submit" class="btn-logout">
@@ -85,12 +84,15 @@
                 </div>
                 
                 <ul class="ingredients-list">
-                    <li th:each="ing : ${ricetta.ingredienti}">
+                    <li th:each="riga : ${ricetta.ingredienti}">
                         <i class="fas fa-star star-icon"></i> 
-                        <strong th:text="${ing.nome}" class="ingredient-name">Nome</strong>
-                        <span th:if="${ing.quantita} != null"> 
-                            <span th:text="${ing.quantita}">0</span>
-                            </span>
+                        <span th:text="${riga.quantita} + ' ' + ${riga.unita}">200 g</span>
+                        <span> di </span>
+                        <strong th:text="${riga.ingrediente.nome}" class="ingredient-name">Farina</strong>
+                    </li>
+                    
+                    <li th:if="${#lists.isEmpty(ricetta.ingredienti)}" style="font-style: italic; color: #666;">
+                        Nessun ingrediente specificato.
                     </li>
                 </ul>
                 
@@ -102,26 +104,39 @@
 
             <div class="right-column">
                 <div class="recipe-image-wrapper">
-                    <img th:if="${ricetta.immagine != null}" th:src="${ricetta.immagine}" alt="Immagine Ricetta"/>
-                    <img th:unless="${ricetta.immagine != null}" src="/images/placeholder-piatto.jpg" alt="Nessuna immagine"/>
+                    <img th:if="${ricetta.imageUrl != null}" th:src="${ricetta.imageUrl}" alt="Immagine Ricetta"/>
+                    <img th:unless="${ricetta.imageUrl != null}" src="/images/placeholder-piatto.jpg" alt="Nessuna immagine"/>
                 </div>
                 
                 <div class="tech-details">
                     <h3><i class="fas fa-info-circle"></i> Dettagli</h3>
                     <ul class="tech-list">
+                        
                         <li>
-                            <span><i class="fas fa-clock"></i> Tempo:</span>
+                            <span><i class="fas fa-tag"></i> Categoria:</span>
+                            <strong th:text="${ricetta.categoria} != null ? ${ricetta.categoria} : '-'">Dolci</strong>
+                        </li>
+
+                        <li>
+                            <span><i class="fas fa-clock"></i> Preparazione:</span>
                             <strong th:text="${ricetta.tempoDiPreparazione} + ' min'">30 min</strong>
                         </li>
+
+                        <li>
+                            <span><i class="fas fa-fire"></i> Cottura:</span>
+                            <strong th:text="${ricetta.tempoDiCottura} != null ? ${ricetta.tempoDiCottura} + ' min' : '-'">20 min</strong>
+                        </li>
+
                         <li>
                             <span><i class="fas fa-signal"></i> Difficoltà:</span>
                             <strong th:text="${ricetta.difficolta}">Media</strong>
                         </li>
+
                         <li>
                             <span><i class="fas fa-utensils"></i> Porzioni:</span>
                             <strong th:text="${ricetta.porzioni} != null ? ${ricetta.porzioni} : '-'">4</strong>
                         </li>
-                        </ul>
+                    </ul>
                 </div>
             </div>
         </div>

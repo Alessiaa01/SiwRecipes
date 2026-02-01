@@ -81,31 +81,70 @@
     </div>
 
     <div class="container" th:unless="${ricette.isEmpty()}">
-        <ul class="recipe-grid">
+       <ul class="recipe-grid">
             <li th:each="ricetta : ${ricette}" class="recipe-card">
                 
                 <div class="card-image-wrapper">
-                    <img th:src="${ricetta.imageUrl != null} ? ${ricetta.imageUrl} : 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=800&auto=format&fit=crop'" 
+                    <img th:src="${ricetta.imageUrl} ? ${ricetta.imageUrl} : '/images/placeholder-piatto.jpg'" 
                          th:alt="'Immagine di ' + ${ricetta.titolo}" />
-                    <span class="difficulty-badge" th:if="${ricetta.difficoltà != null}" th:text="${ricetta.difficoltà}">Facile</span>
+                    
+                    <span class="difficulty-badge" th:text="${ricetta.difficolta}">Facile</span>
+
+                    <div class="rating-badge" title="Media Voti">
+                        <i class="fa-solid fa-star"></i>
+                        <span th:if="${not #lists.isEmpty(ricetta.recensioni)}" 
+                              th:text="${#numbers.formatDecimal(#aggregates.avg(ricetta.recensioni.![voto]), 1, 1)}">4.5</span>
+                        <span th:if="${#lists.isEmpty(ricetta.recensioni)}">-</span>
+                    </div>
+
+                    <div sec:authorize="isAuthenticated()" class="favorite-action">
+                        <form th:action="@{'/ricetta/' + ${ricetta.id} + '/favorite'}" method="post">
+                            <button type="submit" class="btn-favorite" title="Aggiungi ai preferiti">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
                 
                 <div class="card-content">
                     <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="recipe-title">
-                        <span th:text="${ricetta.titolo}">Titolo</span>
+                        <span th:text="${ricetta.titolo}">Titolo Ricetta</span>
                     </a>
-                    <p class="recipe-description" th:text="${ricetta.descrizione}">Descrizione...</p>
+                    
+                    <p class="recipe-description" th:text="${ricetta.descrizione}">Descrizione breve della ricetta...</p>
+
                     <div class="card-divider"></div>
-                    <div class="card-footer">
-                        <div class="meta-info">
-                            <span class="meta-item"><i class="fa-regular fa-clock"></i> <span th:text="${ricetta.tempoDiPreparazione}">0</span>'</span>
-                            <span class="meta-item"><i class="fa-solid fa-users"></i> <span th:text="${ricetta.porzioni}">2</span></span>
-                        </div>
-                        <span class="meta-item"><i class="fa-solid fa-user-pen"></i> <span th:text="${ricetta.autore.nome}">Autore</span></span>
-                    </div>
-                    <div style="margin-top:15px; text-align:center;">
-                        <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="btn-gold" style="width:100%">Leggi</a>
-                    </div>
+
+					<div class="card-footer">
+					    <div class="meta-info">
+					        <span class="meta-item" title="Tempo di preparazione">
+					            <i class="fa-regular fa-clock"></i> 
+					            <span th:text="${ricetta.tempoDiPreparazione}">0</span>'
+					        </span>
+
+					        <span class="meta-item" title="Porzioni">
+					            <i class="fa-solid fa-users"></i> 
+					            <span th:text="${ricetta.porzioni}">2</span>
+					        </span>
+					    </div>
+
+					    <div class="card-footer-right">
+					         <span class="meta-item author">
+					            <i class="fa-solid fa-user-pen" style="font-size: 0.8rem;"></i>
+					            <a th:if="${ricetta.autore != null}" 
+					               th:href="@{'/user/' + ${ricetta.autore.id}}" 
+					               class="author-link">
+					               <span th:text="${ricetta.autore.nome}">Chef</span>
+					            </a>
+					            <span th:unless="${ricetta.autore != null}">Anonimo</span>
+					        </span>
+					        
+					        <div class="date-info" th:if="${ricetta.dataInserimento}">
+					            <span class="separator">•</span> <i class="fa-regular fa-calendar" style="font-size: 0.7rem;"></i>
+					            <span th:text="${#temporals.format(ricetta.dataInserimento, 'dd/MM/yyyy')}"></span>
+					        </div>
+					    </div>
+					</div>
                 </div>
             </li>
         </ul>

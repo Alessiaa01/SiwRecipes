@@ -39,4 +39,8 @@ public class IngredienteService {
 	public Ingrediente findByNome(String nome) {
 		return this.ingredienteRepository.findByNome(nome).orElse(null);
 	}
+	
+	public void delete(Long id) {
+        this.ingredienteRepository.deleteById(id);
+    }
 }

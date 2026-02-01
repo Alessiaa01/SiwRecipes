@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggiungi Ingredienti - Disney RecipeBook</title>
+    
+    <link rel="stylesheet" th:href="@{/css/stile.css}" />
+    <link rel="stylesheet" th:href="@{/css/formAddIngredienti.css}" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="magic-background-layer"></div>
+
+    <header class="main-header">
+        <div class="header-content-wrapper">
+            <div class="header-left">
+                <div class="btn-home">
+                    <a th:href="@{/index}"><i class="fa-solid fa-house-chimney"></i> Home</a>
+                </div>   
+            </div>
+            
+            <div class="header-right">
+                <div sec:authorize="isAuthenticated()" class="user-profile">
+                    <span th:if="${currentUser != null}" class="header-text">
+                        <i class="fa-solid fa-user-circle"></i>
+                        <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Chef</span>
+                    </span>
+                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+                        <button type="submit" class="btn-logout">
+                            Logout <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="single-recipe-card-wrapper">
+        <div class="single-recipe-card">
+        
+            <div class="form-title-section">
+                <h1><i class="fas fa-flask"></i> Il Calderone</h1>
+                <p class="subtitle">
+                    Stai aggiungendo ingredienti a: <br>
+                    <strong class="recipe-name-highlight" th:text="${ricetta.titolo}">Nome Ricetta</strong>
+                </p>
+            </div>
+
+            <form th:action="@{'/ricetta/' + ${ricetta.id} + '/addIngrediente'}" 
+                  th:object="${ricettaIngrediente}" 
+                  method="POST"
+                  class="add-ingredient-form-container">
+
+                <div class="ingredients-input-grid">
+                    
+                    <div class="input-box ingredient-select">
+                        <label>Dispensa</label>
+                        <select name="ingredienteId" class="magic-input" required>
+                            <option value="">-- Scegli --</option>
+                            <option th:each="ing : ${listaIngredienti}" 
+                                    th:value="${ing.id}" 
+                                    th:text="${ing.nome}">
+                                Polvere di Stelle
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="input-box quantity-input">
+                        <label>Qt.</label>
+                        <input type="number" th:field="*{quantita}" class="magic-input" placeholder="0" required />
+                    </div>
+
+                    <div class="input-box unit-input">
+                        <label>Unità</label>
+                        <input type="text" th:field="*{unita}" class="magic-input" placeholder="gr" />
+                    </div>
+
+                    <div class="input-box add-btn-box">
+                        <button type="submit" class="btn-add-gradient" title="Aggiungi al Calderone">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
+            <div class="calderone-list-section">
+                <h3 class="section-header-decorative">
+                    <i class="fas fa-scroll"></i> Ingredienti Inseriti
+                </h3>
+
+                <div class="ingredients-list-container" th:if="${!ricetta.ingredienti.isEmpty()}">
+                    <div th:each="riga : ${ricetta.ingredienti}" class="ingredient-list-item">
+                        
+                        <div class="ing-name-text">
+                            <i class="fas fa-check-circle check-icon-ok"></i>
+                            <strong th:text="${riga.ingrediente.nome}">Farina</strong>
+                        </div>
+                        
+                        <div class="ing-details-text">
+                            <span th:text="${riga.quantita}">500</span>
+                            <span th:text="${riga.unita}">gr</span>
+                        </div>
+
+                        <a th:href="@{'/ricetta/' + ${ricetta.id} + '/removeIngrediente/' + ${riga.id}}" 
+                           class="btn-remove-gradient" title="Rimuovi">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="empty-state-box" th:if="${ricetta.ingredienti.isEmpty()}">
+                    <i class="fas fa-basket-shopping"></i>
+                    <p>Il calderone è ancora vuoto!</p>
+                </div>
+            </div>
+
+            <div class="footer-buttons-container">
+                <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="btn-gold btn-gold-large">
+                    <i class="fas fa-wand-magic-sparkles"></i> Ho finito, crea la magia!
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

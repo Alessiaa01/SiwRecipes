@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,7 +34,7 @@ public class Ricetta {
 	
 	private String categoria;
 	
-	private String difficoltà;
+	private String difficolta;
 	
 	@Column(length=2000)
 	private String imageUrl;
@@ -44,10 +45,16 @@ public class Ricetta {
 	
 	private Integer tempoDiPreparazione;
 	
-	private LocalDate dataDiInserimento;
+	private LocalDate dataInserimento;
 	
 	@OneToMany(mappedBy ="ricetta", cascade = CascadeType.ALL)
     private List<RicettaIngrediente> ingredienti = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "ricetta")
+    private List<Recensione> recensioni;
+	
+	@ElementCollection
+    private List<String> tags;
 	
 	@ManyToOne  
     private Utente autore;
@@ -87,12 +94,16 @@ public String getCategoria() {
 	return categoria;
 }
 
-public String getDifficoltà() {
-	return difficoltà;
+public String getDifficolta() {
+	return difficolta;
 }
 
 public String getImageUrl() {
 	return imageUrl;
+}
+
+public void setImageUrl(String imageUrl) {
+	this.imageUrl = imageUrl;
 }
 
 public Integer getPorzioni() {
@@ -119,13 +130,11 @@ public void setCategoria(String categoria) {
 	this.categoria = categoria;
 }
 
-public void setDifficoltà(String difficoltà) {
-	this.difficoltà = difficoltà;
+public void setDifficolta(String difficolta) {
+	this.difficolta = difficolta;
 }
 
-public void setImageUrl(String imageUrl) {
-	this.imageUrl = imageUrl;
-}
+
 
 public void setPorzioni(Integer porzioni) {
 	this.porzioni = porzioni;
@@ -139,12 +148,12 @@ public void setTempoDiPreparazione(Integer tempoDiPreparazione) {
 	this.tempoDiPreparazione = tempoDiPreparazione;
 }
 
-public LocalDate getDataDiInserimento() {
-	return dataDiInserimento;
+public LocalDate getDataInserimento() {
+	return dataInserimento;
 }
 
-public void setDataDiInserimento(LocalDate dataDiInserimento) {
-	this.dataDiInserimento = dataDiInserimento;
+public void setDataInserimento(LocalDate dataDiInserimento) {
+	this.dataInserimento = dataDiInserimento;
 }
 
 public List<RicettaIngrediente> getIngredienti() {
@@ -161,6 +170,22 @@ public Utente getAutore() {
 
 public void setAutore(Utente autore) {
 	this.autore = autore;
+}
+
+public List<Recensione> getRecensioni() {
+	return recensioni;
+}
+
+public void setRecensioni(List<Recensione> recensioni) {
+	this.recensioni = recensioni;
+}
+
+public List<String> getTags() {
+    return tags;
+}
+
+public void setTags(List<String> tags) {
+    this.tags = tags;
 }
 
 @Override

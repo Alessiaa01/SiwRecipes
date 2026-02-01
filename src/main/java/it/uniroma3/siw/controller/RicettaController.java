@@ -1,5 +1,8 @@
 package it.uniroma3.siw.controller;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,10 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import it.uniroma3.siw.model.Credentials;
+import it.uniroma3.siw.model.Recensione;
 import it.uniroma3.siw.model.Ricetta;
 import it.uniroma3.siw.model.Utente;
 import it.uniroma3.siw.service.CredentialsService;
+import it.uniroma3.siw.service.IngredienteService;
 import it.uniroma3.siw.service.RicettaService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 
@@ -30,12 +36,17 @@ public class RicettaController {
 	
 	@Autowired
 	private CredentialsService credentialsService;
+	
+	@Autowired
+	private IngredienteService ingredienteService;
 
+	//---UTENTE GENERICO---
 	//Ricetta singola
 	@GetMapping("/ricetta/{id}")
 	public String getRicetta(@PathVariable("id") Long id, Model model) {
 	Ricetta ricetta= this.ricettaService.findById(id);
 	model.addAttribute("ricetta",ricetta);
+	model.addAttribute("nuovaRecensione", new Recensione());
 		return "ricetta.html";
 	}
 	
@@ -46,44 +57,116 @@ public class RicettaController {
 		return "ricette.html";
 	}
 	
-	//inserimento nuova ricetta (form)
-	@GetMapping("/formNewRicetta")
-	public String formNewRicetta(Model model) {
-		model.addAttribute("ricetta",new Ricetta());
-		return "formNewRicetta.html";
-	}
-	
-    //nuova ricetta
-	@PostMapping("/ricetta")
-	public String newRicetta(@Valid @ModelAttribute("ricetta")Ricetta ricetta,
-			                 BindingResult bindingResult ,
-			                 @ModelAttribute("currentUser") Utente currentUser, Model model) {
-		
-		//se ci sono errori (es titolo vuoti ), ricarica il form
-		if(bindingResult.hasErrors()) {
-			return "formNewRicetta.html";
-		}
-		//utente non loggato
-			if (currentUser == null) {
-	            return "redirect:/login";
-	        }
-		//salvataggio, collgea la ricetta all'autore e gli ingredienti alla ricetta
-		this.ricettaService.saveRicetta(ricetta,currentUser);
-		//model.addAttribute("ricetta",ricetta);
-		return "redirect:ricetta/" + ricetta.getId();
-	}
-	
 	@GetMapping("/formSearchRicetta")
 	public String formSearchRicette() {
 		return "formSearchRicetta.html";
 	}
 	
+
+		
 	@PostMapping("/searchRicetta")
 	public String searchRicette(Model model, @RequestParam String titolo) {
 		model.addAttribute("ricette", this.ricettaService.findByTitolo(titolo));
 		return "ricette.html";
 	}
 	
+	//---UTENTE REGISTRATO---
+	
+	//inserimento nuova ricetta (form)
+			@GetMapping("/formNewRicetta")
+			public String formNewRicetta(Model model) {
+				model.addAttribute("ricetta",new Ricetta());
+				
+				model.addAttribute("listaIngredienti", this.ingredienteService.findAll());
+				return "formNewRicetta.html";
+			}
+			// In RicettaController.java
+
+			@PostMapping("/ricetta")
+			public String newRicetta(@Valid @ModelAttribute("ricetta") Ricetta ricetta,
+			                         BindingResult bindingResult,
+			                         @ModelAttribute("currentUser") Utente currentUser, 
+			                         Model model,
+			                         // --- 1. AGGIUNGI QUESTI PARAMETRI PER RICEVERE GLI INGREDIENTI ---
+			                         @RequestParam(value = "ingredienteIds", required = false) List<Long> ingredienteIds,
+			                         @RequestParam(value = "quantitaIng", required = false) List<Integer> quantitaIng,
+			                         @RequestParam(required = false) List<String> unitaIng) {
+			    
+			    // Se ci sono errori (es titolo vuoto), ricarica il form
+			    if (bindingResult.hasErrors()) {
+			        // Importante: se c'è errore, dobbiamo ricaricare la lista ingredienti per la select
+			        model.addAttribute("listaIngredienti", this.ingredienteService.findAll());
+			        return "formNewRicetta.html";
+			    }
+
+			    // 2. Salvataggio della Ricetta Base (crea l'ID e collega l'autore)
+			    if (currentUser != null) {
+			    	ricetta.setDataInserimento(LocalDate.now());
+			        this.ricettaService.saveRicetta(ricetta, currentUser);
+			    }
+			    
+			    // 3. ORA SALVIAMO GLI INGREDIENTI (Se ce ne sono)
+			 // Salvataggio Ingredienti CON UNITA'
+			    if (ingredienteIds != null && quantitaIng != null && unitaIng != null) {
+			        for (int i = 0; i < ingredienteIds.size(); i++) {
+			            // Nota: devi aggiornare anche questo metodo nel Service!
+			            this.ricettaService.addIngrediente(ricetta, ingredienteIds.get(i), quantitaIng.get(i), unitaIng.get(i));
+			        }
+			    }
+
+			    return "redirect:/ricetta/" + ricetta.getId();
+			}
+	
+	//mie ricette
+	@GetMapping("/myRecipes")
+	public String manageMyRecipes(Model model, @ModelAttribute("currentUser") Utente currentUser) {
+		// Recupero solo le ricette dell'autore loggato
+		if (currentUser != null) {
+			model.addAttribute("ricette", this.ricettaService.findByAutore(currentUser));
+		}
+		return "myRecipes.html"; 
+		
+	}
+	
+	//---ACCESSO ADMIN---
+	// Lista Ricette per Admin (Tabella gestione)
+    @GetMapping("/admin/ricette")
+    public String adminManageRicette(Model model) {
+        model.addAttribute("ricette", this.ricettaService.findAll());
+        return "admin/manageRicette.html";
+    }
+
+    @PostMapping("/ricetta/delete/{id}")
+    public String deleteRicetta(@PathVariable("id") Long id, 
+                                @ModelAttribute("currentUser") Utente currentUser,
+                                HttpServletRequest request) { // per decidere il redirect
+        
+        Ricetta ricetta = this.ricettaService.findById(id);
+
+        if (ricetta == null) 
+            return "redirect:/ricette";
+
+        // 1. CONTROLLO DI SICUREZZA: "Posso cancellare?"
+        // Usa il tuo metodo helper che controlla se sei Autore o Admin
+        if (this.isAuthorized(ricetta, currentUser)) {
+            
+            // Se sì, cancella
+            this.ricettaService.deleteById(id); 
+            
+            // 2. CONTROLLO DI NAVIGAZIONE: "Dove vado ora?"
+            // Se sei Admin -> Pannello Admin
+            if (request.isUserInRole("ADMIN")) {
+                return "redirect:/admin/ricette"; 
+            }
+            // Se sei Autore normale -> Le mie ricette
+            return "redirect:/myRecipes"; 
+  
+         } else {
+            // Se non sei autorizzato -> Errore
+            return "redirect:/ricetta/" + id + "?error=NonAutorizzato";
+        }
+    }
+    
 	
 	
 	// -------------------------------------------------------------------------
