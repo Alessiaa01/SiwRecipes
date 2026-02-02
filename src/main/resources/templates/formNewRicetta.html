@@ -23,7 +23,7 @@
                    </a>
                    
                    <div sec:authorize="hasAuthority('ADMIN')">
-                       <a th:href="@{/admin}" class="btn-gold">
+                       <a th:href="@{/admin/indiceAdmin}" class="btn-gold">
                            <i class="fa-solid fa-crown"></i> Gestione Admin
                        </a>
                    </div>
@@ -31,10 +31,22 @@
                
                <div class="header-right">
                     <div sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap:10px;">
-                    <span class="header-text">
-                        <i class="fa-solid fa-user"></i>
-                        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
-                    </span>
+						<div th:if="${currentUser != null}" style="display: inline-block;">
+
+											    <span th:if="${credentials.ruolo == 'ADMIN'}" 
+											          class="chef-name" 
+											          style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+											           
+											           <i class="fa-solid fa-crown" style="color: #C5A059;"></i>
+											           <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Admin</span>
+											    </span>
+
+											    <span th:unless="${credentials.ruolo == 'ADMIN'}" class="header-text">
+											        <i class="fa-solid fa-user"></i>
+											        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+											    </span>
+
+											</div>
                        
                        <form th:action="@{/logout}" method="post" style="margin: 0;">
                            <button type="submit" class="btn-logout">
@@ -55,7 +67,7 @@
             <p style="text-align:center; color: #666; font-size: 0.9em;">Compila i dettagli e aggiungi gli ingredienti </p>
         </div>
 
-        <form th:action="@{/formNewRicetta2}" 
+        <form th:action="@{/newRicetta}" 
               th:object="${ricetta}" 
               method="POST" 
               id="newRecipeForm">
@@ -87,9 +99,6 @@
                          <option value="Secondi Piatti">Secondi Piatti</option>
                          <option value="Contorni">Contorni</option>
                          <option value="Dolci">Dolci</option>
-                         <option value="Piatto Unico">Piatto Unico</option>
-                         <option value="Vegetariane">Vegetariane</option>
-                         <option value="Vegane">Vegane</option>
                          <option value="Altro">Altro</option>
                     </select>
                 </div>
@@ -225,7 +234,8 @@
     <script th:inline="javascript">
         /* Recupera l'indice attuale in base a quanti elementi ci sono già nel DB */
         /* Se è null (nuova ricetta), parte da 0 */
-        var globalIndex = [[${ricetta.ricettaIngredienti != null ? ricetta.ricettaIngredienti.size() : 0}]];
+       
+
 
         function updatePreview() {
             const url = document.getElementById('imgUrlInput').value;

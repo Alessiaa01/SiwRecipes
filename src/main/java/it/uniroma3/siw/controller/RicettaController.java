@@ -42,7 +42,7 @@ public class RicettaController {
 	private IngredienteService ingredienteService;
 
 	//---UTENTE GENERICO---
-	//Ricetta singola
+	//VISUALIZZA SINGOLA RICETTA
 	@GetMapping("/ricetta/{id}")
 	public String getRicetta(@PathVariable("id") Long id, Model model) {
 	Ricetta ricetta= this.ricettaService.findById(id);
@@ -51,7 +51,7 @@ public class RicettaController {
 		return "ricetta.html";
 	}
 	
-	//lista ricette
+	//VISUALIZZA TUTTE LE RICETTE
 	@GetMapping("/ricette")
 	public String getRicette(Model model) {
 		model.addAttribute("ricette",this.ricettaService.findAll());
@@ -72,7 +72,7 @@ public class RicettaController {
 	
 	//---UTENTE REGISTRATO---
 	
-	//inserimento nuova ricetta (form)
+           //Prepara la pagina con il form per creare una nuova ricetta
 			@GetMapping("/formNewRicetta")
 			public String formNewRicetta(Model model) {
 				model.addAttribute("ricetta",new Ricetta());
@@ -82,85 +82,85 @@ public class RicettaController {
 			}
 			
 			
-			@PostMapping("/formNewRicetta2")
-		    public String formNewRicetta(@ModelAttribute("ricetta") Ricetta ricetta, Model model) {
-		        
-		        // 1. Recupero l'utente loggato dal Model 
-		       
-		        Utente utente = (Utente) model.getAttribute("currentUser");
+			@PostMapping("/newRicetta") 
+		    public String newRicetta(@ModelAttribute("ricetta") Ricetta ricetta, Model model) {
 
-		        // 2. Controllo se è una MODIFICA o un NUOVO inserimento
+		        // 1. Recupero l'utente loggato (Grazie al GlobalController!)
+		        Utente currentUser = (Utente) model.getAttribute("currentUser");
+
+		        // 2. Logica: MODIFICA o NUOVO inserimento?
 		        if (ricetta.getId() != null) {
 		            // --- MODIFICA ---
-		            // Recupero la ricetta vecchia per non perdere i dati sensibili
 		            Ricetta ricettaEsistente = this.ricettaService.findById(ricetta.getId());
+
+		            // SECURITY CHECK: Se la ricetta esiste ma non sei l'autore (e non sei admin), BLOCCO.
+		            if (ricettaEsistente != null && !this.isAuthorized(ricettaEsistente, currentUser)) {
+		                return "redirect:/login"; // O una pagina di errore
+		            }
 		            
-		            // Re-imposto i dati che il form non invia (e che quindi sarebbero null)
-		            ricetta.setAutore(ricettaEsistente.getAutore());
-		           // ricetta.setUtentiCheHannoSalvato(ricettaEsistente.getUtentiCheHannoSalvato());
-		            ricetta.setDataInserimento(ricettaEsistente.getDataInserimento());
+		            // Re-imposto i dati che il form non invia
+		            if (ricettaEsistente != null) {
+		                ricetta.setAutore(ricettaEsistente.getAutore());
+		                ricetta.setDataInserimento(ricettaEsistente.getDataInserimento());
+		               // ricetta.setUtentiCheHannoSalvato(ricettaEsistente.getUtentiCheHannoSalvato());
+		            }
+
 		        } else {
 		            // --- NUOVA RICETTA ---
-		            if (utente != null) {
-		                ricetta.setAutore(utente); // Il cuoco è l'utente loggato
+		            if (currentUser != null) {
+		                ricetta.setAutore(currentUser); // Il cuoco è l'utente loggato
 		            }
-		            ricetta.setDataInserimento(LocalDate.now()); // La data è oggi
+		            ricetta.setDataInserimento(LocalDate.now());
 		        }
-		        
+
 		        // 3. Gestione della lista ingredienti (RicettaIngrediente)
 		        if (ricetta.getRicettaIngredienti() != null) {
 		            
-		            // A. Pulizia: rimuovo le righe vuote se l'utente non ha scelto l'ingrediente
-		            // (Uso un iteratore o removeIf per evitare errori durante il ciclo)
+		            // A. Pulizia: rimuovo le righe vuote
 		            ricetta.getRicettaIngredienti().removeIf(riga -> riga.getIngrediente() == null);
 		            
-		            // B. Associazione Bidirezionale: Dico a ogni riga: "La tua ricetta è QUESTA qui"
+		            // B. Associazione Bidirezionale
 		            for (RicettaIngrediente riga : ricetta.getRicettaIngredienti()) {
 		                riga.setRicetta(ricetta);
 		            }
 		        }
 
-		        // 4. Salvataggio finale tramite il Service
-		        Ricetta nuovaricetta = this.ricettaService.save(ricetta);
-		        
+		        // 4. Salvataggio finale
+		        Ricetta nuovaRicetta = this.ricettaService.save(ricetta);
+
 		        // 5. Redirect alla pagina di dettaglio
-		        return "redirect:/ricetta/" + nuovaricetta.getId();
+		        return "redirect:/ricetta/" + nuovaRicetta.getId();
 		    }
 
-			@PostMapping("/ricetta")
-			public String newRicetta(@Valid @ModelAttribute("ricetta") Ricetta ricetta,
-			                         BindingResult bindingResult,
-			                         Model model,
-			                         @RequestParam(value = "ingredienteIds", required = false) List<Long> ingredienteIds,
-			                         @RequestParam(value = "quantitaIng", required = false) List<Integer> quantitaIng,
-			                         @RequestParam(required = false) List<String> unitaIng) {
-
-		
-			    Utente currentUser = (Utente) model.getAttribute("currentUser");
-
-			    // Validazione
-			    if (bindingResult.hasErrors()) {
-			        model.addAttribute("listaIngredienti", this.ingredienteService.findAll());
-			        return "formNewRicetta.html"; // Controlla il percorso se è sotto admin/
-			    }
-
-			    // 2. Salvataggio Base
-			    if (currentUser != null) {
-			        ricetta.setAutore(currentUser); // Qui currentUser ha l'ID corretto!
-			        ricetta.setDataInserimento(LocalDate.now());
-			        this.ricettaService.save(ricetta); // Usa save generico o saveRicetta
-			    }
-
-			    // 3. Salvataggio Ingredienti
-			    if (ingredienteIds != null) {
-			        for (int i = 0; i < ingredienteIds.size(); i++) {
-			            this.ricettaService.addIngrediente(ricetta, ingredienteIds.get(i), quantitaIng.get(i), unitaIng.get(i));
-			        }
-			    }
-
-			    return "redirect:/ricetta/" + ricetta.getId();
-			}
 			
+			@GetMapping("/ricetta/{id}/edit")
+		    public String editRicetta(@PathVariable("id") Long id, Model model) {
+		        
+		        // 1. Cerco la ricetta nel DB
+		        Ricetta ricetta = this.ricettaService.findById(id);
+		        
+		        // 2. Recupero l'utente corrente (già caricato dal GlobalController)
+		        Utente currentUser = (Utente) model.getAttribute("currentUser");
+
+		        // 3. Controllo se l'utente ha il permesso (è l'autore o è admin?)
+		        if (this.isAuthorized(ricetta, currentUser)) {
+		            
+		            // --- ACCESSO CONSENTITO ---
+		            
+		            // Passo la ricetta al model (così i campi del form si pre-compilano!)
+		            model.addAttribute("ricetta", ricetta);
+		            
+		            // Passo la lista di tutti gli ingredienti disponibili per le checkbox
+		            model.addAttribute("listaIngredienti", this.ingredienteService.findAll());
+		            
+		            // Restituisco la vista del form (riutilizziamo quella di creazione)
+		            return "formNewRicetta";
+		        }
+
+		        // --- ACCESSO NEGATO ---
+		        // Se non è l'autore, lo rimando alla pagina di visualizzazione della ricetta
+		        return "redirect:/ricetta/" + id;
+		    }
 			
 	
 	

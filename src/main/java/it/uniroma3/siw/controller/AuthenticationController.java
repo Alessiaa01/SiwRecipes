@@ -1,5 +1,7 @@
 package it.uniroma3.siw.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,21 +77,22 @@ public String defaultAfterLogin() {
 		return "redirect:/ricette"; // La nostra home vera è la lista ricette
 	}
 	
-	@GetMapping("/admin")
+	@GetMapping("/admin/indiceAdmin")
 	public String indexAdmin() {
 	    // Questo indirizza alla cartella templates/admin/indexAdmin.html
 	    return "admin/indiceAdmin";
 	}
 	
-	//Pagina per gestire gli utenti(solo Admin)
-		@GetMapping("/admin/manageUtenti")
-	    public String manageUsers(Model model) {
-	        model.addAttribute("credentialsLista", this.credentialsService.getAllCredentials());
-	        return "admin/manageUtenti"; 
-	    }
+	@GetMapping("/admin/manageUtenti")
+	public String manageUtenti(Model model) {
+	    // 1. Recupera la lista
+	    List<Credentials> allCredentials = this.credentialsService.findAll();
+	    model.addAttribute("credentialsList", allCredentials);
+	    return "admin/manageUtenti";
+	}
 		
 		@GetMapping("/admin/manageRicette")
-		public String manageRecipes(Model model) {
+		public String manageRicette(Model model) {
 		    // Carica le ricette dal database
 		    model.addAttribute("ricette", this.ricettaService.findAll()); 
 		    
@@ -98,14 +101,14 @@ public String defaultAfterLogin() {
 		
 		//Azione per bannare un utente 
 		@PostMapping("/admin/manageUtenti/{username}/ban")
-	    public String banUser(@PathVariable("username") String username) {
+	    public String banUtenti(@PathVariable("username") String username) {
 	        this.credentialsService.lockCredentials(username);
 	        return "redirect:/admin/manageUtenti";
 	    }
 		
 		//Azione per riabilitare un utente 
 		@PostMapping("/admin/manageUtenti/{username}/unban")
-	    public String unbanUser(@PathVariable("username") String username) {
+	    public String unbanUtenti(@PathVariable("username") String username) {
 	        this.credentialsService.unlockCredentials(username);
 	        return "redirect:/admin/manageUtenti";
 	    }

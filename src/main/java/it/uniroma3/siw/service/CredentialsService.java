@@ -69,6 +69,11 @@ public class CredentialsService {
 		return this.credentialsRepository.save(credentials);
 	}
 	
+	public List<Credentials> findAll() {
+		return this.credentialsRepository.findAll();
+    }
+	
+	
 	
 
 	

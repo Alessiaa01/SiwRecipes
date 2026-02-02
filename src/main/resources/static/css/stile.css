@@ -107,3 +107,8 @@ ul { list-style: none; }
     background-position: right center; transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(211, 47, 47, 0.6);
 }
+
+.chef-name {
+    font-family: 'Lato', sans-serif; font-weight: 700;
+    color: #5D4037; font-size: 0.9rem;
+}

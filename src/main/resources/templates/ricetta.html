@@ -84,14 +84,14 @@
                 </div>
                 
                 <ul class="ingredients-list">
-                    <li th:each="riga : ${ricetta.ingredienti}">
+                    <li th:each="riga : ${ricetta.ricettaIngredienti}">
                         <i class="fas fa-star star-icon"></i> 
                         <span th:text="${riga.quantita} + ' ' + ${riga.unita}">200 g</span>
                         <span> di </span>
                         <strong th:text="${riga.ingrediente.nome}" class="ingredient-name">Farina</strong>
                     </li>
                     
-                    <li th:if="${#lists.isEmpty(ricetta.ingredienti)}" style="font-style: italic; color: #666;">
+                    <li th:if="${#lists.isEmpty(ricetta.ricettaIngredienti)}" style="font-style: italic; color: #666;">
                         Nessun ingrediente specificato.
                     </li>
                 </ul>
@@ -246,7 +246,7 @@
        
         <div class="admin-actions-centered" 
              th:if="${currentUser != null} and (${ricetta.autore.id} == ${currentUser.id} or ${#authorization.expression('hasAuthority(''ADMIN'')')})">
-            <a th:href="@{'/ricetta/edit/' + ${ricetta.id}}" class="btn-gold">
+         <a th:href="@{/ricetta/{id}/edit(id=${ricetta.id})}" class="btn-gold">
                 <i class="fas fa-pencil-alt"></i> Modifica
             </a>
             <form th:action="@{'/ricetta/cancella/' + ${ricetta.id}}" method="POST" class="delete-form-inline">
