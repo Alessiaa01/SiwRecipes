@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import it.uniroma3.siw.model.Credentials;
 import it.uniroma3.siw.model.Recensione;
 import it.uniroma3.siw.model.Ricetta;
+import it.uniroma3.siw.model.RicettaIngrediente;
 import it.uniroma3.siw.model.Utente;
 import it.uniroma3.siw.service.CredentialsService;
 import it.uniroma3.siw.service.IngredienteService;
@@ -79,18 +80,62 @@ public class RicettaController {
 				model.addAttribute("listaIngredienti", this.ingredienteService.findAll());
 				return "formNewRicetta.html";
 			}
-			// In RicettaController.java
+			
+			
+			@PostMapping("/formNewRicetta2")
+		    public String formNewRicetta(@ModelAttribute("ricetta") Ricetta ricetta, Model model) {
+		        
+		        // 1. Recupero l'utente loggato dal Model 
+		       
+		        Utente utente = (Utente) model.getAttribute("currentUser");
+
+		        // 2. Controllo se è una MODIFICA o un NUOVO inserimento
+		        if (ricetta.getId() != null) {
+		            // --- MODIFICA ---
+		            // Recupero la ricetta vecchia per non perdere i dati sensibili
+		            Ricetta ricettaEsistente = this.ricettaService.findById(ricetta.getId());
+		            
+		            // Re-imposto i dati che il form non invia (e che quindi sarebbero null)
+		            ricetta.setAutore(ricettaEsistente.getAutore());
+		           // ricetta.setUtentiCheHannoSalvato(ricettaEsistente.getUtentiCheHannoSalvato());
+		            ricetta.setDataInserimento(ricettaEsistente.getDataInserimento());
+		        } else {
+		            // --- NUOVA RICETTA ---
+		            if (utente != null) {
+		                ricetta.setAutore(utente); // Il cuoco è l'utente loggato
+		            }
+		            ricetta.setDataInserimento(LocalDate.now()); // La data è oggi
+		        }
+		        
+		        // 3. Gestione della lista ingredienti (RicettaIngrediente)
+		        if (ricetta.getRicettaIngredienti() != null) {
+		            
+		            // A. Pulizia: rimuovo le righe vuote se l'utente non ha scelto l'ingrediente
+		            // (Uso un iteratore o removeIf per evitare errori durante il ciclo)
+		            ricetta.getRicettaIngredienti().removeIf(riga -> riga.getIngrediente() == null);
+		            
+		            // B. Associazione Bidirezionale: Dico a ogni riga: "La tua ricetta è QUESTA qui"
+		            for (RicettaIngrediente riga : ricetta.getRicettaIngredienti()) {
+		                riga.setRicetta(ricetta);
+		            }
+		        }
+
+		        // 4. Salvataggio finale tramite il Service
+		        Ricetta nuovaricetta = this.ricettaService.save(ricetta);
+		        
+		        // 5. Redirect alla pagina di dettaglio
+		        return "redirect:/ricetta/" + nuovaricetta.getId();
+		    }
 
 			@PostMapping("/ricetta")
 			public String newRicetta(@Valid @ModelAttribute("ricetta") Ricetta ricetta,
 			                         BindingResult bindingResult,
-			                         // RIMOSSO: @ModelAttribute("currentUser") Utente currentUser
 			                         Model model,
 			                         @RequestParam(value = "ingredienteIds", required = false) List<Long> ingredienteIds,
 			                         @RequestParam(value = "quantitaIng", required = false) List<Integer> quantitaIng,
 			                         @RequestParam(required = false) List<String> unitaIng) {
 
-			    // 1. Recupero l'utente VERO dal model (messo dal ControllerAdvice)
+		
 			    Utente currentUser = (Utente) model.getAttribute("currentUser");
 
 			    // Validazione

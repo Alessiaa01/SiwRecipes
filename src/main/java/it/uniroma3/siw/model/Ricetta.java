@@ -48,7 +48,7 @@ public class Ricetta {
 	private LocalDate dataInserimento;
 	
 	@OneToMany(mappedBy ="ricetta", cascade = CascadeType.ALL)
-    private List<RicettaIngrediente> ingredienti = new ArrayList<>();
+    private List<RicettaIngrediente> ricettaIngredienti = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "ricetta")
     private List<Recensione> recensioni;
@@ -61,7 +61,7 @@ public class Ricetta {
 	
 	//COSTRUTTORE
 		public Ricetta() {
-			this.ingredienti = new ArrayList<>();
+			this.ricettaIngredienti = new ArrayList<>();
 		}
 
 //METODI GETTER E SETTER 
@@ -156,12 +156,12 @@ public void setDataInserimento(LocalDate dataDiInserimento) {
 	this.dataInserimento = dataDiInserimento;
 }
 
-public List<RicettaIngrediente> getIngredienti() {
-	return ingredienti;
+public List<RicettaIngrediente> getRicettaIngredienti() {
+	return ricettaIngredienti;
 }
 
-public void setIngredienti(List<RicettaIngrediente> ingredienti) {
-	this.ingredienti = ingredienti;
+public void setIngredienti(List<RicettaIngrediente> ricettaIngredienti) {
+	this.ricettaIngredienti = ricettaIngredienti;
 }
 
 public Utente getAutore() {

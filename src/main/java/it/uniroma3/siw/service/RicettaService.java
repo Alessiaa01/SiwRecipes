@@ -28,13 +28,13 @@ public class RicettaService {
 
 	//Metodo base, salvataggio semplice. Solo se la ricetta è già compelta di tutto 
 	@Transactional
-	public void save(Ricetta ricetta) {
-		this.ricettaRepository.save(ricetta);
+	public Ricetta save(Ricetta ricetta) {
+		return this.ricettaRepository.save(ricetta);
 	}
 	
 	//Metodo++
 	//Gestisce l'associazione con l'autore e fissa i collegamenti degli ingredienti 
-	
+	/*
 	@Transactional
 	public Ricetta saveRicetta(Ricetta ricetta, Utente autore) {
 		
@@ -50,8 +50,8 @@ public class RicettaService {
 		// Quando arrivano dal form, gli oggetti RicettaIngrediente sono "orfani".
 		// Sanno la quantità, ma il campo "ricetta" dentro di loro è null.
 		// Dobbiamo dire a ogni riga: "Ehi, la tua ricetta padre è QUESTA qui".
-		if (ricetta.getIngredienti() != null) {
-			for (RicettaIngrediente riga : ricetta.getIngredienti()) {
+		if (ricetta.getricettaIngredienti() != null) {
+			for (RicettaIngrediente riga : ricetta.getricettaIngredienti()) {
 				riga.setRicetta(ricetta); // <--- SENZA QUESTO, IL DB NON SALVA IL COLLEGAMENTO
 			}
 		}
@@ -59,7 +59,7 @@ public class RicettaService {
 		// 4. Salvo tutto (grazie al CascadeType.ALL salverà anche gli ingredienti)
 		return this.ricettaRepository.save(ricetta);
 	}
-	
+	*/
 	public Ricetta findById(Long id) {
 		return ricettaRepository.findById(id).orElse(null);
 	}
