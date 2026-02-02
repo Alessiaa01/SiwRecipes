@@ -1,20 +1,18 @@
 package it.uniroma3.siw.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import it.uniroma3.siw.model.Credentials;
 import it.uniroma3.siw.model.Utente;
-import it.uniroma3.siw.model.Utente;
 import it.uniroma3.siw.service.CredentialsService;
+import it.uniroma3.siw.service.RicettaService;
 import it.uniroma3.siw.service.UtenteService;
 import jakarta.validation.Valid;
 
@@ -25,7 +23,10 @@ public class AuthenticationController {
 	private CredentialsService credentialsService;
     
     @Autowired
-	private UtenteService utenteService; // Assicurati di avere questo service
+	private UtenteService utenteService; 
+    
+    @Autowired
+    private RicettaService ricettaService;
 
 	// MOSTRA PAGINA DI LOGIN
 	@GetMapping(value = "/login") 
@@ -79,6 +80,35 @@ public String defaultAfterLogin() {
 	    // Questo indirizza alla cartella templates/admin/indexAdmin.html
 	    return "admin/indiceAdmin";
 	}
+	
+	//Pagina per gestire gli utenti(solo Admin)
+		@GetMapping("/admin/manageUtenti")
+	    public String manageUsers(Model model) {
+	        model.addAttribute("credentialsLista", this.credentialsService.getAllCredentials());
+	        return "admin/manageUtenti"; 
+	    }
+		
+		@GetMapping("/admin/manageRicette")
+		public String manageRecipes(Model model) {
+		    // Carica le ricette dal database
+		    model.addAttribute("ricette", this.ricettaService.findAll()); 
+		    
+		    return "admin/manageRicette.html"; 
+		}
+		
+		//Azione per bannare un utente 
+		@PostMapping("/admin/manageUtenti/{username}/ban")
+	    public String banUser(@PathVariable("username") String username) {
+	        this.credentialsService.lockCredentials(username);
+	        return "redirect:/admin/manageUtenti";
+	    }
+		
+		//Azione per riabilitare un utente 
+		@PostMapping("/admin/manageUtenti/{username}/unban")
+	    public String unbanUser(@PathVariable("username") String username) {
+	        this.credentialsService.unlockCredentials(username);
+	        return "redirect:/admin/manageUtenti";
+	    }
 	
 	
 }

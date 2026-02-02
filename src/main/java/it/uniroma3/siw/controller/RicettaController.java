@@ -62,7 +62,6 @@ public class RicettaController {
 		return "formSearchRicetta.html";
 	}
 	
-
 		
 	@PostMapping("/searchRicetta")
 	public String searchRicette(Model model, @RequestParam String titolo) {
@@ -85,48 +84,40 @@ public class RicettaController {
 			@PostMapping("/ricetta")
 			public String newRicetta(@Valid @ModelAttribute("ricetta") Ricetta ricetta,
 			                         BindingResult bindingResult,
-			                         @ModelAttribute("currentUser") Utente currentUser, 
+			                         // RIMOSSO: @ModelAttribute("currentUser") Utente currentUser
 			                         Model model,
-			                         // --- 1. AGGIUNGI QUESTI PARAMETRI PER RICEVERE GLI INGREDIENTI ---
 			                         @RequestParam(value = "ingredienteIds", required = false) List<Long> ingredienteIds,
 			                         @RequestParam(value = "quantitaIng", required = false) List<Integer> quantitaIng,
 			                         @RequestParam(required = false) List<String> unitaIng) {
-			    
-			    // Se ci sono errori (es titolo vuoto), ricarica il form
+
+			    // 1. Recupero l'utente VERO dal model (messo dal ControllerAdvice)
+			    Utente currentUser = (Utente) model.getAttribute("currentUser");
+
+			    // Validazione
 			    if (bindingResult.hasErrors()) {
-			        // Importante: se c'è errore, dobbiamo ricaricare la lista ingredienti per la select
 			        model.addAttribute("listaIngredienti", this.ingredienteService.findAll());
-			        return "formNewRicetta.html";
+			        return "formNewRicetta.html"; // Controlla il percorso se è sotto admin/
 			    }
 
-			    // 2. Salvataggio della Ricetta Base (crea l'ID e collega l'autore)
+			    // 2. Salvataggio Base
 			    if (currentUser != null) {
-			    	ricetta.setDataInserimento(LocalDate.now());
-			        this.ricettaService.saveRicetta(ricetta, currentUser);
+			        ricetta.setAutore(currentUser); // Qui currentUser ha l'ID corretto!
+			        ricetta.setDataInserimento(LocalDate.now());
+			        this.ricettaService.save(ricetta); // Usa save generico o saveRicetta
 			    }
-			    
-			    // 3. ORA SALVIAMO GLI INGREDIENTI (Se ce ne sono)
-			 // Salvataggio Ingredienti CON UNITA'
-			    if (ingredienteIds != null && quantitaIng != null && unitaIng != null) {
+
+			    // 3. Salvataggio Ingredienti
+			    if (ingredienteIds != null) {
 			        for (int i = 0; i < ingredienteIds.size(); i++) {
-			            // Nota: devi aggiornare anche questo metodo nel Service!
 			            this.ricettaService.addIngrediente(ricetta, ingredienteIds.get(i), quantitaIng.get(i), unitaIng.get(i));
 			        }
 			    }
 
 			    return "redirect:/ricetta/" + ricetta.getId();
 			}
+			
+			
 	
-	//mie ricette
-	@GetMapping("/myRecipes")
-	public String manageMyRecipes(Model model, @ModelAttribute("currentUser") Utente currentUser) {
-		// Recupero solo le ricette dell'autore loggato
-		if (currentUser != null) {
-			model.addAttribute("ricette", this.ricettaService.findByAutore(currentUser));
-		}
-		return "myRecipes.html"; 
-		
-	}
 	
 	//---ACCESSO ADMIN---
 	// Lista Ricette per Admin (Tabella gestione)

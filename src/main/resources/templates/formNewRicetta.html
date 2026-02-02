@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuova Ricetta - Disney RecipeBook</title>
+    <title th:text="${ricetta.id != null} ? 'Modifica Ricetta' : 'Nuova Ricetta'">Ricetta</title>
     
     <link rel="stylesheet" th:href="@{/css/formNewRicetta.css}" />
     <link rel="stylesheet" th:href="@{/css/stile.css}" />
@@ -15,58 +15,53 @@
 
     <div class="magic-background"></div>
 
-	<header class="main-header">
-	       <div class="header-content-wrapper">
-	           <div class="header-left">
-	               <a th:href="@{/}" class="btn-gold">
-	                   <i class="fa-solid fa-house-chimney"></i> Home
-	               </a>
-	               
-	               <div sec:authorize="hasAuthority('ADMIN')">
-	                   <a th:href="@{/admin/index}" class="btn-gold">
-	                       <i class="fa-solid fa-crown"></i> Gestione Admin
-	                   </a>
-	               </div>
-	               
-	               <div sec:authorize="hasAuthority('DEFAULT')">
-	                   <a th:href="@{/user/profile}" class="btn-gold">
-	                       <i class="fa-solid fa-user-gear"></i> Gestione Profilo
-	                   </a>
-	               </div>
-	           </div>
-	           
-	           <div class="header-right">
-	                <div sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap:10px;">
-					<span class="header-text">
-					                   <i class="fa-solid fa-user"></i>
-					                        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
-					                    </span>
-	                   
-	                   <form th:action="@{/logout}" method="post" style="margin: 0;">
-	                       <button type="submit" class="btn-logout">
-	                           Logout <i class="fa-solid fa-right-from-bracket"></i>
-	                       </button>
-	                   </form>
-	               </div>
-	               
-	               <div sec:authorize="!isAuthenticated()" class="guest-actions" style="display:flex; align-items:center; gap:10px;">
-	                   <span class="welcome-text">Benvenuto!</span>
-	                   <a th:href="@{/login}" class="btn-gold">Accedi</a>
-	                   <a th:href="@{/registrazione}" class="btn-gold">Registrati</a>
-	               </div>
-	           </div>
-	       </div>
-	   </header>
+    <header class="main-header">
+           <div class="header-content-wrapper">
+               <div class="header-left">
+                   <a th:href="@{/}" class="btn-gold">
+                       <i class="fa-solid fa-house-chimney"></i> Home
+                   </a>
+                   
+                   <div sec:authorize="hasAuthority('ADMIN')">
+                       <a th:href="@{/admin}" class="btn-gold">
+                           <i class="fa-solid fa-crown"></i> Gestione Admin
+                       </a>
+                   </div>
+               </div>
+               
+               <div class="header-right">
+                    <div sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap:10px;">
+                    <span class="header-text">
+                        <i class="fa-solid fa-user"></i>
+                        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+                    </span>
+                       
+                       <form th:action="@{/logout}" method="post" style="margin: 0;">
+                           <button type="submit" class="btn-logout">
+                               Logout <i class="fa-solid fa-right-from-bracket"></i>
+                           </button>
+                       </form>
+                   </div>
+               </div>
+           </div>
+       </header>
 
     <div class="single-recipe-card">
         
         <div class="form-title">
-            <h1><i class="fas fa-feather-alt"></i> Crea Nuova Ricetta</h1>
+            <h1 th:if="${ricetta.id == null}"><i class="fas fa-feather-alt"></i> Crea Nuova Ricetta</h1>
+            <h1 th:if="${ricetta.id != null}"><i class="fas fa-pen-nib"></i> Modifica Ricetta</h1>
+            
             <p style="text-align:center; color: #666; font-size: 0.9em;">Compila i dettagli e aggiungi gli ingredienti </p>
         </div>
 
-        <form th:action="@{/ricetta}" th:object="${ricetta}" method="POST" id="newRecipeForm">
+        <form th:action="@{${ricetta.id != null} ? '/admin/ricetta/update/' + ${ricetta.id} : '/ricetta'}" 
+              th:object="${ricetta}" 
+              method="POST" 
+              id="newRecipeForm">
             
+            <input type="hidden" th:field="*{id}" />
+
             <div th:if="${#fields.hasGlobalErrors()}" class="error-banner">
                 <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
             </div>
@@ -119,7 +114,6 @@
                 </label>
                 
                 <div class="checkbox-wrapper">
-                    
                     <label class="magic-checkbox-label checkbox-veg">
                         <input type="checkbox" value="Vegetariano" th:field="*{tags}"> 
                         <i class="fas fa-carrot"></i> <span>Vegetariano</span>
@@ -139,7 +133,6 @@
                         <input type="checkbox" value="Senza Lattosio" th:field="*{tags}"> 
                         <i class="fas fa-cheese"></i> <span>Senza Lattosio</span>
                     </label>
-                    
                 </div>
             </div>
 
@@ -170,12 +163,31 @@
                     </div>
 
                     <ul id="listaVisiva" class="temp-list">
+                        <li th:each="ingRic : ${ricetta.ingredienti}" 
+                            th:if="${ricetta.id != null}"
+                            th:attr="data-ref-id='existing_server_' + ${ingRic.ingrediente.id}"> <span>
+                                <i class="fas fa-leaf" style="color:#4CAF50; margin-right:5px;"></i> 
+                                <b th:text="${ingRic.ingrediente.nome}">Farina</b> 
+                                <span style="color:#666;" th:text="|(${ingRic.quantita} ${ingRic.unita})|">(100 gr)</span>
+                            </span> 
+                            <i class="fas fa-trash-alt btn-remove" onclick="rimuovi(this)" title="Rimuovi"></i>
+                        </li>
+
                         <li th:if="${#lists.isEmpty(listaIngredienti)}" style="color: #999; justify-content: center; font-style: italic; background:none; border:none;">
                             (Assicurati che la dispensa non sia vuota!)
                         </li>
                     </ul>
                     
-                    <div id="hiddenInputs"></div>
+                    <div id="hiddenInputs">
+                        <div th:each="ingRic : ${ricetta.ingredienti}" 
+                             th:if="${ricetta.id != null}"
+                             th:id="'existing_server_' + ${ingRic.ingrediente.id}">
+                             
+                             <input type="hidden" name="ingredienteIds" th:value="${ingRic.ingrediente.id}">
+                             <input type="hidden" name="quantitaIng" th:value="${ingRic.quantita}">
+                             <input type="hidden" name="unitaIng" th:value="${ingRic.unita}">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -199,12 +211,8 @@
             </div>
 
             <div class="footer-buttons">
-                <p style="width:100%; text-align:center; margin-bottom:10px; font-size: 0.9rem; color:#666;">
-                 
-                </p>
-                
                 <button type="submit" class="btn-gold">Salva</button>
-                <a th:href="@{/index}" class="btn-logout">Annulla</a>
+                <a th:href="@{/ricette}" class="btn-logout">Annulla</a>
             </div>
 
         </form>
@@ -252,6 +260,7 @@
                 return;
             }
 
+            // Aggiungi visuale
             var li = document.createElement("li");
             li.innerHTML = `
                 <span><i class="fas fa-leaf" style="color:#4CAF50; margin-right:5px;"></i> 
@@ -260,6 +269,7 @@
             `;
             document.getElementById("listaVisiva").appendChild(li);
 
+            // Aggiungi hidden input
             var hiddenDiv = document.createElement("div");
             
             var inputId = document.createElement("input");
@@ -283,21 +293,33 @@
             
             document.getElementById("hiddenInputs").appendChild(hiddenDiv);
 
+            // Reset campi
             document.getElementById("ingSearchInput").value = "";
             document.getElementById("ingQty").value = "";
             document.getElementById("ingSearchInput").focus();
             
+            // Collega il li al div nascosto tramite ID univoco
             li.dataset.refId = hiddenDiv.id = "hidden_" + Math.random().toString(36).substr(2, 9);
         }
 
         function rimuovi(elementoIcona) {
             var li = elementoIcona.parentNode;
-            var hiddenDivId = li.dataset.refId;
-            var hiddenDiv = document.getElementById(hiddenDivId);
-            if(hiddenDiv) hiddenDiv.remove();
+            
+            // Se l'elemento ha un data-ref-id (generato da JS o da Thymeleaf), cerchiamo il div nascosto corrispondente
+            var hiddenDivId = li.dataset.refId; // Per quelli JS
+            if(!hiddenDivId) {
+                hiddenDivId = li.getAttribute("data-ref-id"); // Per quelli Thymeleaf (server)
+            }
+
+            if(hiddenDivId) {
+                var hiddenDiv = document.getElementById(hiddenDivId);
+                if(hiddenDiv) hiddenDiv.remove();
+            }
+            
             li.remove();
         }
         
+        // Esegui anteprima al caricamento (per l'edit)
         updatePreview();
     </script>
 </body>

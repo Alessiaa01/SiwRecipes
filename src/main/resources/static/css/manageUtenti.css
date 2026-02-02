@@ -1,0 +1,137 @@
+/* ========================================================== */
+/* GESTIONE UTENTI - STILE COERENTE CON IL REGISTRO           */
+/* ========================================================== */
+
+:root {
+    --celeste-bg: #E1F5FE;       
+    --marrone-dark: #5D4037;
+    --marrone-text: #4E342E;
+    --oro: #C5A059;
+    --oro-shine: #E6C676;
+    --parchment: #fffbf0;
+    --shadow-card: 0 15px 35px rgba(78, 52, 46, 0.15);
+    
+    --font-title: 'Cinzel Decorative', cursive; 
+    --font-body: 'Cormorant Garamond', serif;   
+    --font-ui: 'Lato', sans-serif;              
+}
+
+/* --- 1. SETUP GENERALE & HEADER --- */
+body {
+    font-family: var(--font-body);
+    background-color: var(--celeste-bg);
+    background-image: linear-gradient(135deg, #E1F5FE 0%, #B3E5FC 100%);
+    background-attachment: fixed;
+    margin: 0;
+}
+
+header {
+    position: sticky; top: 0; z-index: 1000; 
+    background-color: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(10px); 
+    border-bottom: 1px solid rgba(197, 160, 89, 0.3); 
+    padding: 0.8rem 2rem;
+}
+
+.header-content-wrapper { display: flex; justify-content: space-between; align-items: center; }
+.header-left, .user-actions-right { display: flex; align-items: center; gap: 15px; }
+
+/* --- 2. BOTTONI HEADER (Home Oro, Logout Rosso) --- */
+.admin-link-header-left a {
+    background-image: linear-gradient(45deg, #C5A059 0%, #E6C676 50%, #C5A059 100%);
+    background-size: 200% auto; color: white !important;
+    font-family: var(--font-ui); font-weight: 700; text-transform: uppercase;
+    font-size: 0.85rem; padding: 8px 20px; border-radius: 50px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: 0.3s ease; text-decoration: none !important;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+}
+.admin-link-header-left a:hover { background-position: right center; transform: translateY(-2px); }
+
+.chef-name { font-family: var(--font-ui); font-weight: 700; color: var(--marrone-dark); }
+
+.btn-logout {
+    background-image: linear-gradient(45deg, #D32F2F 0%, #FF6B6B 50%, #D32F2F 100%);
+    background-size: 200% auto; color: white !important;
+    font-family: var(--font-ui); font-weight: 700; text-transform: uppercase;
+    font-size: 0.85rem; padding: 8px 20px; border-radius: 50px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: 0.3s ease; text-decoration: none !important;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+}
+.btn-logout:hover { background-position: right center; transform: translateY(-2px); }
+
+/* --- 3. TITOLO SEZIONE --- */
+.hero-section { text-align: center; padding: 3rem 1rem 1rem; }
+.main-title { font-family: var(--font-title); font-size: 3rem; color: var(--marrone-dark); text-shadow: 1px 1px 0 var(--oro); }
+
+/* --- 4. LA TABELLA MAGICA --- */
+.parchment-panel {
+    background-color: var(--parchment);
+    max-width: 1100px; margin: 0 auto;
+    border-radius: 15px; padding: 2.5rem;
+    box-shadow: var(--shadow-card);
+    border-top: 5px solid var(--oro);
+}
+
+.magic-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+
+/* Centratura Colonne di base */
+.magic-table th {
+    color: var(--oro); font-family: var(--font-ui); text-transform: uppercase;
+    padding: 12px; text-align: center; border-bottom: 2px solid rgba(197, 160, 89, 0.2);
+}
+
+.magic-table td {
+    background-color: rgba(255, 255, 255, 0.4);
+    padding: 15px; text-align: center; vertical-align: middle;
+    border-top: 1px solid rgba(197, 160, 89, 0.1);
+    border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+}
+
+/* --- ALLINEAMENTO A SINISTRA (Avatar e Username) --- */
+/* Prima colonna (Suddito) e Seconda colonna (Contatti) a sinistra */
+.magic-table th:nth-child(1), .magic-table td:nth-child(1),
+.magic-table th:nth-child(2), .magic-table td:nth-child(2) {
+    text-align: left !important;
+}
+.magic-table td:nth-child(1) { padding-left: 25px; }
+
+/* --- ELEMENTI INTERNI --- */
+
+.font-title { font-family: var(--font-body); font-weight: 700; font-size: 1.2rem; color: var(--marrone-dark); }
+
+/* Sottotitolo per Nome e Cognome */
+.sub-text {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 2px;
+}
+
+/* Badge Ruoli e Stato */
+.role-badge, .status-badge, .badge-banned {
+    padding: 5px 12px; border-radius: 50px; font-size: 0.75rem;
+    font-family: var(--font-ui); font-weight: 800; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 5px;
+}
+.badge-admin { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+.badge-user { background: #FFF3E0; color: #E65100; border: 1px solid #FFCC80; }
+.badge-active { background: #d4edda; color: #155724; }
+.badge-banned { background: #ffebee; color: #c62828; }
+
+/* Azioni Centrate */
+.action-buttons { justify-content: flex-end !important; }
+
+.btn-magic {
+    padding: 8px 16px; border-radius: 50px; border: none;
+    font-family: var(--font-ui); font-weight: 700; color: white;
+    cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-ban-magic { background: linear-gradient(135deg, #D32F2F, #FF6B6B); }
+.btn-unban-magic { background: linear-gradient(135deg, #00b09b, #96c93d); }
+.btn-magic:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+/* Arrotondamento Righe */
+.magic-table td:first-child { border-radius: 12px 0 0 12px; }
+.magic-table td:last-child { border-radius: 0 12px 12px 0; padding-right: 25px; }

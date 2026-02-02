@@ -23,7 +23,7 @@
                 </a>
                 
                 <div sec:authorize="hasAuthority('ADMIN')">
-                    <a th:href="@{/admin/index}" class="btn-gold">
+                    <a th:href="@{/admin/indiceAdmin}" class="btn-gold">
                         <i class="fa-solid fa-crown"></i> Gestione Admin
                     </a>
                 </div>
@@ -246,7 +246,7 @@
        
         <div class="admin-actions-centered" 
              th:if="${currentUser != null} and (${ricetta.autore.id} == ${currentUser.id} or ${#authorization.expression('hasAuthority(''ADMIN'')')})">
-            <a th:href="@{'/ricetta/modifica/' + ${ricetta.id}}" class="btn-gold">
+            <a th:href="@{'/ricetta/edit/' + ${ricetta.id}}" class="btn-gold">
                 <i class="fas fa-pencil-alt"></i> Modifica
             </a>
             <form th:action="@{'/ricetta/cancella/' + ${ricetta.id}}" method="POST" class="delete-form-inline">
