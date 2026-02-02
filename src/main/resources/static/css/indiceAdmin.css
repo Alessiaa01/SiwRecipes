@@ -1,72 +1,198 @@
 /* ========================================================== */
-/* ADMIN.CSS - Solo layout specifico della Dashboard          */
+/* INDEX ADMIN.CSS - Pannello di Controllo                    */
 /* ========================================================== */
 
-/* --- 1. GRIGLIA DASHBOARD --- */
+/* --- 1. VARIABILI & FONTS --- */
+:root {
+    --celeste-bg: #E1F5FE;       
+    --marrone-dark: rgb(100, 62, 41);
+    --marrone-text: #5D4037;
+    --oro: #C5A059;
+    --oro-light: #FFF8E1;        
+    --parchment: #fffbf0;   
+    
+    --font-title: 'Cinzel Decorative', cursive; 
+    --font-body: 'Cormorant Garamond', serif;   
+    --font-ui: 'Lato', sans-serif;              
+}
+
+/* --- 2. RESET & BODY --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-body);
+    font-weight: 500; 
+    background-color: var(--celeste-bg);
+    background-image: linear-gradient(to bottom, #E1F5FE 0%, #B3E5FC 100%);
+    background-attachment: fixed; 
+    color: var(--marrone-text);
+    min-height: 100vh;
+}
+
+a { text-decoration: none; transition: 0.3s; }
+
+/* --- 3. HEADER --- */
+header {
+    position: sticky; top: 0; z-index: 1000; 
+    background-color: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3); 
+    padding: 0.8rem 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.header-content-wrapper {
+    max-width: 100%; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+/* --- 4. TASTO HOME (Sinistra) --- */
+.btn-home-royal  {
+    background-image: linear-gradient(45deg, #C5A059 0%, #E6C676 50%, #C5A059 100%);
+    background-size: 200% auto; color: white !important;
+    font-family: var(--font-ui); font-weight: 700; text-transform: uppercase;
+    font-size: 0.85rem; padding: 8px 20px; border-radius: 50px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: 0.3s ease; text-decoration: none !important;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+}
+.btn-home-royal:hover {
+    background-position: right center; transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.5);
+}
+
+/* --- 5. UTENTE & LOGOUT (Destra) --- */
+.chef-name {
+    font-family: 'Lato', sans-serif; font-weight: 700;
+    color: #5D4037; font-size: 0.9rem;
+}
+
+/* Tasto Logout (Stile Rosso Gradient) */
+.btn-logout {
+    background-image: linear-gradient(45deg, #D32F2F 0%, #FF6B6B 50%, #D32F2F 100%);
+    background-size: 200% auto;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 8px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); 
+}
+
+.btn-logout:hover {
+    background-position: right center; transform: translateY(-2px); 
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.6); 
+}
+
+/* --- 6. LOGO & TITOLO --- */
+.logo-container {
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+}
+
+.main-logo {
+    max-height: 180px;
+    filter: drop-shadow(0 5px 15px rgba(78, 52, 46, 0.2));
+    animation: magicFloat 4s ease-in-out infinite;
+}
+
+@keyframes magicFloat {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.main-title {
+    font-family: var(--font-title);
+    color: var(--marrone-dark);
+    font-size: 3rem; 
+    text-shadow: 1px 1px 0px var(--oro);
+    margin-top: 10px;
+}
+
+/* --- 7. DASHBOARD GRID --- */
 .dashboard-container {
-    max-width: 1000px; 
+    max-width: 1100px; 
     margin: 2rem auto; 
     padding: 0 1.5rem 5rem;
     display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Card responsive */
+    /* Questa riga magica farà stare le 3 card affiancate se c'è spazio */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 3rem;
 }
 
-/* --- 2. DASHBOARD CARD (Stile Pergamena) --- */
+/* --- 8. DASHBOARD CARD --- */
 .dashboard-card {
-    background-color: #fffbf0; /* Pergamena */
+    background-color: var(--parchment);
+    background-image: linear-gradient(to bottom, #fffbf0 0%, #fff8e1 100%);
     border-radius: 15px;
-    padding: 3rem 1.5rem;
+    padding: 2.5rem 1.5rem;
     text-align: center;
     position: relative;
     overflow: hidden;
     
-    /* Cornice ed Effetto */
-    border: 1px solid rgba(197, 160, 89, 0.3); /* Oro */
-    box-shadow: 0 10px 25px rgba(78, 52, 46, 0.1);
+    /* Cornice Preziosa */
+    box-shadow: 
+        0 0 0 1px rgba(197, 160, 89, 0.3), 
+        0 10px 25px rgba(78, 52, 46, 0.1);
     
     transition: all 0.3s ease;
     display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-    min-height: 300px;
+    min-height: 280px;
 }
 
 .dashboard-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 40px rgba(197, 160, 89, 0.3);
-    border-color: #C5A059; /* Var oro */
+    box-shadow: 
+        0 0 0 2px var(--oro), 
+        0 20px 40px rgba(197, 160, 89, 0.3);
 }
 
-/* --- 3. ICONA E TESTI --- */
+/* Icona dentro la card */
 .dashboard-card .icon {
     font-size: 3.5rem;
-    color: rgb(100, 62, 41); /* Marrone */
+    color: var(--marrone-dark);
     margin-bottom: 1rem;
     display: block;
-    transition: 0.3s;
 }
-
-.dashboard-card:hover .icon {
-    color: #C5A059; /* Oro al passaggio del mouse */
-    transform: scale(1.1);
-}
+.dashboard-card:hover .icon { color: var(--oro); transform: scale(1.1); transition: 0.3s; }
 
 .dashboard-card h2 {
-    font-family: 'Cinzel Decorative', cursive; /* Var font-title */
-    color: rgb(100, 62, 41);
+    font-family: var(--font-title);
+    color: var(--marrone-dark);
     font-size: 1.8rem;
     margin-bottom: 0.5rem;
 }
 
 .dashboard-card p {
-    font-family: 'Cormorant Garamond', serif; /* Var font-body */
-    font-size: 1.2rem;
+    font-family: var(--font-body);
+    font-size: 1.1rem;
     color: #777;
     margin-bottom: 2rem;
-    line-height: 1.4;
 }
 
-/* Il bottone usa .btn-gold di stile.css, qui lo allarghiamo un po' */
-.dashboard-card .btn-gold {
-    width: 100%;
-    max-width: 200px;
+/* Bottone dentro la card */
+.dashboard-btn {
+    background-image: linear-gradient(45deg, #C5A059 0%, #E6C676 50%, #C5A059 100%);
+    background-size: 200% auto;
+    color: white !important;
+    font-family: 'Lato', sans-serif; font-weight: 700;
+    text-transform: uppercase; font-size: 0.8rem;
+    padding: 10px 20px; border-radius: 50px;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+    transition: all 0.3s ease; text-decoration: none;
+    border: none !important;
+}
+
+.dashboard-btn:hover {
+    background-position: right center; transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.5);
 }

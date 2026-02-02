@@ -73,4 +73,12 @@ public String defaultAfterLogin() {
 	public String index(Model model) {
 		return "redirect:/ricette"; // La nostra home vera è la lista ricette
 	}
+	
+	@GetMapping("/admin")
+	public String indexAdmin() {
+	    // Questo indirizza alla cartella templates/admin/indexAdmin.html
+	    return "admin/indiceAdmin";
+	}
+	
+	
 }

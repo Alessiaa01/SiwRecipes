@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Dispensa - Disney Admin</title>
+    
+    <link rel="stylesheet" th:href="@{/css/stile.css}" />
+    <link rel="stylesheet" th:href="@{/css/manageIngredienti.css}" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="magic-background-layer"></div>
+
+    <header class="main-header">
+        <div class="header-content-wrapper">
+            
+            <div class="header-left">
+                <a th:href="@{/}" class="btn-gold" style="margin-right: 10px;">
+                    <i class="fa-solid fa-house-chimney"></i> Home
+                </a>
+                
+                <a th:href="@{/admin}" class="btn-gold">
+                    <i class="fa-solid fa-crown"></i> Gestione Admin
+                </a>
+            </div>
+            
+            <div class="header-right">
+                <div sec:authorize="isAuthenticated()" class="user-profile" style="display:flex; align-items:center; gap:15px;">
+                   
+
+					<span th:if="${currentUser != null}" class="chef-name" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+					    <i class="fa-solid fa-crown" style="color: #C5A059;"></i>
+					    <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Admin</span>
+					</span>
+                   
+                   <form th:action="@{/logout}" method="post" style="margin: 0;">
+                       <button type="submit" class="btn-logout">
+                           Logout <i class="fa-solid fa-right-from-bracket"></i>
+                       </button>
+                   </form>
+               </div>
+            </div>
+
+        </div>
+    </header>
+
+    <div class="enchanted-container"> 
+        <div class="recipe-book-card">
+            <div class="card-content-wrapper">
+                
+                <div class="header-decoration">
+                    <a th:href="@{/admin}"><img th:src="@{/images/logo2 copia.png}" class="main-logo" alt="Logo"></a>
+                    <h1 class="title-main">Registro della Dispensa</h1>
+                    <span class="subtitle-script">Aggiungi o Rimuovi Ingredienti</span>
+                </div>
+
+                <div th:if="${messaggioErrore}" class="error-banner" style="background:#FFEBEE; color:#b71c1c; padding:15px; border-radius:8px; text-align:center; margin-bottom:20px; border:1px solid #ffcdd2;">
+                    <i class="fas fa-exclamation-triangle"></i> <span th:text="${messaggioErrore}">Errore</span>
+                </div>
+
+				<div class="form-section">
+				    <form th:action="@{/admin/ingrediente}" th:object="${ingrediente}" method="POST">
+				        
+				        <div class="magic-field">
+				            <label>Nuovo Ingrediente</label>
+				            
+				            <div class="input-group-row">
+				                
+				                <div class="field-wrapper">
+				                    <i class="fas fa-leaf input-icon"></i>
+				                    <input type="text" th:field="*{nome}" class="form-control" placeholder="Es. Farina..." required />
+				                </div>
+
+				                <button type="submit" class="btn-gold btn-inline">
+				                    <i class="fas fa-plus"></i> Aggiungi
+				                </button>
+				            
+				            </div>
+
+				            <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" 
+				                  style="color: #ef5350; font-size: 0.85rem; font-weight: 600; margin-top: 5px; display: block;">
+				            </span>
+				        </div>
+
+				    </form>
+				    
+		
+				</div>
+
+                <div class="existing-list">
+                    <h3><i class="fas fa-clipboard-list" style="color:#C5A059;"></i> Ingredienti Attuali</h3>
+                    
+                    <div th:if="${listaIngredienti.isEmpty()}" style="text-align:center; color:#999; font-style:italic; margin-top: 20px;">
+                        Il registro è vuoto. Aggiungi il primo ingrediente!
+                    </div>
+
+                    <div class="scroll-container" th:if="${!listaIngredienti.isEmpty()}">
+                        <div class="ing-grid">
+                            
+                            <div th:each="ing : ${listaIngredienti}" class="ing-row-item">
+                                <div class="ing-info">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span th:text="${ing.nome}">Farina</span>
+                                </div>
+                                
+                                <a th:href="@{'/admin/ingrediente/delete/' + ${ing.id}}" 
+                                   class="btn-delete" 
+                                   title="Elimina Ingrediente"
+                                   onclick="return confirm('Sei sicuro di voler eliminare questo ingrediente?');">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

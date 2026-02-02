@@ -1,0 +1,186 @@
+/* ========================================================== */
+/* MANAGE INGREDIENTI - Usa Header Globale + Card Grande      */
+/* ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&family=Rouge+Script&display=swap');
+
+:root {
+    --celeste-bg: #E1F5FE;       
+    --marrone-dark: #5D4037;
+    --marrone-text: #4E342E;
+    --oro: #C5A059;
+    --parchment: #fffbf0;
+    --red-delete: #ef5350;
+    --shadow-card: 0 15px 35px rgba(78, 52, 46, 0.15);
+    
+    --font-title: 'Cinzel Decorative', cursive; 
+    --font-ui: 'Lato', sans-serif;
+    --font-script: 'Rouge Script', cursive;
+}
+
+* { box-sizing: border-box; }
+
+/* --- 1. BODY --- */
+body {
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+    margin: 0;
+    
+    /* IMPORTANTE: Diamo spazio sopra affinché l'header globale 
+       (che è fisso/trasparente) non copra la card */
+    padding-top: 120px; 
+    padding-bottom: 40px;
+    display: block; 
+}
+
+.magic-background-layer {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--celeste-bg);
+    background-image: linear-gradient(135deg, #E1F5FE 0%, #B3E5FC 100%);
+    z-index: -1;
+}
+
+/* NOTA: Ho rimosso le classi .main-header da qui. 
+   Verranno prese automaticamente da stile.css */
+
+/* --- 2. CARD REGISTRO --- */
+.enchanted-container {
+    width: 100%;
+    max-width: 900px; 
+    margin: 0 auto; /* Centra orizzontalmente */
+    z-index: 10;
+    position: relative;
+}
+
+.recipe-book-card {
+    background-color: var(--parchment);
+    border-radius: 15px;
+    box-shadow: var(--shadow-card), 0 0 0 1px rgba(197, 160, 89, 0.3);
+    border-top: 5px solid var(--oro);
+    padding-bottom: 20px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.card-content-wrapper { padding: 3rem; }
+
+/* Header Interno (Logo e Titolo della Card) */
+.header-decoration { text-align: center; margin-bottom: 3rem; }
+.main-logo {
+    max-height: 110px; width: auto; margin-bottom: 1rem;
+    animation: magicFloat 4s ease-in-out infinite;
+}
+@keyframes magicFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+.title-main { font-family: var(--font-title); color: var(--marrone-dark); font-size: 2.5rem; margin: 0; }
+.subtitle-script { font-family: var(--font-script); font-size: 2rem; color: var(--oro); margin-top: 5px; display: block; }
+
+/* --- 3. SEZIONE FORM --- */
+.form-section {
+    max-width: 500px; margin: 0 auto 40px auto; 
+}
+
+.magic-field label {
+    font-family: var(--font-ui); font-weight: 700; color: var(--marrone-dark);
+    font-size: 0.95rem; display: block; margin-bottom: 8px; text-transform: uppercase;
+}
+.field-wrapper { position: relative; }
+.input-icon { position: absolute; top: 50%; left: 20px; transform: translateY(-50%); color: var(--oro); z-index: 10; }
+.form-control {
+    width: 100%; background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid #e0e0e0; border-radius: 50px;
+    padding: 15px 15px 15px 50px;
+    font-family: var(--font-ui); color: var(--marrone-dark); font-size: 1.1rem;
+    outline: none; transition: 0.3s;
+}
+.form-control:focus { background-color: #fff; border-color: var(--oro); box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.2); }
+
+.royal-btn {
+    background: linear-gradient(90deg, #C5A059, #e6c676, #fff, #e6c676, #C5A059);
+    background-size: 200% auto; color: white; border: none; padding: 15px;
+    border-radius: 50px; width: 100%; font-family: var(--font-title); font-weight: 700;
+    font-size: 1.2rem; text-transform: uppercase; margin-top: 15px; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4); animation: shine 4s linear infinite;
+    transition: 0.3s;
+}
+.royal-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(197, 160, 89, 0.6); }
+@keyframes shine { to { background-position: 200% center; } }
+
+.btn-gold-outline { display: block; text-align: center; margin-top: 20px; color: #777; text-decoration: none; font-family: var(--font-ui); transition: 0.3s; }
+.btn-gold-outline:hover { color: var(--oro); }
+
+/* --- 4. LISTA INGREDIENTI --- */
+.existing-list {
+    margin-top: 40px;
+    border-top: 2px dashed rgba(197, 160, 89, 0.3);
+    padding-top: 30px;
+}
+.existing-list h3 { font-family: var(--font-title); text-align: center; color: var(--marrone-dark); margin-bottom: 20px; }
+
+.scroll-container {
+    max-height: 400px; 
+    overflow-y: auto;
+    padding-right: 10px;
+}
+.scroll-container::-webkit-scrollbar { width: 8px; }
+.scroll-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+.scroll-container::-webkit-scrollbar-thumb { background: #C5A059; border-radius: 4px; }
+
+.ing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.ing-row-item {
+    background: #fff;
+    border: 1px solid #e0d4b8;
+    border-radius: 12px;
+    padding: 10px 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+.ing-row-item:hover { transform: translateY(-2px); border-color: var(--oro); box-shadow: 0 4px 10px rgba(197,160,89,0.2); }
+
+.ing-info { display: flex; align-items: center; gap: 10px; font-family: var(--font-ui); font-weight: 600; color: #555; }
+.ing-info i { color: #4CAF50; }
+
+.btn-delete {
+    color: #e57373;
+    background: transparent; border: none; font-size: 1rem; cursor: pointer;
+    padding: 8px; border-radius: 50%; transition: 0.2s; display: flex; align-items: center;
+}
+.btn-delete:hover { background-color: #ffebee; color: #c62828; transform: scale(1.1); }
+
+/* --- STILE PER INPUT E BOTTONE AFFIANCATI --- */
+
+.input-group-row {
+    display: flex;        /* Mette gli elementi uno accanto all'altro */
+    align-items: center;  /* Li allinea verticalmente al centro */
+    gap: 10px;            /* Spazio tra input e bottone */
+    width: 100%;
+}
+
+/* Modifica specifica per il campo di input quando è in gruppo */
+.input-group-row .field-wrapper {
+    flex-grow: 1; /* L'input prende tutto lo spazio disponibile */
+}
+
+/* Modifica specifica per il bottone quando è accanto all'input */
+.btn-gold.btn-inline {
+    width: auto;          /* Non più 100% larghezza */
+    margin-top: 0;        /* Rimuove il margine sopra */
+    padding: 13px 25px;   /* Padding aggiustato per pareggiare l'altezza */
+    white-space: nowrap;  /* Evita che il testo vada a capo */
+    height: 100%;         /* Altezza consistente */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chef-name {
+    font-family: 'Lato', sans-serif; font-weight: 700;
+    color: #5D4037; font-size: 0.9rem;
+}
