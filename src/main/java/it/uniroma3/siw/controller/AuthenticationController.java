@@ -55,7 +55,7 @@ public String registerUser(@Valid @ModelAttribute("user") Utente utente,
 
 	if (!userBindingResult.hasErrors() && !credentialsBindingResult.hasErrors()) {
         // salva l'utente
-        utenteService.saveUtente(utente);//salva dati anagrafici
+        utenteService.save(utente);//salva dati anagrafici
         credentials.setUtente(utente);//collega credenziali all'utente
         credentialsService.saveCredentials(credentials); //salva le credenziali 
         model.addAttribute("utente", utente);

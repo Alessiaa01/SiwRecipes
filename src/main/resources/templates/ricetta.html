@@ -154,79 +154,22 @@
         </div>
 
         <div class="reviews-section">
-            <h2 class="reviews-title"><i class="fas fa-comments"></i> I Commenti</h2>
+    <h2 class="reviews-title"><i class="fas fa-comments"></i> I Commenti</h2>
 
-            <div th:if="${!ricetta.recensioni.empty}">
-                <div th:each="recensione : ${ricetta.recensioni}" class="review-card">
+    <div th:if="${!ricetta.recensioni.empty}">
+        <div th:each="recensione : ${ricetta.recensioni}" class="review-card">
+            
+            <div th:if="${recensioneDaModificare != null && recensioneDaModificare.id == recensione.id}">
+                <h3 class="edit-inline-title">Modifica la tua recensione</h3>
+                
+                <form th:action="@{'/recensione/modifica/' + ${recensione.id}}" 
+                      method="POST" 
+                      th:object="${recensioneDaModificare}" 
+                      class="form-magic">
                     
-                    <div th:if="${recensioneDaModificare != null && recensioneDaModificare.id == recensione.id}">
-                        <h3 class="edit-inline-title">Modifica la tua recensione</h3>
-                        <form th:action="@{'/recensione/aggiorna/' + ${recensione.id}}" method="POST" th:object="${recensioneDaModificare}" class="form-magic">
-                            <div class="row">
-                                <div class="form-row-title">
-                                    <input type="text" th:field="*{titolo}" required />
-                                </div>
-                                <div class="form-row-rating">
-                                    <select th:field="*{voto}" required>
-                                        <option value="5">5 ★★★★★</option>
-                                        <option value="4">4 ★★★★</option>
-                                        <option value="3">3 ★★★</option>
-                                        <option value="2">2 ★★</option>
-                                        <option value="1">1 ★</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <textarea th:field="*{testo}" rows="3" required></textarea>
-                            
-                            <div class="edit-actions-container">
-                                <button type="submit" class="btn-gold">Salva Modifiche</button>
-                                <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="btn-logout" style="min-width: auto;">Annulla</a>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div th:unless="${recensioneDaModificare != null && recensioneDaModificare.id == recensione.id}">
-                        <div class="review-header">
-                            <span><i class="fas fa-user"></i> <span th:text="${recensione.autore.nome}">Nome</span></span>
-                            <span class="review-stars">
-                                <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, recensione.voto)}"></i>
-                            </span>
-                        </div>
-                        <strong th:text="${recensione.titolo}" class="review-title-text">Titolo</strong>
-                        <p th:text="${recensione.testo}" class="review-body-text">Testo...</p>
-
-                        <div class="review-actions" 
-                             th:if="${currentUser != null} and (${recensione.autore.id} == ${currentUser.id} or ${#authorization.expression('hasAuthority(''ADMIN'')')})">
-                             
-                            <a th:if="${recensione.autore.id} == ${currentUser.id}"
-                               th:href="@{'/recensione/modifica/' + ${recensione.id}}" 
-                               class="btn-gold" style="min-width: 100px; height: 36px; font-size: 0.75rem;">
-                               <i class="fas fa-edit"></i> Modifica
-                            </a>
-                            
-                            <a th:href="@{'/recensione/cancella/' + ${recensione.id}}" 
-                               onclick="return confirm('Cancellare questa recensione?');"
-                               class="btn-logout" style="min-width: 100px; height: 36px; font-size: 0.75rem;">
-                               <i class="fas fa-trash"></i> Cancella
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div th:if="${ricetta.recensioni.empty}" class="empty-reviews-msg">
-                <p>Nessuna recensione presente. Sii il primo a commentare!</p>
-            </div>
-
-            <div sec:authorize="isAuthenticated()" th:if="${recensioneDaModificare == null}" class="new-review-box">
-                <h3>Lascia la tua opinione</h3>
-                <form th:action="@{'/ricetta/' + ${ricetta.id} + '/recensione'}" method="POST" th:object="${nuovaRecensione}" class="form-magic">
-                    <div th:if="${#fields.hasGlobalErrors()}" class="error-global">
-                        <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
-                    </div>
                     <div class="row">
                         <div class="form-row-title">
-                            <input type="text" th:field="*{titolo}" placeholder="Titolo della recensione..." required />
+                            <input type="text" th:field="*{titolo}" required />
                         </div>
                         <div class="form-row-rating">
                             <select th:field="*{voto}" required>
@@ -238,23 +181,97 @@
                             </select>
                         </div>
                     </div>
-                    <span th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}" class="error-field"></span>
                     
-                    <textarea th:field="*{testo}" rows="3" placeholder="Raccontaci la tua esperienza..." required></textarea>
-                    <span th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}" class="error-field"></span>
-
-                    <div class="form-magic" style="display:flex; justify-content:center;">
-                        <button type="submit" class="btn-gold">
-                            <i class="fas fa-feather-pointed"></i> Pubblica Recensione
-                        </button>
+                    <textarea th:field="*{testo}" rows="3" required></textarea>
+                    
+                    <div class="edit-actions-container" style="margin-top: 10px;">
+                        <button type="submit" class="btn-gold">Salva Modifiche</button>
+                        <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="btn-logout" style="min-width: auto;">Annulla</a>
                     </div>
                 </form>
             </div>
 
-            <div sec:authorize="!isAuthenticated()" class="guest-msg-container">
-                <p><em><a href="/login" class="link-accedi-gold">Accedi</a> per lasciare una recensione.</em></p>
+            <div th:unless="${recensioneDaModificare != null && recensioneDaModificare.id == recensione.id}">
+                
+                <div class="review-header">
+                    <span><i class="fas fa-user"></i> <span th:text="${recensione.autore.nome}">Nome</span></span>
+                    <span class="review-stars">
+                        <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, recensione.voto)}"></i>
+                    </span>
+                </div>
+                
+                <strong th:text="${recensione.titolo}" class="review-title-text">Titolo</strong>
+                <p th:text="${recensione.testo}" class="review-body-text">Testo...</p>
+
+                <div class="review-actions" 
+                     th:if="${currentUser != null} and (${recensione.autore.id} == ${currentUser.id} or ${credentials.ruolo == 'ADMIN'})">
+                     
+                     <a th:if="${recensione.autore.id} == ${currentUser.id}"
+                        th:href="@{'/recensione/modifica/' + ${recensione.id}}" 
+                        class="btn-gold" 
+                        style="min-width: 100px; height: 36px; font-size: 0.75rem; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
+                        <i class="fas fa-edit"></i>&nbsp;Modifica
+                     </a>
+
+                     <form th:action="@{'/ricetta/' + ${ricetta.id} + '/recensione/' + ${recensione.id} + '/delete'}" 
+                           method="POST" 
+                           style="display:inline;">
+                         
+                         <button type="submit" 
+                                 onclick="return confirm('Cancellare questa recensione?');"
+                                 class="btn-logout" 
+                                 style="min-width: 100px; height: 36px; font-size: 0.75rem; cursor: pointer;">
+                             <i class="fas fa-trash"></i> Cancella
+                         </button>
+                     </form>
+                </div>
             </div>
         </div>
+    </div>
+
+    <div th:if="${ricetta.recensioni.empty}" class="empty-reviews-msg">
+        <p>Nessuna recensione presente. Sii il primo a commentare!</p>
+    </div>
+
+    <div sec:authorize="isAuthenticated()" th:if="${recensioneDaModificare == null}" class="new-review-box">
+        <h3>Lascia la tua opinione</h3>
+        <form th:action="@{'/ricetta/' + ${ricetta.id} + '/recensione'}" method="POST" th:object="${nuovaRecensione}" class="form-magic">
+            
+            <div th:if="${#fields.hasGlobalErrors()}" class="error-global">
+                <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+            </div>
+            
+            <div class="row">
+                <div class="form-row-title">
+                    <input type="text" th:field="*{titolo}" placeholder="Titolo della recensione..." required />
+                </div>
+                <div class="form-row-rating">
+                    <select th:field="*{voto}" required>
+                        <option value="5">5 ★★★★★</option>
+                        <option value="4">4 ★★★★</option>
+                        <option value="3">3 ★★★</option>
+                        <option value="2">2 ★★</option>
+                        <option value="1">1 ★</option>
+                    </select>
+                </div>
+            </div>
+            <span th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}" class="error-field"></span>
+            
+            <textarea th:field="*{testo}" rows="3" placeholder="Raccontaci la tua esperienza..." required></textarea>
+            <span th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}" class="error-field"></span>
+
+            <div class="form-magic" style="display:flex; justify-content:center;">
+                <button type="submit" class="btn-gold">
+                    <i class="fas fa-feather-pointed"></i> Pubblica Recensione
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div sec:authorize="!isAuthenticated()" class="guest-msg-container">
+        <p><em><a href="/login" class="link-accedi-gold">Accedi</a> per lasciare una recensione.</em></p>
+    </div>
+</div>
        
         <div class="admin-actions-centered" 
              th:if="${currentUser != null} and (${ricetta.autore.id} == ${currentUser.id} or ${#authorization.expression('hasAuthority(''ADMIN'')')})">

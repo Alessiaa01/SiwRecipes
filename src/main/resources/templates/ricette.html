@@ -7,7 +7,6 @@
     <title>SiwRecipes - Il Ricettario Incantato</title>
     
     <link rel="stylesheet" th:href="@{/css/stile.css}" />
-    
     <link rel="stylesheet" th:href="@{/css/ricette.css}" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -42,22 +41,22 @@
                     <a th:href="@{/registrazione}" class="btn-gold">Registrati</a>
                 </div>
                 <div sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap:10px;">
-					<div th:if="${currentUser != null}" style="display: inline-block;">
+                    <div th:if="${currentUser != null}" style="display: inline-block;">
 
-					    <span th:if="${credentials.ruolo == 'ADMIN'}" 
-					          class="chef-name" 
-					          style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-					           
-					           <i class="fa-solid fa-crown" style="color: #C5A059;"></i>
-					           <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Admin</span>
-					    </span>
+                        <span th:if="${credentials.ruolo == 'ADMIN'}" 
+                              class="chef-name" 
+                              style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                               
+                               <i class="fa-solid fa-crown" style="color: #C5A059;"></i>
+                               <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Admin</span>
+                        </span>
 
-					    <span th:unless="${credentials.ruolo == 'ADMIN'}" class="header-text">
-					        <i class="fa-solid fa-user"></i>
-					        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
-					    </span>
+                        <span th:unless="${credentials.ruolo == 'ADMIN'}" class="header-text">
+                            <i class="fa-solid fa-user"></i>
+                            <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+                        </span>
 
-					</div>
+                    </div>
                     <form th:action="@{/logout}" method="post" style="margin:0;">
                         <button type="submit" class="btn-logout">
                             Logout <i class="fa-solid fa-right-from-bracket"></i>
@@ -87,79 +86,94 @@
         </form>
     </div>
 
-    <div th:if="${ricette.isEmpty()}" class="empty-message">
-        <i class="fa-solid fa-scroll"></i>
-        <p>Non ci sono ricette!</p>
-    </div>
+    <div class="container" th:if="${ricette != null && !ricette.isEmpty()}">
+        <ul class="recipe-grid">
+            
+            <li th:each="ricetta : ${ricette}" class="recipe-card" th:if="${ricetta != null}">
+                 
+                 <div class="card-image-wrapper">
+                     <a th:href="@{'/ricetta/' + ${ricetta.id}}">
+                         <img th:src="${ricetta.imageUrl} ? ${ricetta.imageUrl} : '/images/placeholder-piatto.jpg'" 
+                              th:alt="'Immagine di ' + ${ricetta.titolo}" />
+                     </a>
+                     
+                     <span class="difficulty-badge" th:text="${ricetta.difficolta}">Facile</span>
 
-    <div class="container" th:unless="${ricette.isEmpty()}">
-       <ul class="recipe-grid">
-            <li th:each="ricetta : ${ricette}" class="recipe-card">
-                
-                <div class="card-image-wrapper">
-                    <img th:src="${ricetta.imageUrl} ? ${ricetta.imageUrl} : '/images/placeholder-piatto.jpg'" 
-                         th:alt="'Immagine di ' + ${ricetta.titolo}" />
-                    
-                    <span class="difficulty-badge" th:text="${ricetta.difficolta}">Facile</span>
+                     <div class="rating-badge">
+                         <i class="fa-solid fa-star"></i>
+                         <span th:if="${not #lists.isEmpty(ricetta.recensioni)}" 
+                               th:text="${#numbers.formatDecimal(#aggregates.avg(ricetta.recensioni.![voto]), 1, 1)}">4.5</span>
+                         <span th:if="${#lists.isEmpty(ricetta.recensioni)}">-</span>
+                     </div>
 
-                    <div class="rating-badge" title="Media Voti">
-                        <i class="fa-solid fa-star"></i>
-                        <span th:if="${not #lists.isEmpty(ricetta.recensioni)}" 
-                              th:text="${#numbers.formatDecimal(#aggregates.avg(ricetta.recensioni.![voto]), 1, 1)}">4.5</span>
-                        <span th:if="${#lists.isEmpty(ricetta.recensioni)}">-</span>
-                    </div>
+                     <div sec:authorize="isAuthenticated()" class="favorite-action" th:if="${currentUser != null}">
+                         
+                         <form th:if="${currentUser.ricetteSalvate.contains(ricetta)}"
+                               th:action="@{'/ricetta/' + ${ricetta.id} + '/preferiti/rimuovi'}" 
+                               method="post">
+                             <button type="submit" class="btn-favorite" title="Rimuovi dai preferiti">
+                                 <i class="fa-solid fa-heart" style="color: #ff3b3b;"></i>
+                             </button>
+                         </form>
 
-                    <div sec:authorize="isAuthenticated()" class="favorite-action">
-                        <form th:action="@{'/ricetta/' + ${ricetta.id} + '/favorite'}" method="post">
-                            <button type="submit" class="btn-favorite" title="Aggiungi ai preferiti">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                
-                <div class="card-content">
+                         <form th:unless="${currentUser.ricetteSalvate.contains(ricetta)}"
+                               th:action="@{'/ricetta/' + ${ricetta.id} + '/preferiti/aggiungi'}" 
+                               method="post">
+                             <button type="submit" class="btn-favorite" title="Aggiungi ai preferiti">
+                                 <i class="fa-regular fa-heart"></i>
+                             </button>
+                         </form>
+
+                     </div>
+                 </div>
+                 
+                 <div class="card-content">
                     <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="recipe-title">
                         <span th:text="${ricetta.titolo}">Titolo Ricetta</span>
                     </a>
                     
-                    <p class="recipe-description" th:text="${ricetta.descrizione}">Descrizione breve della ricetta...</p>
+                    <p class="recipe-description" th:text="${ricetta.descrizione}">Descrizione breve...</p>
 
                     <div class="card-divider"></div>
 
-					<div class="card-footer">
-					    <div class="meta-info">
-					        <span class="meta-item" title="Tempo di preparazione">
-					            <i class="fa-regular fa-clock"></i> 
-					            <span th:text="${ricetta.tempoDiPreparazione}">0</span>'
-					        </span>
+                    <div class="card-footer">
+                        <div class="meta-info">
+                            <span class="meta-item" title="Tempo di preparazione">
+                                <i class="fa-regular fa-clock"></i> 
+                                <span th:text="${ricetta.tempoDiPreparazione}">0</span>'
+                            </span>
 
-					        <span class="meta-item" title="Porzioni">
-					            <i class="fa-solid fa-users"></i> 
-					            <span th:text="${ricetta.porzioni}">2</span>
-					        </span>
-					    </div>
+                            <span class="meta-item" title="Porzioni">
+                                <i class="fa-solid fa-users"></i> 
+                                <span th:text="${ricetta.porzioni}">2</span>
+                            </span>
+                        </div>
 
-					    <div class="card-footer-right">
-					         <span class="meta-item author">
-					            <i class="fa-solid fa-user-pen" style="font-size: 0.8rem;"></i>
-					            <a th:if="${ricetta.autore != null}" 
-					               th:href="@{'/user/' + ${ricetta.autore.id}}" 
-					               class="author-link">
-					               <span th:text="${ricetta.autore.nome}">Chef</span>
-					            </a>
-					            <span th:unless="${ricetta.autore != null}">Anonimo</span>
-					        </span>
-					        
-					        <div class="date-info" th:if="${ricetta.dataInserimento}">
-					            <span class="separator">•</span> <i class="fa-regular fa-calendar" style="font-size: 0.7rem;"></i>
-					            <span th:text="${#temporals.format(ricetta.dataInserimento, 'dd/MM/yyyy')}"></span>
-					        </div>
-					    </div>
-					</div>
+                        <div class="card-footer-right">
+                             <span class="meta-item author">
+                                <i class="fa-solid fa-user-pen" style="font-size: 0.8rem;"></i>
+                                <a th:if="${ricetta.autore != null}" 
+                                   th:href="@{'/user/' + ${ricetta.autore.id}}" 
+                                   class="author-link">
+                                   <span th:text="${ricetta.autore.nome}">Chef</span>
+                                </a>
+                                <span th:unless="${ricetta.autore != null}">Anonimo</span>
+                            </span>
+                            
+                            <div class="date-info" th:if="${ricetta.dataInserimento}">
+                                <span class="separator">•</span> <i class="fa-regular fa-calendar" style="font-size: 0.7rem;"></i>
+                                <span th:text="${#temporals.format(ricetta.dataInserimento, 'dd/MM/yyyy')}"></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </li>
-        </ul>
+
+            </li> </ul>
     </div>
+
+    <div class="container" th:if="${ricette == null || ricette.isEmpty()}" style="text-align: center; margin-top: 2rem;">
+        <p>Non ci sono ricette disponibili al momento.</p>
+    </div>
+
 </body>
 </html>

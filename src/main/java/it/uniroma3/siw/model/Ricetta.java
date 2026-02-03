@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
@@ -58,6 +59,9 @@ public class Ricetta {
 	
 	@ManyToOne  
     private Utente autore;
+	
+	@ManyToMany(mappedBy = "ricetteSalvate") 
+	private List<Utente> utentiCheHannoSalvato;
 	
 	//COSTRUTTORE
 		public Ricetta() {
@@ -156,6 +160,10 @@ public void setDataInserimento(LocalDate dataDiInserimento) {
 	this.dataInserimento = dataDiInserimento;
 }
 
+public void setRicettaIngredienti(List<RicettaIngrediente> ricettaIngredienti) {
+	this.ricettaIngredienti = ricettaIngredienti;
+}
+
 public List<RicettaIngrediente> getRicettaIngredienti() {
 	return ricettaIngredienti;
 }
@@ -186,6 +194,14 @@ public List<String> getTags() {
 
 public void setTags(List<String> tags) {
     this.tags = tags;
+}
+
+public List<Utente> getUtentiCheHannoSalvato() {
+	return utentiCheHannoSalvato;
+}
+
+public void setUtentiCheHannoSalvato(List<Utente> utentiCheHannoSalvato) {
+	this.utentiCheHannoSalvato = utentiCheHannoSalvato;
 }
 
 @Override

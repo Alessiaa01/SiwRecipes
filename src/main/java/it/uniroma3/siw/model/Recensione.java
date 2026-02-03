@@ -6,7 +6,7 @@
 	import jakarta.persistence.Id;
 	import jakarta.persistence.ManyToOne;
 
-	@Entity  // <--- FONDAMENTALE!
+	@Entity  
 	public class Recensione {
 
 	    @Id
@@ -17,6 +17,8 @@
 	    private String testo;
 	    private Integer voto;
 	    
+	    @ManyToOne
+	    private Utente autore;
 	 
 		// Collegamento inverso verso la Ricetta
 	    @ManyToOne 
@@ -40,5 +42,11 @@
 		}
 		public void setVoto(Integer voto) {
 			this.voto = voto;
+		}
+		public Utente getAutore() {
+			return autore;
+		}
+		public void setAutore(Utente autore) {
+			this.autore = autore;
 		}
 	}

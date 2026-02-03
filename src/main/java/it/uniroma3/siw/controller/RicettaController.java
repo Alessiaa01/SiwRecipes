@@ -1,8 +1,6 @@
 package it.uniroma3.siw.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -23,6 +21,7 @@ import it.uniroma3.siw.model.Utente;
 import it.uniroma3.siw.service.CredentialsService;
 import it.uniroma3.siw.service.IngredienteService;
 import it.uniroma3.siw.service.RicettaService;
+import it.uniroma3.siw.service.UtenteService;
 
 
 
@@ -38,6 +37,9 @@ public class RicettaController {
 	
 	@Autowired
 	private IngredienteService ingredienteService;
+	
+	@Autowired 
+	private UtenteService utenteService;
 
 	//---UTENTE GENERICO---
 	//VISUALIZZA SINGOLA RICETTA
@@ -160,8 +162,100 @@ public class RicettaController {
 		        return "redirect:/ricetta/" + id;
 		    }
 			
-	
-	
+			@PostMapping("/ricetta/delete/{id}")
+		    public String deleteRicetta(@PathVariable("id") Long id, Model model) {
+		        
+		        // 1. Recupero la ricetta e l'utente corrente
+		        Ricetta ricetta = this.ricettaService.findById(id);
+		        Utente currentUser = (Utente) model.getAttribute("currentUser");
+
+		        // Se la ricetta non esiste, torno alla lista
+		        if (ricetta == null) {
+		            return "redirect:/ricette";
+		        }
+
+		        // Se l'utente non è loggato, via al login
+		        if (currentUser == null) {
+		            return "redirect:/login";
+		        }
+
+		        // 2. Controllo Permessi: Sei l'Autore O sei un Admin?
+		        // NOTA: Se nella tua classe si chiama 'getCuoco', cambia 'getAutore' in 'getCuoco' qui sotto
+		        boolean isOwner = currentUser.getId().equals(ricetta.getAutore().getId());
+		        
+		        // Controllo Admin
+		        boolean isAdmin = currentUser.getCredentials() != null && 
+		                          currentUser.getCredentials().getRuolo().equals(Credentials.ADMIN_ROLE);
+
+		        if (isOwner || isAdmin) {
+		            
+		            // 3. Cancellazione secca
+		            this.ricettaService.deleteById(id);
+		            
+		            // 4. Redirect
+		            if (isAdmin) {
+		                return "redirect:/admin/manageRicette";
+		            } else {
+		                return "redirect:/ricette";
+		            }
+		        }
+
+		        // Se arrivi qui, non avevi i permessi
+		        return "redirect:/ricetta/" + id + "?error=NonAutorizzato";
+		    }
+
+		    // ---------------------------------------------------------
+		    // AGGIUNGI AI PREFERITI
+		    // ---------------------------------------------------------
+		    @PostMapping("/ricetta/{ricettaId}/preferiti/aggiungi")
+		    public String addPreferiti(@PathVariable("ricettaId") Long ricettaId, 
+		                               @ModelAttribute("currentUser") Utente currentUser,
+		                               Model model) {
+		        
+		        // 1. Ricarico l'utente "fresco" dal DB per sicurezza
+		        // Questo evita errori "detached entity" o conflitti di sessione
+		        Utente utente = this.utenteService.findById(currentUser.getId());
+		        Ricetta ricetta = this.ricettaService.findById(ricettaId);
+
+		        if (utente != null && ricetta != null) {
+		            // 2. Aggiungo solo se non c'è già (per evitare duplicati)
+		            if (!utente.getRicetteSalvate().contains(ricetta)) {
+		                utente.getRicetteSalvate().add(ricetta);
+		                // Opzionale: mantieni la coerenza in memoria sull'altro lato
+		                ricetta.getUtentiCheHannoSalvato().add(utente); 
+		                
+		                this.utenteService.save(utente); // Salvo l'utente (che possiede la lista)
+		            }
+		        }
+		        
+		        // Torno alla pagina della ricetta
+		        return "redirect:/ricette" ;
+		    }
+
+		    // ---------------------------------------------------------
+		    // RIMUOVI DAI PREFERITI
+		    // ---------------------------------------------------------
+		    @PostMapping("/ricetta/{ricettaId}/preferiti/rimuovi")
+		    public String removePreferiti(@PathVariable("ricettaId") Long ricettaId, 
+		                                  @ModelAttribute("currentUser") Utente currentUser,
+		                                  Model model) {
+		        
+		        Utente utente = this.utenteService.findById(currentUser.getId());
+		        Ricetta ricetta = this.ricettaService.findById(ricettaId);
+
+		        if (utente != null && ricetta != null) {
+		            // Rimuovo se presente
+		            if (utente.getRicetteSalvate().contains(ricetta)) {
+		                utente.getRicetteSalvate().remove(ricetta);
+		                // Opzionale
+		                // ricetta.getUtentiCheHannoSalvato().remove(utente);
+		                
+		                this.utenteService.save(utente);
+		            }
+		        }
+		        
+		        return "redirect:/ricette";
+		    }
 	//---ACCESSO ADMIN---
 	// Lista Ricette per Admin (Tabella gestione)
     @GetMapping("/admin/ricette")
@@ -169,48 +263,7 @@ public class RicettaController {
         model.addAttribute("ricette", this.ricettaService.findAll());
         return "admin/manageRicette.html";
     }
-    @PostMapping("/ricetta/delete/{id}")
-    public String deleteRicetta(@PathVariable("id") Long id, Model model) {
-        
-        // 1. Recupero la ricetta e l'utente corrente
-        Ricetta ricetta = this.ricettaService.findById(id);
-        Utente currentUser = (Utente) model.getAttribute("currentUser");
-
-        // Se la ricetta non esiste, torno alla lista
-        if (ricetta == null) {
-            return "redirect:/ricette";
-        }
-
-        // Se l'utente non è loggato, via al login
-        if (currentUser == null) {
-            return "redirect:/login";
-        }
-
-        // 2. Controllo Permessi: Sei l'Autore O sei un Admin?
-        // NOTA: Se nella tua classe si chiama 'getCuoco', cambia 'getAutore' in 'getCuoco' qui sotto
-        boolean isOwner = currentUser.getId().equals(ricetta.getAutore().getId());
-        
-        // Controllo Admin
-        boolean isAdmin = currentUser.getCredentials() != null && 
-                          currentUser.getCredentials().getRuolo().equals(Credentials.ADMIN_ROLE);
-
-        if (isOwner || isAdmin) {
-            
-            // 3. Cancellazione secca
-            this.ricettaService.deleteById(id);
-            
-            // 4. Redirect
-            if (isAdmin) {
-                return "redirect:/admin/manageRicette";
-            } else {
-                return "redirect:/ricette";
-            }
-        }
-
-        // Se arrivi qui, non avevi i permessi
-        return "redirect:/ricetta/" + id + "?error=NonAutorizzato";
-    }
-	
+    
 	
 	// -------------------------------------------------------------------------
     // METODI PRIVATI (Helper)
