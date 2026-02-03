@@ -37,10 +37,22 @@
             
             <div class="header-right">
                  <div sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap:10px;">
-					<span class="header-text">
-					                   <i class="fa-solid fa-user"></i>
-					                        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
-					                    </span>
+					<div th:if="${currentUser != null}" style="display: inline-block;">
+
+									    <span th:if="${credentials.ruolo == 'ADMIN'}" 
+									          class="chef-name" 
+									          style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+									           
+									           <i class="fa-solid fa-crown" style="color: #C5A059;"></i>
+									           <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Admin</span>
+									    </span>
+
+									    <span th:unless="${credentials.ruolo == 'ADMIN'}" class="header-text">
+									        <i class="fa-solid fa-user"></i>
+									        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+									    </span>
+
+									</div>
                     
                     <form th:action="@{/logout}" method="post" style="margin: 0;">
                         <button type="submit" class="btn-logout">
@@ -249,7 +261,7 @@
          <a th:href="@{/ricetta/{id}/edit(id=${ricetta.id})}" class="btn-gold">
                 <i class="fas fa-pencil-alt"></i> Modifica
             </a>
-            <form th:action="@{'/ricetta/cancella/' + ${ricetta.id}}" method="POST" class="delete-form-inline">
+            <form th:action="@{'/ricetta/delete/' + ${ricetta.id}}" method="POST" class="delete-form-inline">
                 <button type="submit" class="btn-logout"
                         onclick="return confirm('Sei sicuro di voler eliminare questa ricetta?');">
                     <i class="fas fa-trash-alt"></i> Elimina

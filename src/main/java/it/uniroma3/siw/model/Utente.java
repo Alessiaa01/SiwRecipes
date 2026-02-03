@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Utente {
@@ -29,6 +30,9 @@ public class Utente {
 
 	@OneToMany(mappedBy="autore", cascade= CascadeType.ALL)
 	private List <Ricetta> ricetteScritte = new ArrayList<>();
+	
+	@OneToOne(mappedBy = "utente", cascade = CascadeType.ALL)
+    private Credentials credentials;
 	
 	// COSTRUTTORE
 	public Utente() {
@@ -85,6 +89,14 @@ public class Utente {
 	}
 
 	
+	public Credentials getCredentials() {
+		return credentials;
+	}
+
+	public void setCredentials(Credentials credentials) {
+		this.credentials = credentials;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(email, nome);

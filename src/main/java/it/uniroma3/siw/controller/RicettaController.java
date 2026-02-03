@@ -1,6 +1,7 @@
 package it.uniroma3.siw.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +23,6 @@ import it.uniroma3.siw.model.Utente;
 import it.uniroma3.siw.service.CredentialsService;
 import it.uniroma3.siw.service.IngredienteService;
 import it.uniroma3.siw.service.RicettaService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 
 
 
@@ -171,39 +169,47 @@ public class RicettaController {
         model.addAttribute("ricette", this.ricettaService.findAll());
         return "admin/manageRicette.html";
     }
-
     @PostMapping("/ricetta/delete/{id}")
-    public String deleteRicetta(@PathVariable("id") Long id, 
-                                @ModelAttribute("currentUser") Utente currentUser,
-                                HttpServletRequest request) { // per decidere il redirect
+    public String deleteRicetta(@PathVariable("id") Long id, Model model) {
         
+        // 1. Recupero la ricetta e l'utente corrente
         Ricetta ricetta = this.ricettaService.findById(id);
+        Utente currentUser = (Utente) model.getAttribute("currentUser");
 
-        if (ricetta == null) 
+        // Se la ricetta non esiste, torno alla lista
+        if (ricetta == null) {
             return "redirect:/ricette";
-
-        // 1. CONTROLLO DI SICUREZZA: "Posso cancellare?"
-        // Usa il tuo metodo helper che controlla se sei Autore o Admin
-        if (this.isAuthorized(ricetta, currentUser)) {
-            
-            // Se sì, cancella
-            this.ricettaService.deleteById(id); 
-            
-            // 2. CONTROLLO DI NAVIGAZIONE: "Dove vado ora?"
-            // Se sei Admin -> Pannello Admin
-            if (request.isUserInRole("ADMIN")) {
-                return "redirect:/admin/ricette"; 
-            }
-            // Se sei Autore normale -> Le mie ricette
-            return "redirect:/myRecipes"; 
-  
-         } else {
-            // Se non sei autorizzato -> Errore
-            return "redirect:/ricetta/" + id + "?error=NonAutorizzato";
         }
+
+        // Se l'utente non è loggato, via al login
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        // 2. Controllo Permessi: Sei l'Autore O sei un Admin?
+        // NOTA: Se nella tua classe si chiama 'getCuoco', cambia 'getAutore' in 'getCuoco' qui sotto
+        boolean isOwner = currentUser.getId().equals(ricetta.getAutore().getId());
+        
+        // Controllo Admin
+        boolean isAdmin = currentUser.getCredentials() != null && 
+                          currentUser.getCredentials().getRuolo().equals(Credentials.ADMIN_ROLE);
+
+        if (isOwner || isAdmin) {
+            
+            // 3. Cancellazione secca
+            this.ricettaService.deleteById(id);
+            
+            // 4. Redirect
+            if (isAdmin) {
+                return "redirect:/admin/manageRicette";
+            } else {
+                return "redirect:/ricette";
+            }
+        }
+
+        // Se arrivi qui, non avevi i permessi
+        return "redirect:/ricetta/" + id + "?error=NonAutorizzato";
     }
-    
-    
 	
 	
 	// -------------------------------------------------------------------------

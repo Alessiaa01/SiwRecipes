@@ -47,7 +47,7 @@ public class Ricetta {
 	
 	private LocalDate dataInserimento;
 	
-	@OneToMany(mappedBy ="ricetta", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy ="ricetta", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<RicettaIngrediente> ricettaIngredienti = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "ricetta")

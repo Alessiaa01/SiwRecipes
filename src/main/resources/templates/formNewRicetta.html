@@ -168,14 +168,9 @@
 
                         <input type="number" id="ingQty" class="magic-input" placeholder="Qtà" style="flex: 1;">
 
-                        <select id="ingUnit" class="magic-input" style="flex: 1; padding: 10px;">
-                            <option value="gr">gr</option>
-                            <option value="kg">kg</option>
-                            <option value="ml">ml</option>
-                            <option value="l">l</option>
-                            <option value="qb">q.b.</option>
-                            <option value="pz">pz</option>
-                        </select>
+						<input type="text" id="ingUnit" class="magic-input" 
+						       style="flex: 1; padding: 10px;" 
+						       placeholder="Unità (facoltativo)">
                         
                         <button type="button" class="btn-small" onclick="aggiungiIngrediente()">
                             <i class="fas fa-plus"></i>
@@ -235,7 +230,7 @@
         /* Recupera l'indice attuale in base a quanti elementi ci sono già nel DB */
         /* Se è null (nuova ricetta), parte da 0 */
        
-
+		var globalIndex = /*[[${ricetta.ricettaIngredienti != null ? ricetta.ricettaIngredienti.size() : 0}]]*/ 0;
 
         function updatePreview() {
             const url = document.getElementById('imgUrlInput').value;
@@ -248,64 +243,80 @@
             }
         }
 
-        function aggiungiIngrediente() {
-            var inputVal = document.getElementById("ingSearchInput").value;
-            var qty = document.getElementById("ingQty").value;
-            var unit = document.getElementById("ingUnit").value;
-            var datalist = document.getElementById("datalistIngredienti");
-            
-            var id = null;
-            var options = datalist.options;
-            
-            if (options.length > 0) {
-                for(var i = 0; i < options.length; i++) {
-                    if(options[i].value === inputVal) {
-                        id = options[i].getAttribute("data-id");
-                        break;
-                    }
-                }
-            }
+		function aggiungiIngrediente() {
+		    var inputVal = document.getElementById("ingSearchInput").value;
+		    var qty = document.getElementById("ingQty").value;
+		    
+		    // Prendo semplicemente il testo scritto
+		    var unit = document.getElementById("ingUnit").value.trim(); 
+		    
+		    // ... LOGICA RICERCA ID ...
+		    var datalist = document.getElementById("datalistIngredienti");
+		    var id = null;
+		    var options = datalist.options;
+		    if (options.length > 0) {
+		        for(var i = 0; i < options.length; i++) {
+		            if(options[i].value === inputVal) {
+		                id = options[i].getAttribute("data-id");
+		                break;
+		            }
+		        }
+		    }
+		    // ... FINE LOGICA RICERCA ID ...
 
-            if (!id) {
-                alert("Devi selezionare un ingrediente valido dalla lista!");
-                return;
-            }
-            if (qty === "" || qty <= 0) {
-                alert("Inserisci una quantità valida!");
-                return;
-            }
+		    if (!id) {
+		        alert("Devi selezionare un ingrediente valido dalla lista!");
+		        return;
+		    }
+		    
+		    // Controllo duplicati (quello che ti ho dato prima)
+		    var ingredientiPresenti = document.querySelectorAll("input[name$='.ingrediente']");
+		    for (var i = 0; i < ingredientiPresenti.length; i++) {
+		        if (ingredientiPresenti[i].value === id) {
+		            alert("Hai già inserito questo ingrediente!");
+		            return;
+		        }
+		    }
 
-            // Creo elemento LI
-            var li = document.createElement("li");
-            li.id = "riga_new_" + globalIndex;
+		    if (qty === "" || qty <= 0) {
+		        alert("Inserisci una quantità valida!");
+		        return;
+		    }
 
-            // HTML VISUALE
-            var htmlContent = `
-                <span><i class="fas fa-leaf" style="color:#4CAF50; margin-right:5px;"></i> 
-                <b>${inputVal}</b> <span style="color:#666;">(${qty} ${unit})</span></span> 
-            `;
+		    // Creo la riga
+		    var li = document.createElement("li");
+		    li.id = "riga_new_" + globalIndex;
 
-            // HTML NASCOSTO PER SPRING (La parte fondamentale)
-            // Generiamo inputs: ricettaIngredienti[INDEX].campo
-            
-            htmlContent += `<input type="hidden" name="ricettaIngredienti[${globalIndex}].ingrediente" value="${id}">`;
-            htmlContent += `<input type="hidden" name="ricettaIngredienti[${globalIndex}].quantita" value="${qty}">`;
-            htmlContent += `<input type="hidden" name="ricettaIngredienti[${globalIndex}].unita" value="${unit}">`;
+		    // Se l'unità c'è la mostro, altrimenti stringa vuota
+		    var visualUnit = unit ? unit : ""; 
 
-            // Tasto rimuovi
-            htmlContent += `<i class="fas fa-trash-alt btn-remove" onclick="rimuovi(this)" title="Rimuovi"></i>`;
+		    var htmlContent = `
+		        <span>
+		            <i class="fas fa-leaf" style="color:#4CAF50; margin-right:5px;"></i> 
+		            <b>${inputVal}</b> 
+		            <span style="color:#666;">(${qty} ${visualUnit})</span>
+		        </span> 
+		    `;
 
-            li.innerHTML = htmlContent;
-            document.getElementById("listaVisiva").appendChild(li);
+		    // Input nascosti per il salvataggio
+		    htmlContent += `<input type="hidden" name="ricettaIngredienti[${globalIndex}].ingrediente" value="${id}">`;
+		    htmlContent += `<input type="hidden" name="ricettaIngredienti[${globalIndex}].quantita" value="${qty}">`;
+		    htmlContent += `<input type="hidden" name="ricettaIngredienti[${globalIndex}].unita" value="${unit}">`;
 
-            // Aumento l'indice per il prossimo
-            globalIndex++;
+		    htmlContent += `<i class="fas fa-trash-alt btn-remove" onclick="rimuovi(this)" title="Rimuovi"></i>`;
 
-            // Reset campi
-            document.getElementById("ingSearchInput").value = "";
-            document.getElementById("ingQty").value = "";
-            document.getElementById("ingSearchInput").focus();
-        }
+		    li.innerHTML = htmlContent;
+		    document.getElementById("listaVisiva").appendChild(li);
+
+		    globalIndex++;
+
+		    // Pulisco i campi per il prossimo ingrediente
+		    document.getElementById("ingSearchInput").value = "";
+		    document.getElementById("ingQty").value = "";
+		    document.getElementById("ingUnit").value = ""; // Torna vuoto
+		    document.getElementById("ingSearchInput").focus();
+		}
+        
 
         function rimuovi(elementoIcona) {
             // Rimuoviamo l'intero LI, inclusi gli input nascosti dentro di esso
