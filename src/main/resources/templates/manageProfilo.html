@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Il mio Profilo - SiwRecipes</title>
+    <link rel="stylesheet" href="/css/stile.css" />
+    <link rel="stylesheet" href="/css/manageProfilo.css" />
+</head>
+<body>
+
+	<header class="main-header">
+	    <div class="header-content-wrapper">
+	        
+	        <div class="header-left">
+	            <a th:href="@{/}" class="btn-gold">
+	                <i class="fa-solid fa-house-chimney"></i> Home
+	            </a>
+	        </div>
+	        
+	        <div class="header-right">
+	            
+	            <div sec:authorize="isAuthenticated()" th:if="${currentUser != null}">
+	                <span class="chef-name">
+	                    <i class="fa-solid fa-user"></i>
+	                    <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+	                </span>
+	            </div>
+	            
+	            <form th:action="@{/logout}" method="post" style="margin:0; display:flex;">
+	                <button type="submit" class="btn-logout">
+	                    Logout <i class="fa-solid fa-right-from-bracket"></i>
+	                </button>
+	            </form>
+	            
+	          
+
+	        </div>
+	    </div>
+	</header>
+    <div class="container">
+        
+        <div class="profile-header">
+            <h1 th:text="'Benvenuto, ' + ${currentUser.nome} + '!'">Benvenuto!</h1>
+            <p>Gestisci le tue ricette e i tuoi piatti preferiti.</p>
+            
+            <div class="actions-bar">
+                <a th:href="@{/formNewRicetta}" class="btn-add">
+                    + Crea Nuova Ricetta
+                </a>
+            </div>
+        </div>
+
+        <section>
+            <div class="section-title">
+                Le mie Ricette Caricate
+            </div>
+            
+            <div th:if="${currentUser.ricetteScritte == null || currentUser.ricetteScritte.isEmpty()}" class="empty-state">
+                <p>Non hai ancora scritto nessuna ricetta. Inizia ora!</p>
+            </div>
+
+            <div class="recipe-grid">
+                <a th:each="ricetta : ${currentUser.ricetteScritte}" 
+                   th:href="@{'/ricetta/' + ${ricetta.id}}" 
+                   class="recipe-card">
+                    
+                    <div class="card-image-container">
+                        <img th:src="${ricetta.imageUrl != null ? ricetta.imageUrl : '/images/default.jpg'}" alt="Foto Ricetta">
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title" th:text="${ricetta.titolo}">Titolo</h3>
+                        </div>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">
+                I miei Preferiti
+            </div>
+
+            <div th:if="${currentUser.ricetteSalvate == null || currentUser.ricetteSalvate.isEmpty()}" class="empty-state">
+                <p>Non hai ancora salvato ricette nei preferiti.</p>
+            </div>
+
+            <div class="recipe-grid">
+                <a th:each="fav : ${currentUser.ricetteSalvate}" 
+                   th:href="@{'/ricetta/' + ${fav.id}}" 
+                   class="recipe-card">
+                   
+                    <div class="card-image-container">
+                        <span class="badge-fav">♥</span> <img th:src="${fav.imageUrl != null ? fav.imageUrl : '/images/default.jpg'}" alt="Foto Preferita">
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title" th:text="${fav.titolo}">Titolo</h3>
+                        <p class="card-author">Di: <span th:text="${fav.autore.nome} + ' ' + ${fav.autore.cognome}">Chef</span></p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>

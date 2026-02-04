@@ -17,9 +17,7 @@ public class UtenteController {
 
 	// Se cambi questo URL, devi cambiare anche il link nell'HTML!
     @GetMapping("/profiloAutore/{utenteId}")
-    public String getProfiloAutore(@PathVariable("utenteId") Long utenteId, Model model) {
-        System.out.println(">>> DEBUG: Controller chiamato per id " + utenteId);
-        
+    public String getProfiloAutore(@PathVariable("utenteId") Long utenteId, Model model) {   
         Utente utente = this.utenteService.getUtente(utenteId);
         
         if (utente != null) {
@@ -28,5 +26,10 @@ public class UtenteController {
         } else {
             return "redirect:/";
         }
+    }
+    
+    @GetMapping("/manageProfilo")
+    public String getProfilo(Model model) {
+    	return "manageProfilo";
     }
 }

@@ -1,0 +1,258 @@
+/* ========================================================== */
+/* MANAGE PROFILO.CSS - Stile coordinato con Index Admin      */
+/* ========================================================== */
+
+/* --- 1. IMPORT FONTS --- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&display=swap');
+
+/* --- 2. VARIABILI (Stesso tema dell'Admin) --- */
+:root {
+    --celeste-bg: #E1F5FE;       
+    --marrone-dark: rgb(100, 62, 41);
+    --marrone-text: #5D4037;
+    --oro: #C5A059;
+    --oro-light: #FFF8E1;        
+    --parchment: #fffbf0;   
+    --rosso-grad: linear-gradient(45deg, #D32F2F 0%, #FF6B6B 50%, #D32F2F 100%);
+    
+    --font-title: 'Cinzel Decorative', cursive; 
+    --font-body: 'Cormorant Garamond', serif;   
+    --font-ui: 'Lato', sans-serif;              
+}
+
+/* --- 3. RESET & BODY --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-body);
+    font-weight: 500; 
+    background-color: var(--celeste-bg);
+    background-image: linear-gradient(to bottom, #E1F5FE 0%, #B3E5FC 100%);
+    background-attachment: fixed; 
+    color: var(--marrone-text);
+    min-height: 100vh;
+}
+
+a { text-decoration: none; transition: 0.3s; color: inherit; }
+
+/* --- 4. CONTAINER GENERALE --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* --- 5. HEADER (Navbar in alto) --- */
+header {
+    position: sticky; top: 0; z-index: 1000; 
+    background-color: rgba(255, 255, 255, 0.25); /* Effetto vetro */
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4); 
+    padding: 0.8rem 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+header nav {
+    display: flex; align-items: center; gap: 20px;
+}
+
+header a {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    color: var(--marrone-dark);
+    font-size: 0.95rem;
+}
+
+header a:hover { color: var(--oro); }
+
+/* --- 6. PROFILO HEADER (Card Pergamena) --- */
+.profile-header {
+    background-color: var(--parchment);
+    background-image: linear-gradient(to bottom, #fffbf0 0%, #fff8e1 100%);
+    border-radius: 15px;
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-top: 2rem; margin-bottom: 3rem;
+    position: relative;
+    
+    /* Cornice Preziosa come Index Admin */
+    box-shadow: 
+        0 0 0 1px rgba(197, 160, 89, 0.3), 
+        0 10px 25px rgba(78, 52, 46, 0.1);
+    animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-header h1 {
+    font-family: var(--font-title);
+    color: var(--marrone-dark);
+    font-size: 3rem;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 0px var(--oro);
+}
+
+.profile-header p {
+    font-size: 1.3rem;
+    color: #777;
+    margin-bottom: 2rem;
+}
+
+/* --- 7. BOTTONI --- */
+/* Bottone Principale (Oro) - Usato per "Nuova Ricetta" */
+.btn-add {
+    background-image: linear-gradient(45deg, #C5A059 0%, #E6C676 50%, #C5A059 100%);
+    background-size: 200% auto;
+    color: white !important;
+    font-family: var(--font-ui); font-weight: 700;
+    text-transform: uppercase; font-size: 0.9rem;
+    padding: 12px 30px; border-radius: 50px;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-add:hover {
+    background-position: right center; 
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.6);
+}
+
+/* Bottone Logout (Rosso) - Se usato nella navbar */
+header a[href="/logout"] {
+    background-image: var(--rosso-grad);
+    background-size: 200% auto;
+    color: white !important;
+    padding: 6px 18px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+}
+header a[href="/logout"]:hover {
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(211, 47, 47, 0.5);
+}
+
+/* --- 8. SEZIONI & TITOLI --- */
+section { margin-bottom: 5rem; }
+
+.section-title {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    color: var(--marrone-dark);
+    border-bottom: 2px solid rgba(197, 160, 89, 0.3); /* Linea dorata sottile */
+    padding-bottom: 15px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+/* Messaggio "Vuoto" */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 10px;
+    border: 1px dashed var(--oro);
+    color: var(--marrone-text);
+    font-style: italic;
+    font-size: 1.2rem;
+}
+
+/* --- 9. GRIGLIA RICETTE --- */
+.recipe-grid {
+    display: grid;
+    /* Griglia responsive automatica come nella Dashboard */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2.5rem;
+}
+
+/* --- 10. CARD RICETTA (Stile "Dashboard Card" adattato con foto) --- */
+.recipe-card {
+    background-color: var(--parchment);
+    border-radius: 12px;
+    overflow: hidden; /* Per tagliare l'immagine negli angoli */
+    
+    /* Effetto Cornice Dorata Sottile */
+    box-shadow: 
+        0 0 0 1px rgba(197, 160, 89, 0.2), 
+        0 8px 20px rgba(78, 52, 46, 0.08);
+        
+    transition: all 0.4s ease;
+    display: flex; flex-direction: column;
+    text-align: center;
+    height: 100%;
+}
+
+.recipe-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 
+        0 0 0 2px var(--oro), 
+        0 20px 40px rgba(197, 160, 89, 0.25);
+}
+
+/* Contenitore Immagine */
+.card-image-container {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+}
+
+.card-image-container img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.recipe-card:hover .card-image-container img {
+    transform: scale(1.1); /* Zoom lento all'hover */
+}
+
+/* Contenuto Card */
+.card-content {
+    padding: 1.5rem;
+    display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1;
+}
+
+.card-title {
+    font-family: var(--font-title);
+    font-size: 1.4rem;
+    color: var(--marrone-dark);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.card-author {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #888;
+}
+
+/* Badge Preferiti (Cuoricino) */
+.badge-fav {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #D32F2F;
+    width: 35px; height: 35px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+/* --- 11. RESPONSIVE --- */
+@media (max-width: 768px) {
+    .profile-header h1 { font-size: 2.2rem; }
+    .section-title { font-size: 1.6rem; text-align: center; }
+    .header-content-wrapper { flex-direction: column; gap: 10px; }
+}

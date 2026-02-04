@@ -41,6 +41,7 @@ public class Utente {
 	// COSTRUTTORE
 	public Utente() {
 		this.ricetteScritte=new ArrayList<>();
+		this.ricetteSalvate=new ArrayList<>();
 	}
 	
 	//METODI GETTER E SETTER
