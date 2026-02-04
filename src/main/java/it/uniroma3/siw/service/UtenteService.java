@@ -28,7 +28,7 @@ public class UtenteService {
 	//Di solito viene chiamato automaticamente dal salvataggio delle Credentials
     // grazie al "Cascade", ma è utile averlo per aggiornare profilo (es. cambio nome)
 	@Transactional
-	public Utente save(Utente utente) {
+	public Utente saveUtente(Utente utente) {
         return this.utenteRepository.save(utente);
     }
 	

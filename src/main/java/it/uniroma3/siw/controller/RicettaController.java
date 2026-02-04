@@ -224,7 +224,7 @@ public class RicettaController {
 		                // Opzionale: mantieni la coerenza in memoria sull'altro lato
 		                ricetta.getUtentiCheHannoSalvato().add(utente); 
 		                
-		                this.utenteService.save(utente); // Salvo l'utente (che possiede la lista)
+		                this.utenteService.saveUtente(utente); // Salvo l'utente (che possiede la lista)
 		            }
 		        }
 		        
@@ -250,7 +250,7 @@ public class RicettaController {
 		                // Opzionale
 		                // ricetta.getUtentiCheHannoSalvato().remove(utente);
 		                
-		                this.utenteService.save(utente);
+		                this.utenteService.saveUtente(utente);
 		            }
 		        }
 		        

@@ -77,37 +77,32 @@ public class CredentialsService {
 	
 
 	
-	//LOGIN GOOGLE
 	@Transactional
 	public void loginOrRegisterGoogleUser(String email, String nome, String cognome) {
-		
-		// 1. Controllo se l'utente esiste già
-		if (this.credentialsRepository.findByUsername(email).isPresent()) {
-			return; // Esiste, tutto ok.
-		}
+	    
+	    if (this.credentialsRepository.findByUsername(email).isPresent()) {
+	        return; 
+	    }
 
-		// 2. Se non esiste, lo registro
-		System.out.println("Nuovo utente Google: " + email);
-		
-		// A. Creo Utente
-		Utente nuovoUtente = new Utente();
-		nuovoUtente.setEmail(email);
-		nuovoUtente.setNome(nome);
-		nuovoUtente.setCognome(cognome);
-		this.utenteRepository.save(nuovoUtente);
-		
-		// B. Creo Credenziali
-		Credentials nuoveCredenziali = new Credentials();
-		nuoveCredenziali.setUsername(email);
-		nuoveCredenziali.setRuolo(Credentials.DEFAULT_ROLE);
-		nuoveCredenziali.setUtente(nuovoUtente);
-		
-		// C. Password Casuale (Trucco per soddisfare il DB), l'utente non saprà mai e non userà mai
-		nuoveCredenziali.setPassword(UUID.randomUUID().toString());
-		
-		this.credentialsRepository.save(nuoveCredenziali);
-	}
-	
+	    Utente nuovoUtente = new Utente();
+	    nuovoUtente.setEmail(email);
+	    nuovoUtente.setNome(nome);
+	    nuovoUtente.setCognome(cognome);
+	    this.utenteRepository.save(nuovoUtente);
+	    
+	    Credentials nuoveCredenziali = new Credentials();
+	    nuoveCredenziali.setUsername(email);
+	    nuoveCredenziali.setRuolo(Credentials.DEFAULT_ROLE);
+	    nuoveCredenziali.setUtente(nuovoUtente);
+	    
+	    // 1. CODIFICA la password (fondamentale!)
+	    nuoveCredenziali.setPassword(this.passwordEncoder.encode(UUID.randomUUID().toString()));
+	    
+	    // 2. ABILITA l'utente (altrimenti il login fallisce subito dopo la creazione)
+	    nuoveCredenziali.setEnabled(true); 
+	    
+	    this.credentialsRepository.save(nuoveCredenziali);
+	}	
 	//---GESTIONE BAN(ADMIN)---
 	@Transactional
     public void lockCredentials(String username) {

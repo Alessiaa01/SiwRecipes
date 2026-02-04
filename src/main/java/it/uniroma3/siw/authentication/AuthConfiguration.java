@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+
+
 @Configuration
 @EnableWebSecurity
 public class AuthConfiguration {
@@ -52,6 +54,9 @@ public class AuthConfiguration {
                 
                 // 3. PAGINE DI ACCESSO
                 .requestMatchers("/registrazione", "/login").permitAll()
+                .requestMatchers("/login/oauth2/**", "/oauth2/**","/login/oauth2/code/google").permitAll()
+                
+               
                 
                 // 4. PAGINE ADMIN
                 .requestMatchers("/admin/**").hasAnyAuthority(ADMIN_ROLE)
@@ -71,6 +76,7 @@ public class AuthConfiguration {
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
                 .successHandler(oauth2LoginSuccessHandler)
+                
             )
             
             // CONFIGURAZIONE LOGOUT
