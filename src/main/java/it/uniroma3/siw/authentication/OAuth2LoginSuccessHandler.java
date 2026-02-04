@@ -41,7 +41,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         // Se l'utente voleva andare su una pagina specifica, ci torna.
         // Altrimenti, va alla pagina predefinita (/index).
         this.setAlwaysUseDefaultTargetUrl(false);
-        this.setDefaultTargetUrl("/index");
+        this.setDefaultTargetUrl("/");
         
         // Chiama il metodo della classe padre per gestire il redirect finale
         super.onAuthenticationSuccess(request, response, authentication);

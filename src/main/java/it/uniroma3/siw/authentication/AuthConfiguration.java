@@ -56,7 +56,7 @@ public class AuthConfiguration {
                 .requestMatchers("/registrazione", "/login").permitAll()
                 .requestMatchers("/login/oauth2/**", "/oauth2/**","/login/oauth2/code/google").permitAll()
                 
-               
+                .requestMatchers("/error").permitAll()
                 
                 // 4. PAGINE ADMIN
                 .requestMatchers("/admin/**").hasAnyAuthority(ADMIN_ROLE)

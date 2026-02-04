@@ -18,12 +18,10 @@
 	        
 	        <div class="header-right">
 	            
-	            <div sec:authorize="isAuthenticated()" th:if="${currentUser != null}">
-	                <span class="chef-name">
-	                    <i class="fa-solid fa-user"></i>
-	                    <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
-	                </span>
-	            </div>
+				<span th:if="${currentUser.credentials != null && currentUser.credentials.ruolo == 'DEFAULT'}" class="header-text">
+									        <i class="fa-solid fa-user"></i>
+									        <span th:text="|${currentUser.nome} ${currentUser.cognome}|">Nome Cognome</span>
+									    </span>
 	            
 	            <form th:action="@{/logout}" method="post" style="margin:0; display:flex;">
 	                <button type="submit" class="btn-logout">
