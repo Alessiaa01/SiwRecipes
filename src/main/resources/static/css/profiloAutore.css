@@ -1,0 +1,203 @@
+/* ========================================================== */
+/* STILE SPECIFICO PROFILO AUTORE                             */
+/* (Si occupa solo della Card e dei contenuti interni)        */
+/* ========================================================== */
+
+:root {
+    /* Variabili locali specifiche per questa pagina */
+    /* Nota: --oro, --marrone-text ecc. sono ereditate da stile.css */
+    --parchment-bg: #fffbf0;
+    --parchment-gradient: linear-gradient(to bottom, #fffbf0 0%, #fff8e1 100%);
+    --card-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    --border-deco: rgba(197, 160, 89, 0.3); /* Colore oro trasparente */
+}
+
+/* 1. CONTENITORE PRINCIPALE */
+.enchanted-container {
+    /* IMPORTANTE: Padding alto (6rem) perché l'header in stile.css è 'fixed' */
+    padding: 7rem 1rem 4rem 1rem; 
+    display: flex; 
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+/* 2. CARD STILE PERGAMENA */
+.profile-card {
+    background-color: var(--parchment-bg);
+    background-image: var(--parchment-gradient);
+    border-radius: 12px;
+    padding: 3rem;
+    width: 100%; 
+    max-width: 700px;
+    position: relative; 
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 0 0 1px var(--border-deco), var(--card-shadow);
+}
+
+/* Bordo decorativo interno (effetto cornice) */
+.profile-card::before {
+    content: ''; 
+    position: absolute;
+    top: 15px; left: 15px; right: 15px; bottom: 15px;
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    border-radius: 8px; 
+    pointer-events: none; 
+    z-index: 0;
+}
+
+/* Wrapper per portare il contenuto sopra la cornice decorativa */
+.card-content-wrapper { 
+    position: relative; 
+    z-index: 1; 
+}
+
+/* 3. INTESTAZIONE PROFILO (Avatar e Dati) */
+.profile-header {
+    margin-bottom: 2.5rem; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+}
+
+.avatar-circle {
+    width: 110px; height: 110px;
+    /* Usa un gradiente dorato per l'avatar */
+    background: linear-gradient(135deg, #C5A059 0%, #e6c676 100%);
+    color: white;
+    font-family: 'Cinzel Decorative', cursive; /* Definito nei font globali */
+    font-size: 3.5rem; 
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.4);
+    border: 4px solid white;
+    margin-bottom: 1rem;
+    
+    /* Animazione di galleggiamento magico */
+    animation: magicFloat 4s ease-in-out infinite;
+}
+
+@keyframes magicFloat {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0px); }
+}
+
+.profile-header h1 {
+    font-family: 'Cinzel Decorative', cursive;
+    color: rgb(100, 62, 41); /* Marrone Dark */
+    font-size: 2.2rem; 
+    margin-bottom: 0.5rem; 
+    margin-top: 10px;
+    line-height: 1.2;
+}
+
+.user-meta {
+    font-family: 'Lato', sans-serif;
+    color: #5D4037; /* Marrone Text */
+    font-size: 1rem; 
+    opacity: 0.9; 
+    margin-top: 8px;
+    display: flex; align-items: center; gap: 8px; justify-content: center;
+}
+
+.user-meta i { 
+    color: #C5A059; /* Oro */
+}
+
+/* Linea divisoria elegante */
+.divider {
+    border: 0; height: 1px;
+    background-image: linear-gradient(to right, transparent, #C5A059, transparent);
+    margin: 2.5rem 0; 
+    opacity: 0.4;
+}
+
+/* 4. SEZIONE LISTA RICETTE */
+.user-recipes-section h2 {
+    font-family: 'Cinzel Decorative', cursive;
+    color: rgb(100, 62, 41);
+    font-size: 1.8rem; 
+    margin-bottom: 1.5rem;
+}
+
+/* Stato vuoto (se non ci sono ricette) */
+.empty-state {
+    font-style: italic; color: #888;
+    background-color: rgba(255,255,255,0.4);
+    padding: 2rem; 
+    border-radius: 8px;
+    border: 1px dashed #C5A059;
+}
+
+/* Lista pulita */
+.recipe-list { 
+    list-style: none; 
+    padding: 0; 
+    width: 100%;
+}
+
+/* Card della singola ricetta */
+.recipe-card-mini {
+    background-color: white;
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    border-radius: 10px; 
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 15px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    text-decoration: none; /* Rimuove sottolineatura link */
+}
+
+.recipe-card-mini:hover {
+    transform: translateY(-3px) translateX(2px);
+    border-color: #C5A059;
+    box-shadow: 0 8px 20px rgba(197, 160, 89, 0.25);
+}
+
+/* Testi dentro la card ricetta */
+.recipe-link {
+    font-family: 'Cormorant Garamond', serif; 
+    font-weight: 700;
+    color: rgb(100, 62, 41); 
+    font-size: 1.3rem; 
+    display: block;
+    margin-bottom: 2px;
+}
+
+.recipe-difficulty {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.8rem; 
+    color: #C5A059; /* Oro */
+    text-transform: uppercase; 
+    font-weight: 700; 
+    letter-spacing: 0.5px;
+}
+
+/* Icona freccia */
+.btn-icon-go { 
+    color: #C5A059; 
+    font-size: 1rem; 
+    background: #FFF8E1; /* Oro chiarissimo */
+    width: 35px; height: 35px; 
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.3s;
+}
+
+.recipe-card-mini:hover .btn-icon-go {
+    background: #C5A059; 
+    color: white;
+}
+
+/* Responsive per schermi piccoli */
+@media (max-width: 768px) {
+    .enchanted-container { padding: 6rem 1rem 2rem 1rem; }
+    .profile-card { padding: 1.5rem; }
+    .profile-header h1 { font-size: 1.8rem; }
+    .avatar-circle { width: 90px; height: 90px; font-size: 2.5rem; }
+}

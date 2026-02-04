@@ -150,15 +150,17 @@
                         </div>
 
                         <div class="card-footer-right">
-                             <span class="meta-item author">
-                                <i class="fa-solid fa-user-pen" style="font-size: 0.8rem;"></i>
-                                <a th:if="${ricetta.autore != null}" 
-                                   th:href="@{'/user/' + ${ricetta.autore.id}}" 
-                                   class="author-link">
-                                   <span th:text="${ricetta.autore.nome}">Chef</span>
-                                </a>
-                                <span th:unless="${ricetta.autore != null}">Anonimo</span>
-                            </span>
+							<span class="meta-item author">
+							    <i class="fa-solid fa-user-pen" style="font-size: 0.8rem;"></i>
+							    
+							    <a th:if="${ricetta.autore != null}" 
+							       th:href="@{'/profiloAutore/' + ${ricetta.autore.id}}" 
+							       class="author-link">
+							       <span th:text="${ricetta.autore.nome}">Chef Nome</span>
+							    </a>
+
+							    <span th:unless="${ricetta.autore != null}">Anonimo</span>
+							</span>
                             
                             <div class="date-info" th:if="${ricetta.dataInserimento}">
                                 <span class="separator">•</span> <i class="fa-regular fa-calendar" style="font-size: 0.7rem;"></i>

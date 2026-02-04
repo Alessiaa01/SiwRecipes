@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="'Profilo di ' + ${utente.nome}">Profilo</title>
+ 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" th:href="@{/css/stile.css}" />
+    
+    <link rel="stylesheet" th:href="@{/css/profiloAutore.css}" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-content-wrapper">
+            
+            <div class="header-left">
+                <a th:href="@{/}" class="btn-gold">
+                    <i class="fa-solid fa-house-chimney"></i> Home
+                </a>
+                <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/indiceAdmin}" class="btn-gold">
+                    <i class="fa-solid fa-crown"></i> Gestione Admin
+                </a>
+                <a sec:authorize="isAuthenticated()" th:href="@{/myRecipes}" class="btn-gold">
+                    <i class="fa-solid fa-book-open"></i> Le mie ricette
+                </a>
+            </div>
+            
+            <div class="header-right">
+                
+                <div sec:authorize="isAuthenticated()" class="user-profile">
+                    <span class="chef-name">
+                        <i class="fa-solid fa-user-circle"></i>
+                        <a th:if="${currentUser != null}" 
+                           th:href="@{'/profiloAutore/' + ${currentUser.id}}" 
+                           th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}"
+                           style="color: inherit; text-decoration: none;">
+                            Nome Utente
+                        </a>
+                        <span th:if="${currentUser == null}" sec:authentication="name">User</span>
+                    </span>
+                    
+                    <form th:action="@{/logout}" method="post" class="logout-form">
+                        <button type="submit" class="btn-logout">
+                            Logout <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <div sec:authorize="!isAuthenticated()" class="guest-actions" style="display: flex; align-items: center; gap: 10px;">
+                    <span class="welcome-text" style="font-weight: bold; color: #5D4037; margin-right: 5px;">Benvenuto!</span>
+                    <a th:href="@{/login}" class="btn-gold">Accedi</a>
+                    <a th:href="@{/registrazione}" class="btn-gold">Registrati</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="enchanted-container">
+        <div class="profile-card">
+            <div class="card-content-wrapper">
+                
+                <header class="profile-header">
+                    <div class="avatar-circle">
+                        <span th:text="${utente.nome != null ? #strings.substring(utente.nome, 0, 1) : 'U'}">U</span>
+                    </div>
+                    <h1 th:text="${utente.nome} + ' ' + ${utente.cognome}">Nome Cognome Autore</h1>
+                    
+                    <div class="user-meta">
+                        <i class="fa-solid fa-envelope"></i> 
+                        <span th:text="${utente.email}">email@esempio.com</span>
+                    </div>
+                    
+                    <div class="user-meta" th:if="${utente.dataDiNascita != null}">
+                        <i class="fa-solid fa-cake-candles"></i>
+                        <span th:text="${#temporals.format(utente.dataDiNascita, 'dd MMMM yyyy')}">Data di Nascita</span>
+                    </div>
+                </header>
+
+                <div class="divider"></div>
+
+                <section class="user-recipes-section">
+                    <h2>Ricette Pubblicate</h2>
+                    
+                    <div th:if="${utente.ricetteScritte.isEmpty()}" class="empty-state">
+                        <p>Questo chef non ha ancora pubblicato ricette.</p>
+                    </div>
+
+                    <ul th:unless="${utente.ricetteScritte.isEmpty()}" class="recipe-list">
+                        <li th:each="ricetta : ${utente.ricetteScritte}">
+                            <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="recipe-card-mini">
+                                <div>
+                                    <span class="recipe-link" th:text="${ricetta.titolo}">Titolo Ricetta</span>
+                                    
+                                    <span class="recipe-difficulty">
+                                        <span th:if="${ricetta.difficolta != null}" th:text="'Difficoltà: ' + ${ricetta.difficolta}"></span>
+                                        <span th:if="${ricetta.categoria != null}" th:text="' • ' + ${ricetta.categoria}"></span>
+                                    </span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right btn-icon-go"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

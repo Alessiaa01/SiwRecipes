@@ -27,10 +27,12 @@ public class Ricetta {
 	@Column(nullable=false)
 	private String titolo;
 	
-	@Column(length=2000)
+	//@Column(length=2000)
+	@Column(columnDefinition = "TEXT")
 	private String descrizione;
 
-	@Column(length=2000)
+	//@Column(length=2000)
+	@Column(columnDefinition = "TEXT")
 	private String procedimento;
 	
 	private String categoria;
