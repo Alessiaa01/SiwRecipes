@@ -75,6 +75,7 @@ public class AuthConfiguration {
             // CONFIGURAZIONE LOGIN GOOGLE
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
+            		.defaultSuccessUrl("/success", true)
                 .successHandler(oauth2LoginSuccessHandler)
                 
             )

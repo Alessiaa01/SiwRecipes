@@ -237,25 +237,29 @@ public class RicettaController {
 		    // ---------------------------------------------------------
 		    @PostMapping("/ricetta/{ricettaId}/preferiti/rimuovi")
 		    public String removePreferiti(@PathVariable("ricettaId") Long ricettaId, 
-		                                  @ModelAttribute("currentUser") Utente currentUser,
-		                                  Model model) {
+		                                  @RequestParam(value = "redirect", required = false) String redirect,
+		                                  @ModelAttribute("currentUser") Utente currentUser) {
 		        
 		        Utente utente = this.utenteService.findById(currentUser.getId());
 		        Ricetta ricetta = this.ricettaService.findById(ricettaId);
 
 		        if (utente != null && ricetta != null) {
-		            // Rimuovo se presente
 		            if (utente.getRicetteSalvate().contains(ricetta)) {
 		                utente.getRicetteSalvate().remove(ricetta);
-		                // Opzionale
-		                // ricetta.getUtentiCheHannoSalvato().remove(utente);
-		                
 		                this.utenteService.saveUtente(utente);
 		            }
 		        }
+
+		        // Se il parametro redirect è 'profile', resta in manageProfilo
+		        if ("profile".equals(redirect)) {
+		            return "redirect:/manageProfilo";
+		        }  
 		        
+		        // Altrimenti (es. se cliccato dalla lista generale) torna a /ricette
 		        return "redirect:/ricette";
 		    }
+		    
+		    
 	//---ACCESSO ADMIN---
 	// Lista Ricette per Admin (Tabella gestione)
     @GetMapping("/admin/ricette")

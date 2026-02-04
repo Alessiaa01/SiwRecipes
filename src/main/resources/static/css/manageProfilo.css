@@ -256,3 +256,95 @@ section { margin-bottom: 5rem; }
     .section-title { font-size: 1.6rem; text-align: center; }
     .header-content-wrapper { flex-direction: column; gap: 10px; }
 }
+
+.card-actions {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.btn-edit, .btn-delete {
+    font-size: 0.9em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-delete:hover {
+    text-decoration: underline;
+}
+
+/* Contenitore principale */
+.personal-info-container {
+    margin-bottom: 30px;
+}
+
+/* La scheda dei dati */
+.personal-info-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-left: 5px solid #e2b13c; /* Richiama il colore gold */
+}
+
+/* Intestazione della scheda */
+.info-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.info-card-header i {
+    font-size: 1.8em;
+    color: #e2b13c;
+    margin-right: 15px;
+}
+
+.info-card-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.4em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Griglia dei dati */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Singolo elemento dato */
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.8em;
+    color:rgb(162, 108, 0);
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.info-value-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.info-value-wrapper i {
+    color: #ccc;
+    font-size: 0.9em;
+}
+
+.info-value {
+    font-size: 1.1em;
+    color: #444;
+    font-weight: 500;
+}
