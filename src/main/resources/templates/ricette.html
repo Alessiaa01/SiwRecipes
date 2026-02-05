@@ -179,5 +179,35 @@
         <p>Non ci sono ricette disponibili al momento.</p>
     </div>
 
+	<script>
+	document.querySelectorAll('.btn-favorite').forEach(button => {
+	    button.addEventListener('mouseenter', (e) => {
+	        for(let i = 0; i < 8; i++) {
+	            createParticle(e.pageX, e.pageY);
+	        }
+	    });
+	});
+
+	function createParticle(x, y) {
+	    const p = document.createElement('div');
+	    p.className = 'fairy-dust';
+	    document.body.appendChild(p);
+	    
+	    const size = Math.random() * 6 + 2;
+	    p.style.width = `${size}px`;
+	    p.style.height = `${size}px`;
+	    p.style.left = `${x}px`;
+	    p.style.top = `${y}px`;
+	    
+	    const destinationX = x + (Math.random() - 0.5) * 100;
+	    const destinationY = y + (Math.random() - 0.5) * 100;
+	    
+	    p.animate([
+	        { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+	        { transform: `translate(${destinationX - x}px, ${destinationY - y}px) scale(0)`, opacity: 0 }
+	    ], { duration: 1000, easing: 'ease-out' }).onfinish = () => p.remove();
+	}
+	</script>
+	
 </body>
 </html>

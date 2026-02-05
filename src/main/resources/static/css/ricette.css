@@ -380,3 +380,12 @@
     color: #e0d4b8; /* Colore tenue */
     line-height: 0; /* Evita che sballi l'altezza */
 }
+
+.fairy-dust {
+    position: absolute;
+    background: radial-gradient(circle, #FFF8E1, #C5A059);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 0 5px #E6C676;
+}
