@@ -77,39 +77,29 @@ public String addRecensione(@PathVariable("ricettaId") Long ricettaId,
 	@PostMapping("/ricetta/{ricettaId}/recensione/{recensioneId}/delete")
 	public String deleteRecensione(@PathVariable("ricettaId") Long ricettaId,
 	                               @PathVariable("recensioneId") Long recensioneId,
-	                               // Spring recupera questi due oggetti direttamente dal tuo GlobalController!
-	                               @ModelAttribute("currentUser") Utente currentUser,
-	                               @ModelAttribute("credentials") Credentials credentials) {
+	                               @ModelAttribute("currentUser") Utente currentUser) { // Rimosso @ModelAttribute("credentials")
 
-	    // 1. Recupero la recensione dal DB
 	    Recensione recensione = recensioneService.findById(recensioneId);
 	    
-	    // Controllo di sicurezza base
 	    if (recensione == null || currentUser == null) {
 	        return "redirect:/ricetta/" + ricettaId;
 	    }
 
-	    // 2. Controllo se sono ADMIN usando l'oggetto credentials che hai già
-	    // (Assumo che tu abbia una costante o una stringa per il ruolo ADMIN)
-	    boolean isAdmin = credentials.getRuolo().equals(Credentials.ADMIN_ROLE); 
-	    // Oppure se usi stringhe semplici: credentials.getRole().equals("ADMIN");
+	    // Recuperiamo il ruolo direttamente dall'utente loggato
+	    boolean isAdmin = currentUser.getCredentials() != null && 
+	                      Credentials.ADMIN_ROLE.equals(currentUser.getCredentials().getRuolo()); 
 
-	    // 3. Controllo se sono l'AUTORE
-	    // Nota: uso gli ID per sicurezza massima nel confronto
-	    boolean isAutore = recensione.getAutore().getId().equals(currentUser.getId());
+	    boolean isAutore = recensione.getAutore() != null && 
+	                       recensione.getAutore().getId().equals(currentUser.getId());
 
-	    // 4. Se sono Admin O sono l'Autore -> Cancello
 	    if (isAdmin || isAutore) {
-	        // Rimuovo dalla lista della ricetta per mantenere coerenza (se necessario per il tuo JPA)
+	        // Fondamentale: rimuovere il riferimento dalla lista della ricetta per l'integrità JPA
 	        recensione.getRicetta().getRecensioni().remove(recensione);
-	        
-	        // Cancello effettivamente
 	        recensioneService.delete(recensione);
 	    }
 
 	    return "redirect:/ricetta/" + ricettaId;
 	}
-	
 	// 1. GET: Quando clicco "Modifica", ricarico la pagina ricetta MA con i dati vecchi nel form
 	@GetMapping("/recensione/modifica/{id}")
 	public String modificaRecensione(@PathVariable("id") Long id,
@@ -168,4 +158,12 @@ public String addRecensione(@PathVariable("ricettaId") Long ricettaId,
 
 	    return "redirect:/ricetta/" + originale.getRicetta().getId();
 	}
+	
+	//GESTIONE ADMIN
+	@GetMapping("/admin/recensioni")
+    public String adminManageRecensioni(Model model) {
+        // Recupera tutte le recensioni (assicurati che il metodo findAll esista nel service)
+        model.addAttribute("recensioni", this.recensioneService.findAll());
+        return "admin/manageRecensioni.html";
+    }
 }

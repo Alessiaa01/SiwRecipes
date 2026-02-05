@@ -1,11 +1,12 @@
 package it.uniroma3.siw.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.uniroma3.siw.model.Recensione;
-import it.uniroma3.siw.model.Ricetta;
 import it.uniroma3.siw.repository.RecensioneRepository;
 
 @Service
@@ -27,4 +28,8 @@ public class RecensioneService {
 	public void delete(Recensione recensione) {
         this.recensioneRepository.delete(recensione);
     }
+	
+	public List<Recensione> findAll(){
+		return this.recensioneRepository.findAll();
+	}
 }

@@ -53,7 +53,7 @@ public class Ricetta {
 	@OneToMany(mappedBy ="ricetta", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<RicettaIngrediente> ricettaIngredienti = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "ricetta")
+	@OneToMany(mappedBy = "ricetta",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Recensione> recensioni;
 	
 	@ElementCollection

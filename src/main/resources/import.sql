@@ -3,7 +3,7 @@ INSERT INTO utente (id, nome, cognome, email, data_di_nascita) VALUES (1, 'Aless
 INSERT INTO credentials (id, password, ruolo, username, utente_id, enabled) VALUES (1, '$2a$12$AMC0tDbfcTEOKQd3BizQ3e1Ez5JLajLAIskHZt...4PORrJ8mRHd2', 'ADMIN', 'alessia', 1, true);
 
 INSERT INTO utente (id, nome, cognome, email, data_di_nascita) VALUES (2, 'Mario', 'Rossi', 'mario@gmail.com', '1940-12-01');
-INSERT INTO credentials (id, password, ruolo, username, utente_id, enabled) VALUES (2, '$2a$12$iXNJVm5AMTxPkJOkIDgMOuumIiTCEfelZEmq/Eyp0CMbsfG4gy5q2', 'DEFAULT', 'mario', 2, true);
+INSERT INTO credentials (id, password, ruolo, username, utente_id, enabled) VALUES (2, '$2a$12$iXNJVm5AMTxPkJOkIDgMOuumIiTCEfelZEmq/Eyp0CMbsfG4gy5q2', 'DEFAULT', 'MARIO', 2, true);
 
 -- 2. INGREDIENTI (ID 200+)
 INSERT INTO ingrediente (id, nome) VALUES (200, 'Sale');

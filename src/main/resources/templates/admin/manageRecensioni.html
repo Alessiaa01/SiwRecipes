@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Recensioni - Disney Admin</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" th:href="@{/css/stile.css}" />
+    <link rel="stylesheet" th:href="@{/css/manageRecensioni.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <header class="main-header">
+        <div class="header-content-wrapper">
+            <div class="header-left">
+                <a th:href="@{/}" class="btn-gold">
+                    <i class="fa-solid fa-house-chimney"></i> Home
+                </a>
+                <a th:href="@{/admin/indiceAdmin}" class="btn-gold">
+                    <i class="fa-solid fa-crown"></i> Gestion Admin
+                </a>
+            </div>
+			<div class="header-right">
+			             <div sec:authorize="isAuthenticated()" class="user-profile" style="display:flex; align-items:center; gap:15px;">
+							<span th:if="${currentUser != null}" class="chef-name" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+							                       <i class="fa-solid fa-crown" style="color: #C5A059;"></i>
+							                       <span th:text="${currentUser.nome} + ' ' + ${currentUser.cognome}">Admin</span>
+							                   </span>
+			                <form th:action="@{/logout}" method="post" style="margin: 0;">
+			                    <button type="submit" class="btn-logout">
+			                        Logout <i class="fa-solid fa-right-from-bracket"></i>
+			                    </button>
+			                </form>
+			            </div>
+			         </div>
+        </div>
+    </header>
+
+    <div class="hero-section">
+        <h1 class="main-title">Gestione Recensioni</h1>
+    </div>
+
+    <div class="container table-container">
+        <div class="parchment-panel">
+            
+            <div class="table-responsive">
+                <table class="magic-table">
+                    <thead>
+                        <tr>
+                            <th>Autore</th>
+                            <th>Ricetta</th>
+                            <th>Voto</th>
+                            <th>Anteprima</th>
+                            <th class="text-right">Azioni</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <tr th:each="recensione : ${recensioni}">
+                            <td>
+                                <div class="recipe-title-wrapper">
+                                    <div class="recipe-icon-box"><i class="fa-solid fa-user"></i></div>
+                                    <span class="chef-name" th:text="${recensione.autore.nome} + ' ' + ${recensione.autore.cognome}">Nome</span>
+                                </div>
+                            </td>
+                            <td>
+                                <a th:href="@{'/ricetta/' + ${recensione.ricetta.id}}" class="recipe-link" th:text="${recensione.ricetta.titolo}">Ricetta</a>
+                            </td>
+                            <td>
+                                <div class="star-rating">
+                                    <i class="fa-solid fa-star" th:each="i : ${#numbers.sequence(1, recensione.voto)}"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="review-preview" th:text="${recensione.titolo}">Titolo...</div>
+                            </td>
+                            <td class="text-right">
+                                <div class="action-buttons-wrapper">
+                                    <button type="button" class="btn-action btn-view" 
+                                            th:data-titolo="${recensione.titolo}"
+                                            th:data-testo="${recensione.testo}"
+                                            th:data-autore="${recensione.autore.nome} + ' ' + ${recensione.autore.cognome}"
+                                            th:data-ricetta="${recensione.ricetta.titolo}"
+                                            th:data-voto="${recensione.voto}"
+                                            onclick="openModal(this)">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <form th:action="@{'/ricetta/' + ${recensione.ricetta.id} + '/recensione/' + ${recensione.id} + '/delete'}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn-action btn-delete" onclick="return confirm('Eliminare questa recensione?');">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${recensioni.isEmpty()}">
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-scroll"></i>
+                                <p>Non ci sono ancora recensioni.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="reviewModal" class="modal">
+        <div class="modal-content parchment-panel">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitolo" class="main-title" style="font-size: 1.8rem; margin-bottom: 10px;">Titolo</h2>
+            <div class="modal-info" style="font-family: 'Lato', sans-serif; margin-bottom: 20px;">
+                <span id="modalAutore" class="chef-name"></span> su <em id="modalRicetta" style="color: #C5A059;"></em>
+                <div id="modalVotoStars" class="star-rating" style="margin-top: 5px;"></div>
+            </div>
+            <p id="modalTesto" style="font-size: 1.2rem; line-height: 1.6; background: rgba(255,255,255,0.5); padding: 15px; border-radius: 10px;"></p>
+        </div>
+    </div>
+
+    <script>
+        function openModal(button) {
+            document.getElementById("modalTitolo").innerText = button.getAttribute("data-titolo");
+            document.getElementById("modalTesto").innerText = button.getAttribute("data-testo");
+            document.getElementById("modalAutore").innerText = button.getAttribute("data-autore");
+            document.getElementById("modalRicetta").innerText = button.getAttribute("data-ricetta");
+            
+            const voto = parseInt(button.getAttribute("data-voto"));
+            let stars = "";
+            for(let i=0; i<voto; i++) stars += '<i class="fa-solid fa-star"></i> ';
+            document.getElementById("modalVotoStars").innerHTML = stars;
+
+            document.getElementById("reviewModal").style.display = "block";
+        }
+        function closeModal() { document.getElementById("reviewModal").style.display = "none"; }
+        window.onclick = function(e) { if(e.target == document.getElementById("reviewModal")) closeModal(); }
+    </script>
+</body>
+</html>

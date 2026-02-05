@@ -47,30 +47,43 @@
         <h1 class="main-title">Pannello di Controllo</h1>
     </div>
     
-    <div class="dashboard-container">
-            
-        <div class="dashboard-card">
-            <span class="icon"><i class="fa-solid fa-book-open"></i></span>
-            <h2>Ricette</h2>
-            <p>Aggiungi, modifica o cancella le ricette inviate dagli utenti.</p>
-            <a th:href="@{/admin/manageRicette}" class="dashboard-btn">Gestisci ricette</a>
-        </div>
+	<div class="dashboard-container">
+	            
+	        <div class="dashboard-card">
+	            <span class="icon"><i class="fa-solid fa-book-open"></i></span>
+	            <h2>Ricette</h2>
+	            <p>Aggiungi, modifica o cancella le ricette inviate dagli utenti.</p>
+	            <a th:href="@{/admin/manageRicette}" class="dashboard-btn">Gestisci ricette</a>
+	        </div>
 
-        <div class="dashboard-card">
-            <span class="icon"><i class="fa-solid fa-users"></i></span>
-            <h2>Utenti</h2>
-            <p>Visualizza l'elenco degli iscritti e gestisci i permessi.</p>
-            <a th:href="@{/admin/manageUtenti}" class="dashboard-btn">Gestisci utenti</a>
-        </div>
-        
-        <div class="dashboard-card">
-            <span class="icon"><i class="fa-solid fa-carrot"></i></span>
-            <h2>Ingredienti</h2>
-            <p>Gestisci la dispensa globale aggiungendo nuovi ingredienti.</p>
-            <a th:href="@{/admin/manageIngredienti}" class="dashboard-btn">Aggiungi Ingrediente</a>
-        </div>
+	        <div class="dashboard-card">
+	            <span class="icon"><i class="fa-solid fa-users"></i></span>
+	            <h2>Utenti</h2>
+	            <p>Visualizza l'elenco degli iscritti e gestisci i permessi.</p>
+	            <a th:href="@{/admin/manageUtenti}" class="dashboard-btn">Gestisci utenti</a>
+	        </div>
+	        
+	        <div class="dashboard-card">
+	            <span class="icon"><i class="fa-solid fa-carrot"></i></span>
+	            <h2>Ingredienti</h2>
+	            <p>Gestisci la dispensa globale aggiungendo nuovi ingredienti.</p>
+	            <a th:href="@{/admin/manageIngredienti}" class="dashboard-btn">Aggiungi Ingrediente</a>
+	        </div>
 
-    </div>
-   
+	        <div class="dashboard-card">
+	            <span class="icon"><i class="fa-solid fa-comments"></i></span>
+	            <h2>Recensioni</h2>
+	            <p>Modera i commenti e le valutazioni lasciate dagli utenti.</p>
+	            <a th:href="@{/admin/recensioni}" class="dashboard-btn">Gestisci recensioni</a>
+	        </div>
+			
+			<div class="dashboard-card">
+			            <span class="icon"><i class="fa-solid fa-user-gear"></i></span>
+			            <h2>Il mio Profilo</h2>
+			            <p>Visualizza le tue info, le tue ricette pubblicate e i tuoi preferiti.</p>
+			            <a th:href="@{/manageProfilo}" class="dashboard-btn">Vai al profilo</a>
+			        </div>
+
+	    </div>   
 </body>
 </html>
