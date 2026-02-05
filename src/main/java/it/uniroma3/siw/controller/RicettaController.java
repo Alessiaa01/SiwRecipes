@@ -64,7 +64,7 @@ public class RicettaController {
 	}
 	
 		
-	@PostMapping("/searchRicetta")
+	@GetMapping("/searchRicette")
 	public String searchRicette(Model model, @RequestParam String titolo) {
 		model.addAttribute("ricette", this.ricettaService.findByTitolo(titolo));
 		return "ricette.html";
