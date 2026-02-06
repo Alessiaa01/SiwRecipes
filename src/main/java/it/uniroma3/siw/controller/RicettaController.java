@@ -1,6 +1,7 @@
 package it.uniroma3.siw.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,8 +19,8 @@ import it.uniroma3.siw.model.Recensione;
 import it.uniroma3.siw.model.Ricetta;
 import it.uniroma3.siw.model.RicettaIngrediente;
 import it.uniroma3.siw.model.Utente;
-import it.uniroma3.siw.service.CredentialsService;
 import it.uniroma3.siw.service.IngredienteService;
+import it.uniroma3.siw.service.CredentialsService;
 import it.uniroma3.siw.service.RicettaService;
 import it.uniroma3.siw.service.UtenteService;
 
@@ -54,7 +55,8 @@ public class RicettaController {
 	//VISUALIZZA TUTTE LE RICETTE
 	@GetMapping("/ricette")
 	public String getRicette(Model model) {
-		model.addAttribute("ricette",this.ricettaService.findAll());
+		List<Ricetta> ricette= this.ricettaService.findAll();
+		model.addAttribute("ricette",ricette);
 		return "ricette.html";
 	}
 	
