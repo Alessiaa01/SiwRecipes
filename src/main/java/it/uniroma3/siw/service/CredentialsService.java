@@ -22,7 +22,7 @@ public class CredentialsService {
 	protected CredentialsRepository credentialsRepository;
 	
 	@Autowired
-	@Lazy
+	@Lazy //Spring cerca di caricare il componenete per la cifratura solo quando è effettivamente necessario
     protected PasswordEncoder passwordEncoder;
 	
 	@Autowired
@@ -47,6 +47,8 @@ public class CredentialsService {
 	    public List<Credentials> getAllCredentials() {
 	        return this.credentialsRepository.findAll();
 	    }
+		
+		
 		
 	//---METODI REGISTRAZIONE CLASSICA(Form)---
 	
@@ -79,11 +81,12 @@ public class CredentialsService {
 	
 	@Transactional
 	public void loginOrRegisterGoogleUser(String email, String nome, String cognome) {
-	    
+	    //verifica se la mail di google è già presente come username nel DB
 	    if (this.credentialsRepository.findByUsername(email).isPresent()) {
 	        return; 
 	    }
 
+	    //UTENTE NUOVO: creo un oggetto Utente, con i dati che ricevo da Google
 	    Utente nuovoUtente = new Utente();
 	    nuovoUtente.setEmail(email);
 	    nuovoUtente.setNome(nome);
@@ -95,7 +98,9 @@ public class CredentialsService {
 	    nuoveCredenziali.setRuolo(Credentials.DEFAULT_ROLE);
 	    nuoveCredenziali.setUtente(nuovoUtente);
 	    
-	    // 1. CODIFICA la password (fondamentale!)
+	    // 1. CODIFICA la password 
+	    //Per gli utenti google viene generata una psw casuale che viene criptata. Il DB richiede che il campo psw non sia vuoto,
+	    //anche se l'utente non la userà mai 
 	    nuoveCredenziali.setPassword(this.passwordEncoder.encode(UUID.randomUUID().toString()));
 	    
 	    // 2. ABILITA l'utente (altrimenti il login fallisce subito dopo la creazione)
@@ -103,11 +108,13 @@ public class CredentialsService {
 	    
 	    this.credentialsRepository.save(nuoveCredenziali);
 	}	
+	
 	//---GESTIONE BAN(ADMIN)---
 	@Transactional
     public void lockCredentials(String username) {
         Credentials credentials = this.credentialsRepository.findByUsername(username).orElse(null);
         if (credentials != null) {
+        	//agisce sul campo boolean enabled su credentials, se è false l'accesso viene negato anche se la psw è corretta
             credentials.setEnabled(false); 
             this.credentialsRepository.save(credentials);
         }
