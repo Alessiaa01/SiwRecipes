@@ -274,77 +274,139 @@ section { margin-bottom: 5rem; }
     text-decoration: underline;
 }
 
-/* Contenitore principale */
+/* --- STILE COORDINATO GESTIONE RICETTE (PERGAMENA) --- */
+
 .personal-info-container {
-    margin-bottom: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-/* La scheda dei dati */
+/* Pannello principale stile Pergamena */
 .personal-info-card {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border-left: 5px solid #e2b13c; /* Richiama il colore gold */
+    background-color: var(--parchment); /* #fffbf0 */
+    border-radius: 15px;
+    padding: 2.5rem;
+    box-shadow: 0 15px 35px rgba(78, 52, 46, 0.15);
+    border-top: 5px solid var(--oro); /* Bordo oro come in manageRicette */
 }
 
-/* Intestazione della scheda */
+/* Header della card */
 .info-card-header {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid rgba(197, 160, 89, 0.2);
+    padding-bottom: 15px;
 }
 
 .info-card-header i {
-    font-size: 1.8em;
-    color: #e2b13c;
-    margin-right: 15px;
+    font-size: 2rem;
+    color: var(--oro);
 }
 
 .info-card-header h2 {
+    font-family: var(--font-title); /* Cinzel Decorative */
+    color: var(--marrone-dark);
+    font-size: 1.8rem;
     margin: 0;
-    color: #333;
-    font-size: 1.4em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
-/* Griglia dei dati */
+/* --- STILE ELENCO VERTICALE (ADDIO GRIGLIE) --- */
+
+.personal-info-card {
+    background-color: var(--parchment);
+    border-radius: 15px;
+    padding: 2.5rem;
+    box-shadow: 0 15px 35px rgba(78, 52, 46, 0.15);
+    border-top: 5px solid var(--oro);
+    max-width: 800px; /* Lo rendiamo un po' più stretto per farlo sembrare un documento */
+    margin: 0 auto;
+}
+
 .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-direction: column; /* Mette gli elementi uno sotto l'altro */
+    gap: 0; /* Togliamo lo spazio della griglia */
 }
 
-/* Singolo elemento dato */
 .info-item {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between; /* Etichetta a sinistra, Valore a destra */
+    align-items: center;
+    padding: 20px 10px;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.2); /* Sottile linea dorata tra i dati */
+    transition: background 0.3s ease;
+}
+
+/* Togliamo la linea dall'ultimo elemento */
+.info-item:last-child {
+    border-bottom: none;
+}
+
+/* Effetto al passaggio del mouse */
+.info-item:hover {
+    background-color: rgba(197, 160, 89, 0.05);
 }
 
 .info-label {
-    font-size: 0.8em;
-    color:rgb(162, 108, 0);
+    font-family: var(--font-ui); /* Lato */
+    color: var(--oro);
+    font-weight: 700;
     text-transform: uppercase;
-    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
 }
 
 .info-value-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 5px;
+    gap: 12px;
 }
 
 .info-value-wrapper i {
-    color: #ccc;
-    font-size: 0.9em;
+    color: var(--marrone-dark);
+    opacity: 0.6;
+    font-size: 1rem;
 }
 
 .info-value {
-    font-size: 1.1em;
-    color: #444;
-    font-weight: 500;
+    font-family: var(--font-body); /* Cormorant Garamond */
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--marrone-text);
+}
+/* --- ANIMAZIONE FLUTTUANTE --- */
+@keyframes magicFloat {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* Sale di 10px */
+    100% { transform: translateY(0); }
+}
+
+.logo-container {
+    text-align: center;
+    margin-top: 100px;
+    margin-bottom: 10px;
+}
+
+.main-logo {
+    max-width: 160px; /* Ridimensionato leggermente */
+    height: auto;
+    display: inline-block;
+    
+    /* APPLICA L'ANIMAZIONE */
+    animation: magicFloat 3s ease-in-out infinite;
+    
+    /* Ombra morbida per dare profondità mentre fluttua */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Quando passi il mouse, il logo si ferma e si ingrandisce un po' */
+.main-logo:hover {
+    animation-play-state: paused; 
+    transform: scale(1.1);
+    filter: drop-shadow(0 15px 25px rgba(197, 160, 89, 0.3));
 }

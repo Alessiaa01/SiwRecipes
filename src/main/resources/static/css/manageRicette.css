@@ -28,6 +28,39 @@ body {
     padding-bottom: 50px;
 }
 
+/* --- ANIMAZIONE FLUTTUANTE --- */
+@keyframes magicFloat {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* Sale di 10px */
+    100% { transform: translateY(0); }
+}
+
+.logo-container {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.main-logo {
+    max-width: 160px; /* Ridimensionato leggermente */
+    height: auto;
+    display: inline-block;
+    
+    /* APPLICA L'ANIMAZIONE */
+    animation: magicFloat 3s ease-in-out infinite;
+    
+    /* Ombra morbida per dare profondità mentre fluttua */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Quando passi il mouse, il logo si ferma e si ingrandisce un po' */
+.main-logo:hover {
+    animation-play-state: paused; 
+    transform: scale(1.1);
+    filter: drop-shadow(0 15px 25px rgba(197, 160, 89, 0.3));
+}
 /* NOTA: Nessuna regola per .main-header qui.
    Rimarrà trasparente come definito nel CSS globale. */
 

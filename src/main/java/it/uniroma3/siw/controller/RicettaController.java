@@ -103,6 +103,7 @@ public class RicettaController {
 		                ricetta.setAutore(ricettaEsistente.getAutore());
 		                ricetta.setDataInserimento(ricettaEsistente.getDataInserimento());
 		               // ricetta.setUtentiCheHannoSalvato(ricettaEsistente.getUtentiCheHannoSalvato());
+		                ricetta.setRecensioni(ricettaEsistente.getRecensioni());
 		            }
 
 		        } else {
