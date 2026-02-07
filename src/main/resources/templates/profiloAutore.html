@@ -71,21 +71,26 @@
                         <p>Questo chef non ha ancora pubblicato ricette.</p>
                     </div>
 
-                    <ul th:unless="${utente.ricetteScritte.isEmpty()}" class="recipe-list">
-                        <li th:each="ricetta : ${utente.ricetteScritte}">
-                            <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="recipe-card-mini">
-                                <div>
-                                    <span class="recipe-link" th:text="${ricetta.titolo}">Titolo Ricetta</span>
-                                    
-                                    <span class="recipe-difficulty">
-                                        <span th:if="${ricetta.difficolta != null}" th:text="'Difficoltà: ' + ${ricetta.difficolta}"></span>
-                                        <span th:if="${ricetta.categoria != null}" th:text="' • ' + ${ricetta.categoria}"></span>
-                                    </span>
-                                </div>
-                                <i class="fa-solid fa-chevron-right btn-icon-go"></i>
-                            </a>
-                        </li>
-                    </ul>
+					<ul th:unless="${utente.ricetteScritte.isEmpty()}" class="recipe-list">
+					    <li th:each="ricetta : ${utente.ricetteScritte}">
+					        <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="recipe-card-mini">
+					            <div class="recipe-image-mini">
+					                <img th:if="${ricetta.imageUrl != null}" th:src="${ricetta.imageUrl}" alt="Immagine Ricetta"/>
+					                <img th:unless="${ricetta.imageUrl != null}" src="/images/placeholder-piatto.jpg" alt="Nessuna immagine"/>
+					            </div>
+					            
+					            <div class="recipe-info-mini">
+					                <span class="recipe-link" th:text="${ricetta.titolo}">Titolo Ricetta</span>
+					                <span class="recipe-difficulty">
+					                    <span th:if="${ricetta.difficolta != null}" th:text="'Difficoltà: ' + ${ricetta.difficolta}"></span>
+					                    <span th:if="${ricetta.categoria != null}" th:text="' • ' + ${ricetta.categoria}"></span>
+					                </span>
+					            </div>
+					            
+					            <i class="fa-solid fa-chevron-right btn-icon-go"></i>
+					        </a>
+					    </li>
+					</ul>
                 </section>
 
             </div>

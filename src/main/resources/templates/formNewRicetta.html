@@ -198,6 +198,14 @@
                     </ul>
                 </div>
             </div>
+			
+			<div class="input-group" style="margin-top: 30px;">
+			    <label class="section-header-styled">
+			        <i class="fas fa-lightbulb"></i> Consigli:
+			    </label>
+			    <textarea th:field="*{note}" rows="3" class="magic-textarea" 
+			              placeholder="Aggiungi qui piccoli segreti o suggerimenti per la variante perfetta..."></textarea>
+			</div>
 
             <div class="columns-container">
                 <div class="procedure-section" style="width: 100%;"> 
@@ -278,7 +286,7 @@
 		        }
 		    }
 
-		    if (qty === "" || qty <= 0) {
+		    if (qty === "" || qty < 0) {
 		        alert("Inserisci una quantità valida!");
 		        return;
 		    }

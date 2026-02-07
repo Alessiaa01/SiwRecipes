@@ -212,3 +212,61 @@
     white-space: nowrap;
     margin-right: 10px;
 }
+
+/* Stili aggiornati per la card ricetta con immagine */
+.recipe-card-mini {
+    background-color: white;
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    border-radius: 12px; 
+    padding: 1rem;
+    margin-bottom: 15px;
+    display: flex; 
+    align-items: center; /* Allinea tutto verticalmente al centro */
+    gap: 15px; /* Spazio tra immagine e testo */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    text-decoration: none;
+}
+
+/* Contenitore per la miniatura della foto */
+.recipe-image-mini {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0; /* Impedisce all'immagine di rimpicciolirsi */
+    border: 1px solid var(--border-deco);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.recipe-image-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Taglia l'immagine per riempire il quadrato senza distorcerla */
+}
+
+/* Allineamento del testo */
+.recipe-info-mini {
+    flex-grow: 1; /* Occupa tutto lo spazio centrale */
+    text-align: left;
+}
+
+.recipe-link {
+    font-family: 'Cormorant Garamond', serif; 
+    font-weight: 700;
+    color: rgb(100, 62, 41); 
+    font-size: 1.3rem; 
+    display: block;
+    margin-bottom: 2px;
+}
+
+/* Modifica responsive per schermi molto piccoli */
+@media (max-width: 480px) {
+    .recipe-image-mini {
+        width: 60px;
+        height: 60px;
+    }
+    .recipe-link {
+        font-size: 1.1rem;
+    }
+}

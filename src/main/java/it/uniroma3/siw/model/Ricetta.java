@@ -50,6 +50,9 @@ public class Ricetta {
 	
 	private LocalDate dataInserimento;
 	
+	@Column(columnDefinition = "TEXT")
+    private String note; // Il nuovo campo per i consigli
+	
 	@OneToMany(mappedBy ="ricetta", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<RicettaIngrediente> ricettaIngredienti = new ArrayList<>();
 	
@@ -152,6 +155,14 @@ public void setTempoDiCottura(Integer tempoDiCottura) {
 
 public void setTempoDiPreparazione(Integer tempoDiPreparazione) {
 	this.tempoDiPreparazione = tempoDiPreparazione;
+}
+
+public String getNote() {
+	return note;
+}
+
+public void setNote(String note) {
+	this.note = note;
 }
 
 public LocalDate getDataInserimento() {

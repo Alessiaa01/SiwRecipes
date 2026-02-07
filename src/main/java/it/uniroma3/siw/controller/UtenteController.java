@@ -24,10 +24,10 @@ public class UtenteController {
 	// Se cambi questo URL, devi cambiare anche il link nell'HTML!
     @GetMapping("/profiloAutore/{utenteId}")
     public String getProfiloAutore(@PathVariable("utenteId") Long utenteId, Model model) {   
-        Utente utente = this.utenteService.getUtente(utenteId);
+        Utente autore = this.utenteService.getUtente(utenteId);
         
-        if (utente != null) {
-            model.addAttribute("utente", utente);
+        if (autore != null) {
+            model.addAttribute("utente", autore);
             return "profiloAutore"; 
         } else {
             return "redirect:/";
