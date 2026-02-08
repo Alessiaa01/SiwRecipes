@@ -17,8 +17,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 
-@Configuration //è una classe di configurazione che definisce dei Bean
-@EnableWebSecurity //attiva l'integrazione di Spring Secutiry per per le app web, permettendo di personalizzare le regole di accesso
+@Configuration //è una classe di configurazione che definisce come devono essere determinati i  Bean
+@EnableWebSecurity //attiva l'integrazione di Spring Security per per le app web, permettendo di personalizzare le regole di accesso
 public class AuthConfiguration {
 
     @Autowired
@@ -30,8 +30,8 @@ public class AuthConfiguration {
     @Autowired
     //dove andare a cercare gli utenti per il login classico 
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication() 
-            .dataSource(dataSource) //utilizza il database configurato nel progetto
+        auth.jdbcAuthentication() //Utilizza questa autenticazione per cercare gli utenti direttamente nel db tramite query sql
+            .dataSource(dataSource) //utilizza il database configurato nel progetto (per cercare gli utenti)
             .authoritiesByUsernameQuery("SELECT username, ruolo FROM credentials WHERE username=?") //recupera il ruolo dell'utente
             .usersByUsernameQuery("SELECT username, password, enabled FROM credentials WHERE username=?"); //query per trovare l'utente
              //Spring verifica se l'username esiste e se la psw corrisponde, e se l'utente è attivo/bannato
@@ -79,8 +79,8 @@ public class AuthConfiguration {
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
             		.defaultSuccessUrl("/success", true)
-                .successHandler(oauth2LoginSuccessHandler) //collegato con il componente che si occupa di salvare l'utente nel database locale
-                                                           //la prima volta che effettua l'accesso con google
+                .successHandler(oauth2LoginSuccessHandler)// per salvare i dati dell'utente Google nel tuo database locale la prima volta che entra.
+                                                           
                 
             )
             
@@ -88,8 +88,8 @@ public class AuthConfiguration {
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/") //dopo il logout viene riportato all homepage
-                .invalidateHttpSession(true)//assicura che i dati della
-                .deleteCookies("JSESSIONID")// sessione vengano cancellati
+                .invalidateHttpSession(true)//assicura che i dati della sessione vengano cancellati
+                .deleteCookies("JSESSIONID")// cancella i cookie
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .clearAuthentication(true).permitAll()
             );
