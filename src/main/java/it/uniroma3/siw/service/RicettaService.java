@@ -76,9 +76,10 @@ public class RicettaService {
 			return ricettaRepository.findByAutore(autore);
 		}
 	
-	public boolean existByTitle(String titolo) {
-		return ricettaRepository.existsByTitolo(titolo);
-	}
+		// Cambia 'existByTitle' in 'existsByTitolo'
+		public boolean existsByTitolo(String titolo) {
+		    return ricettaRepository.existsByTitolo(titolo);
+		}
 
 	public void deleteById(Long id) {
 	    ricettaRepository.deleteById(id);

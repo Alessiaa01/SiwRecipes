@@ -34,7 +34,7 @@ public class RecensioneController {
         // Blocca l'autore (per non poter dire "questa recensione l'ha scritta un altro")
         binder.setDisallowedFields("id", "autore", "autore.id", "ricetta", "ricetta.id");
     }
-	
+
 	@PostMapping("/ricetta/{ricettaId}/recensione")
 public String addRecensione(@PathVariable("ricettaId") Long ricettaId,
                         @Valid @ModelAttribute("nuovaRecensione") Recensione recensione,

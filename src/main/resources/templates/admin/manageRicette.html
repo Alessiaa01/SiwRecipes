@@ -80,18 +80,29 @@
                     <tbody>
                         <tr th:each="ricetta : ${ricette}">
                             
-                            <td>
-                                <div class="recipe-title-wrapper">
-                                    <div class="recipe-icon-box">
-                                        <i class="fa-solid fa-utensils"></i>
-                                    </div>
-                                    <div style="display:flex; flex-direction:column;">
-                                        <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="recipe-link" th:text="${ricetta.titolo}">
-                                            Torta di Mele
-                                        </a>
-                                    </div>
-                                </div>
-                            </td>
+							<td>
+							    <div class="recipe-title-wrapper" style="display: flex; align-items: center; gap: 15px;">
+							        
+							        <div class="recipe-icon-box" style="width: 50px; height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; overflow: hidden; border: 2px solid #C5A059; background: #fff;">
+							            
+							            <img th:if="${ricetta.imageUrl != null}" 
+							                 th:src="${ricetta.imageUrl}" 
+							                 alt="Foto" 
+							                 style="width: 100%; height: 100%; object-fit: cover;">
+							            
+							            <i th:unless="${ricetta.imageUrl != null}" 
+							               class="fa-solid fa-utensils" 
+							               style="color: #C5A059; font-size: 1.2em;"></i>
+							        </div>
+
+							        <div style="display:flex; flex-direction:column;">
+							            <a th:href="@{'/ricetta/' + ${ricetta.id}}" class="recipe-link" th:text="${ricetta.titolo}" 
+							               style="font-weight: bold; color: #333; text-decoration: none; font-family: 'Cinzel Decorative', serif;">
+							                Torta di Mele
+							            </a>
+							        </div>
+							    </div>
+							</td>
 
                             <td>
                                 <span class="category-tag">
@@ -119,14 +130,14 @@
 							<td class="text-right">
 							    <div class="action-buttons-wrapper" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
 							        
-							        <div th:if="${currentUser != null and currentUser.ricetteSalvate.contains(ricetta)}">
-							            <form th:action="@{'/utente/ricetta/' + ${ricetta.id} + '/remove'}" method="post" style="margin:0; display: flex;">
-							                <button type="submit" class="btn-action" title="Togli dai preferiti" 
-							                        style="background: transparent; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
-							                    <i class="fa-solid fa-heart" style="color: #ff3b3b; font-size: 1.2em;"></i>
-							                </button>
-							            </form>
-							        </div>
+									<div th:if="${currentUser != null and currentUser.ricetteSalvate.contains(ricetta)}">
+									    <form th:action="@{/admin/preferiti/{id}/remove(id=${ricetta.id})}" method="POST" style="margin:0; display: flex;">
+									        <button type="submit" class="btn-action" title="Togli dai preferiti" 
+									                style="background: transparent; border: none; cursor: pointer; padding: 0; display: flex; align-items: center;">
+									            <i class="fa-solid fa-heart" style="color: #ff3b3b; font-size: 1.2em;"></i>
+									        </button>
+									    </form>
+									</div>
 
 							        <a th:href="@{/ricetta/{id}/edit(id=${ricetta.id})}" class="btn-action btn-edit" title="Modifica" style="display: flex; align-items: center; justify-content: center;">
 							            <i class="fa-solid fa-pen-to-square"></i>

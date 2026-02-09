@@ -19,7 +19,7 @@ public class Ingrediente {
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	private Long id;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, unique = true) //impedisce la creazione di doppioni
 	private String nome;
 	
 	@OneToMany(mappedBy = "ingrediente", cascade = CascadeType.REMOVE, orphanRemoval = true)

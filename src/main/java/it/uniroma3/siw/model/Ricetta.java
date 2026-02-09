@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,11 +28,9 @@ public class Ricetta {
 	@Column(nullable=false)
 	private String titolo;
 	
-	//@Column(length=2000)
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT")//nessun limite
 	private String descrizione;
 
-	//@Column(length=2000)
 	@Column(columnDefinition = "TEXT")
 	private String procedimento;
 	
@@ -51,16 +50,16 @@ public class Ricetta {
 	private LocalDate dataInserimento;
 	
 	@Column(columnDefinition = "TEXT")
-    private String note; // Il nuovo campo per i consigli
+    private String note; 
+	
+	@ElementCollection
+    private Set<String> tags;
 	
 	@OneToMany(mappedBy ="ricetta", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<RicettaIngrediente> ricettaIngredienti = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "ricetta",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Recensione> recensioni;
-	
-	@ElementCollection
-    private List<String> tags;
+    private List<Recensione> recensioni= new ArrayList<>();
 	
 	@ManyToOne  
     private Utente autore;
@@ -68,7 +67,7 @@ public class Ricetta {
 	@ManyToMany(mappedBy = "ricetteSalvate") 
 	private List<Utente> utentiCheHannoSalvato;
 	
-	//COSTRUTTORE
+	//COSTRUTTORE per evitare NullPointerException quando cerchi di aggiungere gli ingredienti a una ricetta appena creata
 		public Ricetta() {
 			this.ricettaIngredienti = new ArrayList<>();
 		}
@@ -183,6 +182,14 @@ public void setNote(String note) {
 	this.note = note;
 }
 
+public Set<String> getTags() {
+	return tags;
+}
+
+public void setTags(Set<String> tags) {
+	this.tags = tags;
+}
+
 public LocalDate getDataInserimento() {
 	return dataInserimento;
 }
@@ -219,13 +226,7 @@ public void setRecensioni(List<Recensione> recensioni) {
 	this.recensioni = recensioni;
 }
 
-public List<String> getTags() {
-    return tags;
-}
 
-public void setTags(List<String> tags) {
-    this.tags = tags;
-}
 
 public List<Utente> getUtentiCheHannoSalvato() {
 	return utentiCheHannoSalvato;

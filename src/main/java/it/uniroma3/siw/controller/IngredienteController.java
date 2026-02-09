@@ -31,9 +31,9 @@ public class IngredienteController {
 	public String newIngrediente(@ModelAttribute("ingrediente") Ingrediente ingrediente, Model model) {
 		
 		// Il tuo service restituisce null se l'ingrediente esiste già
-		Ingrediente saved = this.ingredienteService.saveIngrediente(ingrediente);
+		Ingrediente salvato = this.ingredienteService.saveIngrediente(ingrediente);
 		
-		if (saved == null) {
+		if (salvato == null) {
 			model.addAttribute("messaggioErrore", "Questo ingrediente esiste già nella dispensa!");
 			// Ricarichiamo la lista per non farla sparire
 			model.addAttribute("listaIngredienti", this.ingredienteService.findAll());
@@ -44,10 +44,10 @@ public class IngredienteController {
 		return "redirect:/admin/manageIngredienti";
 	}
 	// Cancellazione Ingrediente dalla Dispensa
-	@GetMapping("/admin/ingrediente/delete/{id}")
+	@PostMapping("/admin/ingrediente/delete/{id}")
     public String deleteIngrediente(@PathVariable("id") Long id) {
         // Cancella direttamente. Se fallisce, Spring mostrerà l'errore standard.
-        this.ingredienteService.delete(id); // Assicurati che il tuo service abbia questo metodo
+        this.ingredienteService.delete(id); 
         return "redirect:/admin/manageIngredienti";
     }
 }

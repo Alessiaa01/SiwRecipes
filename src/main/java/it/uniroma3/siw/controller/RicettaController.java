@@ -8,21 +8,24 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import it.uniroma3.siw.controller.validator.RicettaValidator;
 import it.uniroma3.siw.model.Credentials;
 import it.uniroma3.siw.model.Recensione;
 import it.uniroma3.siw.model.Ricetta;
 import it.uniroma3.siw.model.RicettaIngrediente;
 import it.uniroma3.siw.model.Utente;
-import it.uniroma3.siw.service.IngredienteService;
 import it.uniroma3.siw.service.CredentialsService;
+import it.uniroma3.siw.service.IngredienteService;
 import it.uniroma3.siw.service.RicettaService;
 import it.uniroma3.siw.service.UtenteService;
+import jakarta.validation.Valid;
 
 
 
@@ -41,6 +44,9 @@ public class RicettaController {
 	
 	@Autowired 
 	private UtenteService utenteService;
+	
+	@Autowired
+	private RicettaValidator ricettaValidator; // Assicurati di averlo iniettato in cima alla classe
 
 	//---UTENTE GENERICO---
 	//VISUALIZZA SINGOLA RICETTA
@@ -48,7 +54,7 @@ public class RicettaController {
 	public String getRicetta(@PathVariable("id") Long id, Model model) {
 	Ricetta ricetta= this.ricettaService.findById(id);
 	model.addAttribute("ricetta",ricetta);
-	model.addAttribute("nuovaRecensione", new Recensione());
+	model.addAttribute("nuovaRecensione", new Recensione()); //serve oggetto vuoto di tipo Recensione
 		return "ricetta.html";
 	}
 	
@@ -84,65 +90,74 @@ public class RicettaController {
 			}
 			
 			
-			@PostMapping("/newRicetta") 
-		    public String newRicetta(@ModelAttribute("ricetta") Ricetta ricetta, Model model) {
+			@PostMapping("/newRicetta")
+			public String newRicetta(@Valid @ModelAttribute("ricetta") Ricetta ricetta, 
+			                         BindingResult bindingResult, // <--- 1. AGGIUNTO (deve essere subito dopo @ModelAttribute)
+			                         Model model) {
 
-		        // 1. Recupero l'utente loggato (Grazie al GlobalController!)
-		        Utente currentUser = (Utente) model.getAttribute("currentUser");
+			    // Recupero l'utente loggato 
+			    Utente currentUser = (Utente) model.getAttribute("currentUser");
 
-		        // 2. Logica: MODIFICA o NUOVO inserimento?
-		        if (ricetta.getId() != null) {
-		            // --- MODIFICA ---
-		            Ricetta ricettaEsistente = this.ricettaService.findById(ricetta.getId());
+			    // --- LOGICA DI VALIDAZIONE TITOLO DUPLICATO ---
+			    // Eseguiamo la validazione solo se è una NUOVA ricetta (id null)
+			    // o se il titolo è stato cambiato (per evitare che la ricetta blocchi se stessa in modifica)
+			    if (ricetta.getId() == null) {
+			        this.ricettaValidator.validate(ricetta, bindingResult); // <--- 2. CHIAMATA AL VALIDATORE
+			    } else {
+			        Ricetta esistenteNelDb = this.ricettaService.findById(ricetta.getId());
+			        if (esistenteNelDb != null && !esistenteNelDb.getTitolo().equals(ricetta.getTitolo())) {
+			            this.ricettaValidator.validate(ricetta, bindingResult); // Valida solo se il titolo è cambiato
+			        }
+			    }
 
-		            // SECURITY CHECK: Se la ricetta esiste ma non sei l'autore (e non sei admin), BLOCCO.
-		            if (ricettaEsistente != null && !this.isAuthorized(ricettaEsistente, currentUser)) {
-		                return "redirect:/login"; // O una pagina di errore
-		            }
-		            
-		            // Re-imposto i dati che il form non invia
-		            if (ricettaEsistente != null) {
-		                ricetta.setAutore(ricettaEsistente.getAutore());
-		                ricetta.setDataInserimento(ricettaEsistente.getDataInserimento());
-		               // ricetta.setUtentiCheHannoSalvato(ricettaEsistente.getUtentiCheHannoSalvato());
-		                ricetta.setRecensioni(ricettaEsistente.getRecensioni());
-		            }
+			    // --- CONTROLLO ERRORI ---
+			    if (bindingResult.hasErrors()) { // <--- 3. SE CI SONO ERRORI, TORNA AL FORM
+			        // Se avevi bisogno di caricare categorie o ingredienti per il form, rifallo qui
+			        return "formNewRicetta"; // Assicurati che sia il nome corretto del tuo template HTML
+			    }
 
-		        } else {
-		            // --- NUOVA RICETTA ---
-		            if (currentUser != null) {
-		                ricetta.setAutore(currentUser); // Il cuoco è l'utente loggato
-		            }
-		            ricetta.setDataInserimento(LocalDate.now());
-		        }
+			    // --- LOGICA ESISTENTE: MODIFICA o NUOVO inserimento? ---
+			    if (ricetta.getId() != null) {
+			        Ricetta ricettaEsistente = this.ricettaService.findById(ricetta.getId());
 
-		        // 3. Gestione della lista ingredienti (RicettaIngrediente)
-		        if (ricetta.getRicettaIngredienti() != null) {
-		            
-		            // A. Pulizia: rimuovo le righe vuote
-		            ricetta.getRicettaIngredienti().removeIf(riga -> riga.getIngrediente() == null);
-		            
-		            // B. Associazione Bidirezionale
-		            for (RicettaIngrediente riga : ricetta.getRicettaIngredienti()) {
-		                riga.setRicetta(ricetta);
-		            }
-		        }
+			        if (ricettaEsistente != null && !this.isAuthorized(ricettaEsistente, currentUser)) {
+			            return "redirect:/login";
+			        }
+			        
+			        if (ricettaEsistente != null) {
+			            ricetta.setAutore(ricettaEsistente.getAutore());
+			            ricetta.setDataInserimento(ricettaEsistente.getDataInserimento());
+			            ricetta.setRecensioni(ricettaEsistente.getRecensioni());
+			        }
+			    } else {
+			        if (currentUser != null) {
+			            ricetta.setAutore(currentUser);
+			        }
+			        ricetta.setDataInserimento(LocalDate.now());
+			    }
 
-		        // 4. Salvataggio finale
-		        Ricetta nuovaRicetta = this.ricettaService.save(ricetta);
+			    // 3. Gestione della lista ingredienti
+			    if (ricetta.getRicettaIngredienti() != null) {
+			        ricetta.getRicettaIngredienti().removeIf(riga -> riga.getIngrediente() == null);
+			        for (RicettaIngrediente riga : ricetta.getRicettaIngredienti()) {
+			            riga.setRicetta(ricetta);
+			        }
+			    }
 
-		        // 5. Redirect alla pagina di dettaglio
-		        return "redirect:/ricetta/" + nuovaRicetta.getId();
-		    }
+			    // 4. Salvataggio finale
+			    Ricetta nuovaRicetta = this.ricettaService.save(ricetta);
 
-			
+			    return "redirect:/ricetta/" + nuovaRicetta.getId();
+			}
+
+			//MOSTRA LA PAGINA DI MODIFICA
 			@GetMapping("/ricetta/{id}/edit")
 		    public String editRicetta(@PathVariable("id") Long id, Model model) {
 		        
 		        // 1. Cerco la ricetta nel DB
 		        Ricetta ricetta = this.ricettaService.findById(id);
 		        
-		        // 2. Recupero l'utente corrente (già caricato dal GlobalController)
+		        // 2. Recupero l'utente corrente 
 		        Utente currentUser = (Utente) model.getAttribute("currentUser");
 
 		        // 3. Controllo se l'utente ha il permesso (è l'autore o è admin?)
@@ -182,8 +197,7 @@ public class RicettaController {
 		            return "redirect:/login";
 		        }
 
-		        // 2. Controllo Permessi: Sei l'Autore O sei un Admin?
-		        // NOTA: Se nella tua classe si chiama 'getCuoco', cambia 'getAutore' in 'getCuoco' qui sotto
+		        // 2. Controllo Permessi: Sei l'Autore o sei un Admin?
 		        boolean isOwner = currentUser.getId().equals(ricetta.getAutore().getId());
 		        
 		        // Controllo Admin
@@ -281,24 +295,24 @@ public class RicettaController {
      * Restituisce true se l'utente è l'autore della ricetta o se è un admin.
      */
     private boolean isAuthorized(Ricetta ricetta, Utente currentUser) {
-        // 1. Controlli preliminari (Se non sei loggato o la ricetta non esiste, ciao)
+        // 1. Controlli preliminari (Se non sei loggato o la ricetta non esiste)
         if (currentUser == null || ricetta == null) {
             return false;
         }
 
-        // 2. Controllo Autore
-        // Nota: ricetta.getAutore() potrebbe essere null se hai ricette vecchie senza autore
-        boolean isAuthor = false;
+        // 2. CONTROLLO AUTORE
+        // controlla se coincide l'id dell'utente loggato con l'autore della ricetta--> proprietario
+        boolean isOwner = false;
         if (ricetta.getAutore() != null && ricetta.getAutore().getId().equals(currentUser.getId())) {
-            isAuthor = true;
+            isOwner = true;
         }
 
-        // 3. Controllo Admin
-        // Va a vedere nel contesto di Spring Security se hai il "badge" ADMIN
+        // 3. CONTROLLO ADMIN
+        //per vedere se l'utente ha il ruolo di admin
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals(Credentials.ADMIN_ROLE));
 
-        return isAuthor || isAdmin;
+        return isOwner || isAdmin; //se è autore o admin restituisce true 
     }
 }

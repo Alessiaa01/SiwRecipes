@@ -75,40 +75,7 @@ public class CredentialsService {
 		return this.credentialsRepository.findAll();
     }
 	
-	
-	
-/*
-	//UTENTE CHE ARRIVA DA GOOGLE
-	@Transactional
-	public void loginOrRegisterGoogleUser(String email, String nome, String cognome) {
-	    //verifica se la mail di google è già presente come username nel DB
-	    if (this.credentialsRepository.findByUsername(email).isPresent()) {
-	        return; 
-	    }
 
-	    //UTENTE NUOVO: creo un oggetto Utente, con i dati che ricevo da Google
-	    Utente nuovoUtente = new Utente();
-	    nuovoUtente.setEmail(email);
-	    nuovoUtente.setNome(nome);
-	    nuovoUtente.setCognome(cognome);
-	    this.utenteRepository.save(nuovoUtente);
-	    
-	    Credentials nuoveCredenziali = new Credentials();
-	    nuoveCredenziali.setUsername(email);
-	    nuoveCredenziali.setRuolo(Credentials.DEFAULT_ROLE);
-	    nuoveCredenziali.setUtente(nuovoUtente);
-	    
-	    // 1. CODIFICA la password 
-	    //Per gli utenti google viene generata una psw casuale che viene criptata. Il DB richiede che il campo psw non sia vuoto,
-	    //anche se l'utente non la userà mai 
-	    nuoveCredenziali.setPassword(this.passwordEncoder.encode(UUID.randomUUID().toString())); //PSW FITTIZIA
-	    
-	    // 2. ABILITA l'utente (altrimenti il login fallisce subito dopo la creazione)
-	    nuoveCredenziali.setEnabled(true); 
-	    
-	    this.credentialsRepository.save(nuoveCredenziali);
-	}	
-	*/
 	//---GESTIONE BAN(ADMIN)---
 	@Transactional
     public void lockCredentials(String username) {

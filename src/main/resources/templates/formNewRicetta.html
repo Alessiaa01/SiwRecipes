@@ -78,11 +78,14 @@
                 <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
             </div>
 
-            <div class="input-group">
-                <label>Titolo della Ricetta</label>
-                <input type="text" th:field="*{titolo}" class="magic-input" placeholder="Es. Torta di Mele" required/>
-                <span style="color: #d32f2f;" th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}"></span>
-            </div>
+			<div class="input-group">
+			    <label>Titolo della Ricetta</label>
+			    <input type="text" th:field="*{titolo}" class="magic-input" />
+			    
+			    <ul th:if="${#fields.hasErrors('titolo')}">
+			        <li th:each="err : ${#fields.errors('titolo')}" th:text="${err}" style="color:red;"></li>
+			    </ul>
+			</div>
 
             <div class="input-group">
                 <label>Breve Descrizione</label>

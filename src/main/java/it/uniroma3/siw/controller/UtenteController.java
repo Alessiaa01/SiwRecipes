@@ -21,7 +21,7 @@ public class UtenteController {
 	@Autowired
 	private RicettaService ricettaService;
 
-	// Se cambi questo URL, devi cambiare anche il link nell'HTML!
+	
     @GetMapping("/profiloAutore/{utenteId}")
     public String getProfiloAutore(@PathVariable("utenteId") Long utenteId, Model model) {   
         Utente autore = this.utenteService.getUtente(utenteId);
@@ -39,9 +39,9 @@ public class UtenteController {
     	return "manageProfilo";
     }
     
-    @PostMapping("/utente/ricetta/{id}/remove")
+    @PostMapping("/admin/preferiti/{id}/remove")
     public String removePreferitoAdmin(@PathVariable("id") Long id, Model model) {
-        Utente admin = (Utente) model.getAttribute("currentUser"); // Recuperato dal GlobalController
+        Utente admin = (Utente) model.getAttribute("currentUser"); 
         Ricetta ricetta = ricettaService.findById(id);
         
         if (admin != null && ricetta != null) {
