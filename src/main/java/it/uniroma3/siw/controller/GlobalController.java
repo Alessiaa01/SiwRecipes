@@ -13,25 +13,29 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import it.uniroma3.siw.model.Credentials;
 import it.uniroma3.siw.model.Utente;
 import it.uniroma3.siw.service.CredentialsService;
+import it.uniroma3.siw.service.UtenteService;
 
-@ControllerAdvice
+@ControllerAdvice //rende il controller disponibile per tutti i template
 public class GlobalController {
 
-	@Autowired 
+	@Autowired //non devi creare tu l'oggetto con new, ma lo inietta Spring
 	private CredentialsService credentialsService;
+	
+	@Autowired 
+	private UtenteService utenteService;
 
 	
 	
 	@ModelAttribute("currentUser")
-    public Utente getCurrentUser() {
+    public Utente getCurrentUser() { //identifica chi sta navigando nel sito 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Se non sei loggato, restituisci null
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken ) { //recupero autenticazione
+        // 1.UTENTE ANONIMO
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken ) { 
             return null;
         }
         
-        // LOGIN CLASSICO (Username/Password)
+        // 2.LOGIN CLASSICO (Username/Password)
         if (authentication.getPrincipal() instanceof UserDetails) {
            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Credentials credentials= credentialsService.getCredentials(userDetails.getUsername());
@@ -50,41 +54,38 @@ public class GlobalController {
          
             if (credentials != null) {
             return credentials.getUtente();
-          }
-        }    
-         return null;
-	}  
-	
-}
-            /*
-            else {
+          } else {
             	//utente nuovo, lo registriamo
             	Utente newUtente= new Utente();
-            	newUtente.setNome(principal.getAttribute("given_family"));
+            	
+            	//con i dati che google mette a disposizione
+            	newUtente.setNome(principal.getAttribute("given_name"));
             	newUtente.setCognome(principal.getAttribute("family_name"));
             	newUtente.setEmail(email);
+            	
             	this.utenteService.saveUtente(newUtente);
             	
+            	//creiamo le credenziali collegate
             	Credentials newCredentials= new Credentials();
             	newCredentials.setUsername(email);
-            	
-            	//psw fittizzia
-            	newCredentials.setPassword("[OAUTH_USER]");
+            	newCredentials.setPassword("[OAUTH_USER]");//psw fittizia
             	newCredentials.setRuolo(Credentials.DEFAULT_ROLE);
             	newCredentials.setUtente(newUtente);
+            	
             	this.credentialsService.saveCredentials(newCredentials);
             	
             	newUtente.setCredentials(newCredentials);
             	
             	return newUtente;
-            }
+            
+         }
          }
          return null;
       
-    } 
-	
+	}
+
 	}
 	
-*/
+
 
 

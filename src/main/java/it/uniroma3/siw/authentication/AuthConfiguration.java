@@ -25,9 +25,6 @@ public class AuthConfiguration {
     private DataSource dataSource;
 
     @Autowired
-    private OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
-
-    @Autowired
     //dove andare a cercare gli utenti per il login classico 
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication() //Utilizza questa autenticazione per cercare gli utenti direttamente nel db tramite query sql
@@ -78,10 +75,7 @@ public class AuthConfiguration {
             // CONFIGURAZIONE LOGIN GOOGLE
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
-            		.defaultSuccessUrl("/success", true)
-                .successHandler(oauth2LoginSuccessHandler)// per salvare i dati dell'utente Google nel tuo database locale la prima volta che entra.
-                                                           
-                
+            		.defaultSuccessUrl("/success", true)          
             )
             
             // CONFIGURAZIONE LOGOUT

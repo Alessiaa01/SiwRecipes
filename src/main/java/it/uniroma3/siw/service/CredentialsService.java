@@ -52,7 +52,7 @@ public class CredentialsService {
 		
 	//---METODI REGISTRAZIONE CLASSICA(Form)---
 	
-	@Transactional// se trova un errore annulla tutto, per non avre dati a metà
+	@Transactional// se trova un errore annulla tutto, per non avrò dati a metà
 	public Credentials saveCredentials(Credentials credentials) {
 		
 		//Assegnazione ruolo, di default chi si registra è un utente normale
@@ -77,8 +77,8 @@ public class CredentialsService {
 	
 	
 	
-
-	
+/*
+	//UTENTE CHE ARRIVA DA GOOGLE
 	@Transactional
 	public void loginOrRegisterGoogleUser(String email, String nome, String cognome) {
 	    //verifica se la mail di google è già presente come username nel DB
@@ -101,14 +101,14 @@ public class CredentialsService {
 	    // 1. CODIFICA la password 
 	    //Per gli utenti google viene generata una psw casuale che viene criptata. Il DB richiede che il campo psw non sia vuoto,
 	    //anche se l'utente non la userà mai 
-	    nuoveCredenziali.setPassword(this.passwordEncoder.encode(UUID.randomUUID().toString()));
+	    nuoveCredenziali.setPassword(this.passwordEncoder.encode(UUID.randomUUID().toString())); //PSW FITTIZIA
 	    
 	    // 2. ABILITA l'utente (altrimenti il login fallisce subito dopo la creazione)
 	    nuoveCredenziali.setEnabled(true); 
 	    
 	    this.credentialsRepository.save(nuoveCredenziali);
 	}	
-	
+	*/
 	//---GESTIONE BAN(ADMIN)---
 	@Transactional
     public void lockCredentials(String username) {

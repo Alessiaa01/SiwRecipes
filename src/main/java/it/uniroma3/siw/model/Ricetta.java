@@ -73,6 +73,24 @@ public class Ricetta {
 			this.ricettaIngredienti = new ArrayList<>();
 		}
 
+		public String getMediaVoti() {
+		    // Controllo se la lista è nulla o vuota
+		    if (this.recensioni == null || this.recensioni.isEmpty()) {
+		        return "-";
+		    }
+
+		    double totale = 0.0;
+		    for (Recensione r : this.recensioni) {
+		        totale += r.getVoto();
+		    }
+
+		    double media = totale / this.recensioni.size();
+
+		    // Formatta la media a 1 cifra decimale (es. 4.5)
+		    // Nota: String.format usa il Locale di default del sistema. 
+		    // Se vuoi forzare il punto usa: String.format(Locale.US, "%.1f", media);
+		    return String.format("%.1f", media);
+		}
 //METODI GETTER E SETTER 
 
 public Long getId() {
