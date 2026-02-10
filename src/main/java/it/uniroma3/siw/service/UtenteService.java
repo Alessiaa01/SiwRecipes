@@ -24,7 +24,7 @@ public class UtenteService {
         return result.orElse(null);
     }
 	
-	//salva un utente (NON SO SE SERVE )
+
 	//Di solito viene chiamato automaticamente dal salvataggio delle Credentials
     // grazie al "Cascade", ma è utile averlo per aggiornare profilo (es. cambio nome)
 	@Transactional

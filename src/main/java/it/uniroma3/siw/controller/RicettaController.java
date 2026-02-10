@@ -66,11 +66,6 @@ public class RicettaController {
 		return "ricette.html";
 	}
 	
-	@GetMapping("/formSearchRicetta")
-	public String formSearchRicette() {
-		return "formSearchRicetta.html";
-	}
-	
 		
 	@GetMapping("/searchRicette")
 	public String searchRicette(Model model, @RequestParam String titolo) {

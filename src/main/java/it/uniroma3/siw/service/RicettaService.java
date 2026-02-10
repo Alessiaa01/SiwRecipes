@@ -49,7 +49,7 @@ public class RicettaService {
 			return ricettaRepository.findByAutore(autore);
 		}
 	
-		// Cambia 'existByTitle' in 'existsByTitolo'
+
 		public boolean existsByTitolo(String titolo) {
 		    return ricettaRepository.existsByTitoloIgnoreCase(titolo);
 		}
