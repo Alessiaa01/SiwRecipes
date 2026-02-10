@@ -3,6 +3,9 @@ package it.uniroma3.siw.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,8 +68,24 @@ public String registerUser(@Valid @ModelAttribute("user") Utente utente,
 }
 
 @GetMapping(value = "/success")
-public String defaultAfterLogin() {
-    // tutti vengono mandati alle ricette
+public String defaultAfterLogin(Authentication authentication) {
+    String username;
+    
+    // Identifichiamo l'utente (che sia login classico o Google)
+    if (authentication instanceof OAuth2AuthenticationToken) {
+        OAuth2User principal = ((OAuth2AuthenticationToken) authentication).getPrincipal();
+        username = principal.getAttribute("email");
+    } else {
+        username = authentication.getName();
+    }
+
+    // Controlliamo se le credenziali nel DB sono attive
+    Credentials credentials = credentialsService.getCredentials(username);
+    if (credentials != null && !credentials.isEnabled()) {
+        // Se l'utente è bloccato, lo mandiamo forzatamente al logout
+    	return "redirect:/login?error=blocked";
+    }
+
     return "welcome.html";
 }
   

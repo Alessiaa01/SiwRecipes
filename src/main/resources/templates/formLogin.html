@@ -27,9 +27,26 @@
             <p class="login-subtitle">Accedi al tuo ricettario</p>
         </div>
 
-        <div th:if="${param.error}" class="alert alert-danger magic-alert text-center fade show mx-3" role="alert">
-            <small><i class="fas fa-exclamation-circle me-1"></i> Credenziali errate</small>
-        </div>
+		<div th:if="${param.error != null and param.error[0] != 'blocked'}" 
+		     class="alert alert-danger magic-alert text-center fade show mx-3" role="alert">
+		    <small>
+		        <i class="fas fa-exclamation-circle me-1"></i> 
+		        Credenziali errate o utente non trovato.
+		    </small>
+		</div>
+
+		<div th:if="${param.error != null and param.error[0] == 'blocked'}" 
+		     class="alert alert-danger magic-alert text-center fade show mx-3" 
+		     style="border: 2px solid #ff3b3b; background: rgba(255, 59, 59, 0.1);" role="alert">
+		    <small>
+		        <i class="fa-solid fa-ban me-1"></i> 
+		        <strong>Accesso Negato:</strong> Il tuo account è stato sospeso dall'amministratore.
+		    </small>
+		</div>
+
+		<div th:if="${param.logout}" class="alert alert-success magic-alert text-center fade show mx-3" role="alert">
+		    <small><i class="fas fa-check-circle me-1"></i> A presto!</small>
+		</div>
         
         <div th:if="${param.logout}" class="alert alert-success magic-alert text-center fade show mx-3" role="alert">
             <small><i class="fas fa-check-circle me-1"></i> A presto!</small>

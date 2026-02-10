@@ -20,8 +20,6 @@ public class IngredienteService {
 	public Ingrediente saveIngrediente(Ingrediente ingrediente) {
 		// Controllo duplicati (Case Insensitive: "Uova" == "uova")
 		if (this.ingredienteRepository.existsByNomeIgnoreCase(ingrediente.getNome())) {
-			// Qui potresti lanciare un'eccezione custom tipo "DuplicateException"
-			// Per ora ritorniamo null o l'ingrediente esistente per segnalare il problema
 			return null; 
 		}
 		return this.ingredienteRepository.save(ingrediente);
