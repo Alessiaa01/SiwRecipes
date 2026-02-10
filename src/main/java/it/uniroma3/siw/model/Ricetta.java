@@ -194,8 +194,8 @@ public LocalDate getDataInserimento() {
 	return dataInserimento;
 }
 
-public void setDataInserimento(LocalDate dataDiInserimento) {
-	this.dataInserimento = dataDiInserimento;
+public void setDataInserimento(LocalDate dataInserimento) {
+	this.dataInserimento = dataInserimento;
 }
 
 public void setRicettaIngredienti(List<RicettaIngrediente> ricettaIngredienti) {

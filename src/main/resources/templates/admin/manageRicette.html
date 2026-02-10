@@ -143,13 +143,15 @@
 							            <i class="fa-solid fa-pen-to-square"></i>
 							        </a>
 							        
-							        <a th:href="@{'/admin/deleteRicetta/' + ${ricetta.id}}" 
-							           class="btn-action btn-delete" 
-							           title="Elimina"
-							           onclick="return confirm('Sei sicuro di voler eliminare questa ricetta?');"
-							           style="display: flex; align-items: center; justify-content: center;">
-							            <i class="fa-solid fa-trash-can"></i>
-							        </a>
+									<form th:action="@{'/ricetta/delete/' + ${ricetta.id}}" method="POST" style="display:inline; margin:0;">
+									    <button type="submit" 
+									            class="btn-action btn-delete" 
+									            title="Elimina"
+									            onclick="return confirm('Sei sicuro di voler eliminare questa ricetta?');"
+									            style="border: none; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+									        <i class="fa-solid fa-trash-can" style="color: #d32f2f; font-size: 1.2em;"></i>
+									    </button>
+									</form>
 
 							    </div>
 							</td>

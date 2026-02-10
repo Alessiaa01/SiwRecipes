@@ -204,12 +204,22 @@
 
             <div th:unless="${recensioneDaModificare != null && recensioneDaModificare.id == recensione.id}">
                 
-                <div class="review-header">
-                    <span><i class="fas fa-user"></i> <span th:text="${recensione.autore.nome}">Nome</span></span>
-                    <span class="review-stars">
-                        <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, recensione.voto)}"></i>
-                    </span>
-                </div>
+				<div class="review-header" style="display: flex; justify-content: space-between; align-items: center;">
+				    <span>
+				        <i class="fas fa-user"></i> 
+				        <span th:text="${recensione.autore.nome}">Nome</span>
+				    </span>
+
+				    <span th:if="${recensione.dataInserimento != null}" style="color: #888; font-size: 0.8rem; font-style: italic;">
+				        <i class="far fa-calendar-alt"></i> 
+				        <span th:text="${#temporals.format(recensione.dataInserimento, 'dd/MM/yyyy')}">10/02/2026</span>
+				    </span>
+				</div>
+
+				<div class="review-stars" style="margin-bottom: 5px;">
+				    <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, recensione.voto)}"></i>
+				</div>			
+				
                 
                 <strong th:text="${recensione.titolo}" class="review-title-text">Titolo</strong>
                 <p th:text="${recensione.testo}" class="review-body-text">Testo...</p>

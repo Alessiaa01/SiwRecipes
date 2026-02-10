@@ -9,7 +9,7 @@ import it.uniroma3.siw.model.Utente;
 
 public interface RicettaRepository extends JpaRepository<Ricetta, Long> {
 
-	public boolean existsByTitolo(String titolo);
+	public boolean existsByTitoloIgnoreCase(String titolo);
 	
 	//trova tutte le ricette che contengono una parola nel titolo
 	List <Ricetta> findByTitoloContainingIgnoreCase(String titolo);

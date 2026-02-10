@@ -16,15 +16,19 @@ public class RicettaValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        Ricetta ricetta = (Ricetta) o;
+        Ricetta ricetta = (Ricetta) o; //cast dell'oggetto generico a ricetta
         
         // Controllo se il titolo non è nullo e se esiste già nel database
-        if (ricetta.getTitolo() != null && ricettaService.existsByTitolo(ricetta.getTitolo())) {
-            // "ricetta.duplicate" è la chiave per il messaggio d'errore (nei messaggi o come default)
-        	errors.rejectValue("titolo", "ricetta.duplicate", "Esiste già una ricetta con questo titolo");
+        if (ricetta.getTitolo() != null) {
+            // Puliamo il titolo che arriva dal form
+            String titoloPulito = ricetta.getTitolo().trim();
+
+            // Chiediamo al database un controllo che ignori maiuscole/minuscole
+            if (ricettaService.existsByTitolo(titoloPulito)) {
+                errors.rejectValue("titolo", "ricetta.duplicate", "Esiste già una ricetta con questo titolo (anche se scritto diversamente)");
+            }
         }
     }
-
     @Override
     public boolean supports(Class<?> aClass) {
         // Indica che questo validatore lavora solo su oggetti di classe Ricetta

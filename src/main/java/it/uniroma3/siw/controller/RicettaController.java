@@ -105,8 +105,9 @@ public class RicettaController {
 			        this.ricettaValidator.validate(ricetta, bindingResult); // <--- 2. CHIAMATA AL VALIDATORE
 			    } else {
 			        Ricetta esistenteNelDb = this.ricettaService.findById(ricetta.getId());
+			        //confronta titolo vecchio con quello nuovo (form)
 			        if (esistenteNelDb != null && !esistenteNelDb.getTitolo().equals(ricetta.getTitolo())) {
-			            this.ricettaValidator.validate(ricetta, bindingResult); // Valida solo se il titolo è cambiato
+			            this.ricettaValidator.validate(ricetta, bindingResult); // chiama il validatore  solo se il titolo è cambiato
 			        }
 			    }
 
@@ -116,7 +117,7 @@ public class RicettaController {
 			        return "formNewRicetta"; // Assicurati che sia il nome corretto del tuo template HTML
 			    }
 
-			    // --- LOGICA ESISTENTE: MODIFICA o NUOVO inserimento? ---
+			    // --- LOGICA: MODIFICA o NUOVO inserimento? ---
 			    if (ricetta.getId() != null) {
 			        Ricetta ricettaEsistente = this.ricettaService.findById(ricetta.getId());
 

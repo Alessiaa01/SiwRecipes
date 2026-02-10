@@ -32,34 +32,7 @@ public class RicettaService {
 		return this.ricettaRepository.save(ricetta);
 	}
 	
-	//Metodo++
-	//Gestisce l'associazione con l'autore e fissa i collegamenti degli ingredienti 
-	/*
-	@Transactional
-	public Ricetta saveRicetta(Ricetta ricetta, Utente autore) {
-		
-		// 1. Associo l'autore alla ricetta
-		//Nel db, la tabella ricetta ha una colonna chiamata autore_id, e senza set quando salvi rimarrà nulla
-		ricetta.setAutore(autore);
-		
-		// 2. AGGIUNGIAMO ANCHE LA RICETTA ALLA LISTA DELL'AUTORE
-		//Serve a mantenere la coerenza bidirezionale: la ricetta sa chi è l'autore, e l'autore sa che ha unsa nuova ricetta nella sua lista
-		autore.getRicetteScritte().add(ricetta);
-
-		// 3. IL "FIX" FONDAMENTALE PER GLI INGREDIENTI
-		// Quando arrivano dal form, gli oggetti RicettaIngrediente sono "orfani".
-		// Sanno la quantità, ma il campo "ricetta" dentro di loro è null.
-		// Dobbiamo dire a ogni riga: "Ehi, la tua ricetta padre è QUESTA qui".
-		if (ricetta.getricettaIngredienti() != null) {
-			for (RicettaIngrediente riga : ricetta.getricettaIngredienti()) {
-				riga.setRicetta(ricetta); // <--- SENZA QUESTO, IL DB NON SALVA IL COLLEGAMENTO
-			}
-		}
-
-		// 4. Salvo tutto (grazie al CascadeType.ALL salverà anche gli ingredienti)
-		return this.ricettaRepository.save(ricetta);
-	}
-	*/
+	
 	public Ricetta findById(Long id) {
 		return ricettaRepository.findById(id).orElse(null);
 	}
@@ -78,7 +51,7 @@ public class RicettaService {
 	
 		// Cambia 'existByTitle' in 'existsByTitolo'
 		public boolean existsByTitolo(String titolo) {
-		    return ricettaRepository.existsByTitolo(titolo);
+		    return ricettaRepository.existsByTitoloIgnoreCase(titolo);
 		}
 
 	public void deleteById(Long id) {

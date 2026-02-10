@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,13 +26,7 @@ public class RecensioneController {
 	@Autowired
 	private RicettaService ricettaService;
 
-	@InitBinder
-    public void initBinder(WebDataBinder binder) {
-        // Blocca l'id (per non cambiare identità alla recensione)
-        // Blocca l'autore (per non poter dire "questa recensione l'ha scritta un altro")
-        binder.setDisallowedFields("id", "autore", "autore.id", "ricetta", "ricetta.id");
-    }
-
+	
 	@PostMapping("/ricetta/{ricettaId}/recensione")
 public String addRecensione(@PathVariable("ricettaId") Long ricettaId,
                         @Valid @ModelAttribute("nuovaRecensione") Recensione recensione,
@@ -53,11 +45,10 @@ public String addRecensione(@PathVariable("ricettaId") Long ricettaId,
         // 1. Rimetto la ricetta nel model
         model.addAttribute("ricetta", ricetta);
         
-        // 2. CORREZIONE IMPORTANTE: Ricarico anche le recensioni GIÀ ESISTENTI
-        // Altrimenti se sbaglio a scrivere, spariscono i commenti degli altri!
-        model.addAttribute("recensioni", ricetta.getRecensioni()); // O come hai chiamato la lista nel template
+        // 2. Ricarico anche le recensioni GIÀ ESISTENTI
+        // Altrimenti se sbaglio a scrivere, spariscono i commenti degli altri
+        model.addAttribute("recensioni", ricetta.getRecensioni()); 
         
-        // 3. CORREZIONE: Tolgo ".html"
         return "ricetta"; 
     }
 
@@ -65,19 +56,18 @@ public String addRecensione(@PathVariable("ricettaId") Long ricettaId,
     recensione.setAutore(currentUser); 
     recensione.setRicetta(ricetta);
     
-    // Opzionale: Aggiungo la recensione alla lista della ricetta (per coerenza in memoria)
+    // Aggiungo la recensione alla lista della ricetta 
     ricetta.getRecensioni().add(recensione); 
     
     this.recensioneService.save(recensione);
 
-    // 4. Redirect: Assicurati che questo indirizzo esista nel tuo Controller GET
     return "redirect:/ricetta/" + ricettaId;
 }
 	
 	@PostMapping("/ricetta/{ricettaId}/recensione/{recensioneId}/delete")
 	public String deleteRecensione(@PathVariable("ricettaId") Long ricettaId,
 	                               @PathVariable("recensioneId") Long recensioneId,
-	                               @ModelAttribute("currentUser") Utente currentUser) { // Rimosso @ModelAttribute("credentials")
+	                               @ModelAttribute("currentUser") Utente currentUser) { 
 
 	    Recensione recensione = recensioneService.findById(recensioneId);
 	    
@@ -93,13 +83,15 @@ public String addRecensione(@PathVariable("ricettaId") Long ricettaId,
 	                       recensione.getAutore().getId().equals(currentUser.getId());
 
 	    if (isAdmin || isAutore) {
-	        // Fondamentale: rimuovere il riferimento dalla lista della ricetta per l'integrità JPA
+	        
 	        recensione.getRicetta().getRecensioni().remove(recensione);
 	        recensioneService.delete(recensione);
 	    }
 
 	    return "redirect:/ricetta/" + ricettaId;
 	}
+	
+	
 	// 1. GET: Quando clicco "Modifica", ricarico la pagina ricetta MA con i dati vecchi nel form
 	@GetMapping("/recensione/modifica/{id}")
 	public String modificaRecensione(@PathVariable("id") Long id,
@@ -113,47 +105,51 @@ public String addRecensione(@PathVariable("ricettaId") Long ricettaId,
 	        return "redirect:/ricette";
 	    }
 
-	    // Carico la ricetta (perché la pagina ricetta.html ne ha bisogno per disegnarsi)
+	    // Carico la ricetta ( ricetta.html ne ha bisogno per disegnarsi)
 	    Ricetta ricetta = recensione.getRicetta();
 	    model.addAttribute("ricetta", ricetta);
 
-	    // TRUCCO: Passo al model la recensione specifica da modificare.
+	    // Passo al model la recensione specifica da modificare.
 	    // Nell'HTML useremo questo oggetto per capire se mostrare il form di modifica o quello di aggiunta.
 	    model.addAttribute("recensioneDaModificare", recensione);
 	    
-	    return "ricetta"; // Ritorno alla STESSA pagina, non a un'altra vista
+	    return "ricetta"; // Ritorno alla STESSA pagina
 	}
 
-	// 2. POST: Questo rimane UGUALE a prima (riceve i dati e salva)
+	// riceve i dati e salva
 	@PostMapping("/recensione/modifica/{id}")
 	public String updateRecensione(@PathVariable("id") Long id,
 	                               @Valid @ModelAttribute("recensioneDaModificare") Recensione recensioneForm,
 	                               BindingResult bindingResult,
-	                               @ModelAttribute("currentUser") Utente currentUser,
-	                               Model model) {
+	                               Model model) { // <--- RIMOSSO @ModelAttribute("currentUser") dai parametri
 
+	    // 1. Recuperiamo la recensione originale dal database
 	    Recensione originale = this.recensioneService.findById(id);
 
-	    // Sicurezza
-	    if (originale == null || !originale.getAutore().getId().equals(currentUser.getId())) {
+	    // 2. Recuperiamo l'utente loggato in modo sicuro per il controllo
+	    // Invece di passarlo come parametro, lo prendiamo dal model (dove lo mette il tuo GlobalController o simile)
+	    Utente currentUser = (Utente) model.getAttribute("currentUser");
+
+	    // Sicurezza: controlliamo che chi modifica sia l'autore
+	    if (originale == null || currentUser == null || !originale.getAutore().getId().equals(currentUser.getId())) {
 	        return "redirect:/ricette";
 	    }
 
 	    if (bindingResult.hasErrors()) {
-	        // Se c'è errore, devo ricaricare tutto ciò che serve alla pagina ricetta
 	        model.addAttribute("ricetta", originale.getRicetta());
-	        
-	        // AGGIUNTA IMPORTANTE: Serve perché la pagina ricetta ha anche il form "nuovaRecensione" in basso
 	        model.addAttribute("nuovaRecensione", new Recensione()); 
-	        
 	        return "ricetta"; 
 	    }
 
-	    // Aggiornamento
+	    // 3. AGGIORNAMENTO MIRATO (Qui è dove risolviamo l'errore)
+	    // Copiamo SOLO i campi testuali. NON tocchiamo l'oggetto Autore, nè la Ricetta, nè l'ID.
 	    originale.setTitolo(recensioneForm.getTitolo());
 	    originale.setVoto(recensioneForm.getVoto());
 	    originale.setTesto(recensioneForm.getTesto());
 	    
+	    // Il campo 'originale' ha ancora il suo vecchio autore (ID 652). 
+	    // Non toccandolo, Hibernate non proverà a cambiarlo con l'ID 51.
+
 	    this.recensioneService.save(originale);
 
 	    return "redirect:/ricetta/" + originale.getRicetta().getId();
@@ -162,7 +158,7 @@ public String addRecensione(@PathVariable("ricettaId") Long ricettaId,
 	//GESTIONE ADMIN
 	@GetMapping("/admin/recensioni")
     public String adminManageRecensioni(Model model) {
-        // Recupera tutte le recensioni (assicurati che il metodo findAll esista nel service)
+        // Recupera tutte le recensioni 
         model.addAttribute("recensioni", this.recensioneService.findAll());
         return "admin/manageRecensioni.html";
     }

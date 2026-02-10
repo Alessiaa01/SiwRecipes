@@ -1,10 +1,15 @@
-	package it.uniroma3.siw.model;
+package it.uniroma3.siw.model;
 
-	import jakarta.persistence.Entity;
-	import jakarta.persistence.GeneratedValue;
-	import jakarta.persistence.GenerationType;
-	import jakarta.persistence.Id;
-	import jakarta.persistence.ManyToOne;
+
+
+import java.time.LocalDate;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
 
 	@Entity  
 	public class Recensione {
@@ -17,14 +22,18 @@
 	    private String testo;
 	    private Integer voto;
 	    
-	    @ManyToOne
+	    private LocalDate dataInserimento = LocalDate.now();
+	    
+	    
+		@ManyToOne
 	    private Utente autore;
-	 
-		// Collegamento inverso verso la Ricetta
+	
 	    @ManyToOne 
 	    private Ricetta ricetta;
+	    
+	    
 
-	    // Getter e Setter (obbligatori)
+	    // Getter e Setter 
 	    public Long getId() { return id; }
 	    public void setId(Long id) { this.id = id; }
 	    
@@ -43,6 +52,14 @@
 		public void setVoto(Integer voto) {
 			this.voto = voto;
 		}
+		
+		public LocalDate getDataInserimento() {
+			return dataInserimento;
+		}
+		public void setDataInserimento(LocalDate dataInserimento) {
+			this.dataInserimento = dataInserimento;
+		}
+		
 		public Utente getAutore() {
 			return autore;
 		}
